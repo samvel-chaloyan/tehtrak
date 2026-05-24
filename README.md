@@ -1,8 +1,8 @@
-# Matian
+# Tehtrak
 
 A mobile-first platform for structuring real-world operations without technical knowledge.
 
-**Product framing:** A configurable operational memory system — not ERP, not database software.
+**Product framing:** A calm operational notebook — a configurable operational memory system. Not ERP, not database software.
 
 ## Documentation
 
@@ -17,6 +17,14 @@ All architecture, contracts, and implementation guidance live in [`docs/`](docs/
 | [Engineering](docs/engineering/) | Standards, testing, CI/CD, performance |
 | [Implementation](docs/implementation/) | Phases, MVP checklist |
 
+## Implementation status
+
+| Area | Status |
+|------|--------|
+| Documentation | Complete (architectural contract) |
+| Mobile (`apps/mobile`) | Phase R1 — frontend foundation with mocked data |
+| Backend | Not started (per phased plan) |
+
 ## Stack
 
 | Layer | Technology |
@@ -24,13 +32,23 @@ All architecture, contracts, and implementation guidance live in [`docs/`](docs/
 | Mobile | React Native, TypeScript, Expo |
 | Backend | ASP.NET Core, Clean Architecture, Modular Monolith |
 | Database | PostgreSQL |
-| Local (mobile) | SQLite |
+| Local (mobile) | SQLite (planned; MMKV for preferences in R1) |
 
 ## Core hierarchy
 
 ```
 Workspace → Collections → Records → Fields
 ```
+
+## Mobile app (Phase R1)
+
+```bash
+cd apps/mobile
+npm install
+npm start
+```
+
+See [apps/mobile/README.md](apps/mobile/README.md).
 
 ## Cursor workflow
 

@@ -1,6 +1,6 @@
 # Agent Instructions (Cursor)
 
-You are implementing **Matian** — a mobile-first configurable operational memory system.
+You are implementing **Tehtrak** — a mobile-first configurable operational memory system (calm operational notebook).
 
 ## Before writing code
 
