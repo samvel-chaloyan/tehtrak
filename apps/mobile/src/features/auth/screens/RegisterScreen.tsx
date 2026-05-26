@@ -1,16 +1,31 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
+import { ApiClientError } from '@/core/api';
+import { useRegister } from '@/features/auth/hooks/useAuth';
 import { AuthScreenProps } from '@/navigation/types';
-import { useAppStore } from '@/store';
 import { useTheme } from '@/theme';
 import { Button, Input, Screen, Stack, Text } from '@/shared/ui';
 
 export function RegisterScreen({ navigation }: AuthScreenProps<'Register'>) {
   const { spacing } = useTheme();
-  const setAuthenticated = useAppStore((s) => s.setAuthenticated);
+  const register = useRegister();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+
+  const handleRegister = async () => {
+    setError(null);
+    try {
+      await register.mutateAsync({
+        email: email.trim(),
+        password,
+        displayName: name.trim(),
+      });
+    } catch (e) {
+      setError(e instanceof ApiClientError ? e.displayMessage : 'Could not create account. Try again.');
+    }
+  };
 
   return (
     <Screen scroll>
@@ -41,7 +56,18 @@ export function RegisterScreen({ navigation }: AuthScreenProps<'Register'>) {
           />
         </Stack>
 
-        <Button label="Create account" fullWidth onPress={() => setAuthenticated(true)} />
+        {error ? (
+          <Text variant="bodySmall" color="danger">
+            {error}
+          </Text>
+        ) : null}
+
+        <Button
+          label={register.isPending ? 'Creating…' : 'Create account'}
+          fullWidth
+          onPress={handleRegister}
+          disabled={register.isPending}
+        />
 
         <Pressable onPress={() => navigation.navigate('Login')}>
           <Text variant="bodySmall" color="secondary" style={styles.centered}>

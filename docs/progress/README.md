@@ -2,6 +2,16 @@
 
 This folder holds UI milestones for university documentation, architecture presentations, and portfolio material.
 
+## Phase R2 — API integration
+
+| # | Screen / flow | Filename suggestion |
+|---|----------------|---------------------|
+| 8 | Register + login (real auth) | `r2-01-auth.png` |
+| 9 | Empty workspace → create workspace | `r2-02-create-workspace.png` |
+| 10 | Create collection + properties | `r2-03-collection-setup.png` |
+| 11 | Dynamic form saving to API | `r2-04-persisted-entry.png` |
+| 12 | App relaunch — data still present | `r2-05-session-restore.png` |
+
 ## Phase R1 — Frontend foundation
 
 Capture these flows once the app runs locally:

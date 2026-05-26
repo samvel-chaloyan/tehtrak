@@ -37,9 +37,9 @@ Do not implement later milestones before earlier ones are complete.
 
 | Area | Stack |
 |------|-------|
-| Mobile | React Native, Expo, TypeScript, Zustand, TanStack Query |
-| Backend | ASP.NET Core, Clean Architecture, PostgreSQL, EF Core |
-| Local DB | SQLite |
+| Mobile | React Native, Expo, TypeScript, Zustand, TanStack Query, Axios, SecureStore |
+| Backend | ASP.NET Core, Clean Architecture, PostgreSQL, EF Core (`services/api/`) |
+| Local DB | SQLite (offline phase — not R2) |
 
 ## Coding standards
 

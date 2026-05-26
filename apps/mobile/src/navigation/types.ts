@@ -18,14 +18,17 @@ export type AppStackParamList = {
     itemId: string;
     collectionId: string;
     collectionName: string;
+    workspaceId: string;
   };
   CreateItem: {
     collectionId: string;
     collectionName: string;
+    workspaceId: string;
   };
   CreateProperty: {
     collectionId: string;
     collectionName: string;
+    workspaceId: string;
   };
 };
 

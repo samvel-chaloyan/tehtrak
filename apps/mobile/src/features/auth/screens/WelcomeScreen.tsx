@@ -1,13 +1,11 @@
 import { StyleSheet, View } from 'react-native';
 import { AuthScreenProps } from '@/navigation/types';
-import { useAppStore } from '@/store';
 import { useTheme } from '@/theme';
 import { Button, Screen, Stack, Text } from '@/shared/ui';
 import { appConfig } from '@/config/app';
 
 export function WelcomeScreen({ navigation }: AuthScreenProps<'Welcome'>) {
   const { spacing } = useTheme();
-  const setAuthenticated = useAppStore((s) => s.setAuthenticated);
 
   return (
     <Screen style={styles.screen}>
@@ -31,12 +29,6 @@ export function WelcomeScreen({ navigation }: AuthScreenProps<'Welcome'>) {
           variant="secondary"
           fullWidth
           onPress={() => navigation.navigate('Register')}
-        />
-        <Button
-          label="Explore with sample data"
-          variant="ghost"
-          fullWidth
-          onPress={() => setAuthenticated(true)}
         />
       </Stack>
     </Screen>

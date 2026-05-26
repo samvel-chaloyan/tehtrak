@@ -13,7 +13,7 @@ export interface DynamicItemFormProps {
   fields: PropertyField[];
   initialValues?: ItemData;
   submitLabel?: string;
-  onSubmit: (values: ItemData) => void;
+  onSubmit: (values: ItemData) => void | Promise<void>;
 }
 
 export function DynamicItemForm({
@@ -35,7 +35,7 @@ export function DynamicItemForm({
     mode: 'onSubmit',
   });
 
-  const handleValid = (values: DynamicFormValues) => {
+  const handleValid = async (values: DynamicFormValues) => {
     const normalized: ItemData = { ...(values as ItemData) };
 
     for (const field of fields) {
@@ -47,7 +47,7 @@ export function DynamicItemForm({
       }
     }
 
-    onSubmit(normalized);
+    await onSubmit(normalized);
   };
 
   if (fields.length === 0) {

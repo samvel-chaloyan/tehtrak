@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "EsslriNITpc=",
+  "success": true,
+  "projectFilePath": "/Users/sam/Desktop/sam/workspace/tehtrak/services/api/src/Application/Tehtrak.Application.csproj",
+  "expectedPackageFiles": [
+    "/var/folders/31/pw0kzz791nqcrccp2r4zctcm0000gn/T/cursor-sandbox-cache/1c0a0e74a845f96cad54b65ec8362805/nuget/microsoft.extensions.dependencyinjection.abstractions/10.0.8/microsoft.extensions.dependencyinjection.abstractions.10.0.8.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,18 +1,25 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
+import { ApiClientError } from '@/core/api';
+import { useLogin } from '@/features/auth/hooks/useAuth';
 import { AuthScreenProps } from '@/navigation/types';
-import { useAppStore } from '@/store';
 import { useTheme } from '@/theme';
 import { Button, Input, Screen, Stack, Text } from '@/shared/ui';
 
 export function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
   const { spacing } = useTheme();
-  const setAuthenticated = useAppStore((s) => s.setAuthenticated);
+  const login = useLogin();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = () => {
-    setAuthenticated(true);
+  const handleLogin = async () => {
+    setError(null);
+    try {
+      await login.mutateAsync({ email: email.trim(), password });
+    } catch (e) {
+      setError(e instanceof ApiClientError ? e.displayMessage : 'Could not sign in. Try again.');
+    }
   };
 
   return (
@@ -43,7 +50,18 @@ export function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
           />
         </Stack>
 
-        <Button label="Sign in" fullWidth onPress={handleLogin} />
+        {error ? (
+          <Text variant="bodySmall" color="danger">
+            {error}
+          </Text>
+        ) : null}
+
+        <Button
+          label={login.isPending ? 'Signing in…' : 'Sign in'}
+          fullWidth
+          onPress={handleLogin}
+          disabled={login.isPending}
+        />
 
         <Pressable onPress={() => navigation.navigate('Register')}>
           <Text variant="bodySmall" color="secondary" style={styles.centered}>
@@ -51,12 +69,6 @@ export function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
             <Text variant="bodySmall" color="accent">
               Create an account
             </Text>
-          </Text>
-        </Pressable>
-
-        <Pressable onPress={() => navigation.goBack()}>
-          <Text variant="bodySmall" color="tertiary" style={styles.centered}>
-            Back
           </Text>
         </Pressable>
       </Stack>

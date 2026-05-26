@@ -22,8 +22,8 @@ All architecture, contracts, and implementation guidance live in [`docs/`](docs/
 | Area | Status |
 |------|--------|
 | Documentation | Complete (architectural contract) |
-| Mobile (`apps/mobile`) | Phase R1 — frontend foundation with mocked data |
-| Backend | Not started (per phased plan) |
+| Mobile (`apps/mobile`) | Phase R2 — API integration + metadata-driven forms |
+| Backend (`services/api`) | Phase R2 — Auth, workspaces, collections, fields, records (PostgreSQL) |
 
 ## Stack
 

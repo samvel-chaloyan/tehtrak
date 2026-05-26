@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
+import { ApiClientError } from '@/core/api';
+import { useCreateField, useFields } from '@/features/properties/hooks/useFields';
 import { AppScreenProps } from '@/navigation/types';
-import { getAllFields, useAppStore } from '@/store';
 import { useTheme } from '@/theme';
-import { Button, Input, Screen, Stack, Text } from '@/shared/ui';
-import { PropertyField, PropertyType } from '@/types';
-import { createId, slugifyKey } from '@/utils';
+import { Button, Input, Loader, Screen, Stack, Text } from '@/shared/ui';
+import { PropertyType } from '@/types';
 
 const PROPERTY_TYPES: { type: PropertyType; label: string; hint: string }[] = [
   { type: 'text', label: 'Text', hint: 'Names, notes, labels' },
@@ -16,49 +16,50 @@ const PROPERTY_TYPES: { type: PropertyType; label: string; hint: string }[] = [
 ];
 
 export function CreatePropertyScreen({ navigation, route }: AppScreenProps<'CreateProperty'>) {
-  const { collectionId } = route.params;
+  const { collectionId, workspaceId } = route.params;
   const { colors, radius, spacing } = useTheme();
-  const addProperty = useAppStore((s) => s.addProperty);
-  const existingFields = getAllFields(collectionId);
+  const { data: existingFields, isLoading } = useFields(workspaceId, collectionId);
+  const createField = useCreateField(workspaceId, collectionId);
 
   const [label, setLabel] = useState('');
   const [type, setType] = useState<PropertyType>('text');
   const [required, setRequired] = useState(true);
   const [optionsText, setOptionsText] = useState('Option A\nOption B\nOption C');
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    setError(null);
     const trimmed = label.trim();
     if (!trimmed) return;
 
-    let key = slugifyKey(trimmed);
-    const taken = new Set(existingFields.map((f) => f.key));
-    if (taken.has(key)) {
-      key = `${key}_${existingFields.length + 1}`;
+    const config =
+      type === 'select'
+        ? {
+            options: optionsText
+              .split('\n')
+              .map((line) => line.trim())
+              .filter(Boolean)
+              .map((line) => ({ label: line, value: line.toLowerCase().replace(/[^a-z0-9]+/g, '_') })),
+          }
+        : undefined;
+
+    try {
+      await createField.mutateAsync({
+        label: trimmed,
+        type,
+        required,
+        config,
+        sortOrder: existingFields?.length ?? 0,
+      });
+      navigation.goBack();
+    } catch (e) {
+      setError(e instanceof ApiClientError ? e.displayMessage : 'Could not add property.');
     }
-
-    const field: PropertyField = {
-      id: createId('field'),
-      collectionId,
-      key,
-      label: trimmed,
-      type,
-      required,
-      sortOrder: existingFields.length,
-      config:
-        type === 'select'
-          ? {
-              options: optionsText
-                .split('\n')
-                .map((line) => line.trim())
-                .filter(Boolean)
-                .map((line) => ({ label: line, value: slugifyKey(line) })),
-            }
-          : undefined,
-    };
-
-    addProperty(field);
-    navigation.goBack();
   };
+
+  if (isLoading) {
+    return <Loader fullScreen />;
+  }
 
   return (
     <Screen scroll edges={['bottom']}>
@@ -134,7 +135,18 @@ export function CreatePropertyScreen({ navigation, route }: AppScreenProps<'Crea
           />
         ) : null}
 
-        <Button label="Add property" fullWidth onPress={handleSave} />
+        {error ? (
+          <Text variant="bodySmall" color="danger">
+            {error}
+          </Text>
+        ) : null}
+
+        <Button
+          label={createField.isPending ? 'Saving…' : 'Add property'}
+          fullWidth
+          onPress={handleSave}
+          disabled={createField.isPending}
+        />
       </Stack>
     </Screen>
   );
