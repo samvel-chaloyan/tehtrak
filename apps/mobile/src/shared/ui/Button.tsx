@@ -23,11 +23,14 @@ export function Button({
 }: ButtonProps) {
   const { colors, radius, spacing } = useTheme();
 
-  const variantStyles: Record<ButtonVariant, { bg: string; text: 'inverse' | 'primary' | 'accent' | 'danger'; border?: string }> = {
+  const variantStyles: Record<
+    ButtonVariant,
+    { bg: string; text: 'inverse' | 'accent' | 'danger'; border?: string }
+  > = {
     primary: { bg: colors.primary, text: 'inverse' },
-    secondary: { bg: colors.surface, text: 'primary', border: colors.border },
+    secondary: { bg: colors.background, text: 'accent', border: colors.primary },
     ghost: { bg: 'transparent', text: 'accent' },
-    danger: { bg: colors.dangerMuted, text: 'danger' },
+    danger: { bg: colors.background, text: 'danger', border: colors.danger },
   };
 
   const v = variantStyles[variant];

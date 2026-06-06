@@ -12,11 +12,9 @@ export function SectionHeader({ title, subtitle }: SectionHeaderProps) {
 
   return (
     <View style={[styles.container, { marginBottom: spacing.sm }]}>
-      <Text variant="label" color="secondary">
-        {title}
-      </Text>
+      <Text variant="sectionTitle">{title}</Text>
       {subtitle ? (
-        <Text variant="caption" color="tertiary" style={{ marginTop: 2 }}>
+        <Text variant="caption" color="secondary" style={{ marginTop: spacing.xs }}>
           {subtitle}
         </Text>
       ) : null}

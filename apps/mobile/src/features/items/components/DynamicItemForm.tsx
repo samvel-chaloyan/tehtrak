@@ -19,7 +19,7 @@ export interface DynamicItemFormProps {
 export function DynamicItemForm({
   fields,
   initialValues,
-  submitLabel = 'Save entry',
+  submitLabel = 'Save item',
   onSubmit,
 }: DynamicItemFormProps) {
   const { spacing } = useTheme();

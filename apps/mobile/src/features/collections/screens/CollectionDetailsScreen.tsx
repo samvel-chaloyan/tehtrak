@@ -4,7 +4,7 @@ import { useFields } from '@/features/properties/hooks/useFields';
 import { useRecords } from '@/features/items/hooks/useRecords';
 import { AppScreenProps } from '@/navigation/types';
 import { useTheme } from '@/theme';
-import { Button, Card, EmptyState, Loader, Screen, Stack, Text } from '@/shared/ui';
+import { Button, Card, EmptyNotebook, Screen, SkeletonList, Stack, Text } from '@/shared/ui';
 import { getItemSubtitle, getItemTitle } from '@/utils';
 import { StyleSheet } from 'react-native';
 
@@ -13,57 +13,69 @@ export function CollectionDetailsScreen({
   route,
 }: AppScreenProps<'CollectionDetails'>) {
   const { collectionId, collectionName, workspaceId } = route.params;
-  const { spacing } = useTheme();
+  const { colors, spacing } = useTheme();
   const { data: fields, isLoading: fieldsLoading } = useFields(workspaceId, collectionId);
   const { data: items, isLoading: itemsLoading, isError, refetch, isRefetching } = useRecords(
     workspaceId,
     collectionId,
   );
 
-  if (fieldsLoading || itemsLoading) {
-    return <Loader fullScreen message="Loading entries…" />;
-  }
-
   const fieldList = fields ?? [];
+  const isLoading = fieldsLoading || itemsLoading;
 
   return (
     <Screen edges={['bottom']} padded={false} style={styles.screen}>
-      <View style={[styles.toolbar, { paddingHorizontal: spacing.md, paddingBottom: spacing.sm }]}>
-        <Stack horizontal gap="sm">
+      <View
+        style={[
+          styles.toolbar,
+          {
+            paddingHorizontal: spacing.lg,
+            paddingTop: spacing.md,
+            paddingBottom: spacing.md,
+            borderBottomColor: colors.border,
+          },
+        ]}
+      >
+        <Stack gap="sm">
           <Button
-            label="New entry"
-            size="md"
-            onPress={() => navigation.navigate('CreateItem', { collectionId, collectionName, workspaceId })}
-            style={styles.flex}
+            label="Add item"
+            fullWidth
+            onPress={() =>
+              navigation.navigate('CreateItem', { collectionId, collectionName, workspaceId })
+            }
           />
           <Button
-            label="Property"
-            variant="secondary"
+            label="Add property"
+            variant="ghost"
             onPress={() =>
               navigation.navigate('CreateProperty', { collectionId, collectionName, workspaceId })
             }
           />
         </Stack>
-        <Text variant="caption" color="tertiary" style={{ marginTop: spacing.sm }}>
-          {fieldList.length} properties · metadata-driven forms
+        <Text variant="caption" color="secondary" style={{ marginTop: spacing.sm }}>
+          {fieldList.length} {fieldList.length === 1 ? 'property' : 'properties'}
         </Text>
       </View>
 
-      {isError ? (
-        <View style={{ paddingHorizontal: spacing.md }}>
-          <EmptyState
-            title="Could not load entries"
+      {isLoading ? (
+        <View style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.md }}>
+          <SkeletonList count={5} />
+        </View>
+      ) : isError ? (
+        <View style={{ paddingHorizontal: spacing.lg }}>
+          <EmptyNotebook
+            title="Could not load items"
             description="Check your connection and try again."
             actionLabel="Retry"
             onAction={() => refetch()}
           />
         </View>
       ) : !items?.length ? (
-        <View style={{ paddingHorizontal: spacing.md }}>
-          <EmptyState
-            title="This notebook is empty"
-            description="Add your first operational entry — a jar on the cellar shelf, a vehicle at the gate, a pallet on the floor."
-            actionLabel="Add first entry"
+        <View style={{ paddingHorizontal: spacing.lg }}>
+          <EmptyNotebook
+            title="No items yet"
+            description="Start recording your first item in this collection."
+            actionLabel="Add item"
             onAction={() =>
               navigation.navigate('CreateItem', { collectionId, collectionName, workspaceId })
             }
@@ -76,8 +88,12 @@ export function CollectionDetailsScreen({
           keyExtractor={(item) => item.id}
           refreshing={isRefetching}
           onRefresh={refetch}
-          contentContainerStyle={{ paddingHorizontal: spacing.md, paddingBottom: spacing['2xl'] }}
-          ItemSeparatorComponent={() => <View style={{ height: spacing.sm }} />}
+          contentContainerStyle={{
+            paddingHorizontal: spacing.lg,
+            paddingTop: spacing.md,
+            paddingBottom: spacing['2xl'],
+          }}
+          ItemSeparatorComponent={() => <View style={{ height: spacing.list }} />}
           renderItem={({ item }) => (
             <Card
               onPress={() =>
@@ -114,9 +130,5 @@ const styles = StyleSheet.create({
   },
   toolbar: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#E8ECEF',
-  },
-  flex: {
-    flex: 1,
   },
 });

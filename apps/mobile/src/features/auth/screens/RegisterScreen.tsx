@@ -4,7 +4,7 @@ import { ApiClientError } from '@/core/api';
 import { useRegister } from '@/features/auth/hooks/useAuth';
 import { AuthScreenProps } from '@/navigation/types';
 import { useTheme } from '@/theme';
-import { Button, Input, Screen, Stack, Text } from '@/shared/ui';
+import { Button, Input, Screen, ScreenHeader, Stack, Text } from '@/shared/ui';
 
 export function RegisterScreen({ navigation }: AuthScreenProps<'Register'>) {
   const { spacing } = useTheme();
@@ -30,12 +30,10 @@ export function RegisterScreen({ navigation }: AuthScreenProps<'Register'>) {
   return (
     <Screen scroll>
       <Stack gap="lg" style={{ paddingTop: spacing.lg }}>
-        <Stack gap="xs">
-          <Text variant="titleLarge">Create your space</Text>
-          <Text variant="body" color="secondary">
-            Start with a calm notebook for the work you already track by hand.
-          </Text>
-        </Stack>
+        <ScreenHeader
+          title="Create your space"
+          subtitle="Start with a calm notebook for the work you already track by hand."
+        />
 
         <Stack gap="md">
           <Input label="Your name" value={name} onChangeText={setName} placeholder="Sam" />
@@ -69,7 +67,7 @@ export function RegisterScreen({ navigation }: AuthScreenProps<'Register'>) {
           disabled={register.isPending}
         />
 
-        <Pressable onPress={() => navigation.navigate('Login')}>
+        <Pressable onPress={() => navigation.navigate('Login')} hitSlop={12}>
           <Text variant="bodySmall" color="secondary" style={styles.centered}>
             Already have an account?{' '}
             <Text variant="bodySmall" color="accent">

@@ -1,24 +1,23 @@
 import { StyleSheet, View } from 'react-native';
+import { appConfig } from '@/config/app';
 import { AuthScreenProps } from '@/navigation/types';
 import { useTheme } from '@/theme';
-import { Button, Screen, Stack, Text } from '@/shared/ui';
-import { appConfig } from '@/config/app';
+import { Button, PageTitle, Screen, Stack, Text, ThreeLines } from '@/shared/ui';
 
 export function WelcomeScreen({ navigation }: AuthScreenProps<'Welcome'>) {
   const { spacing } = useTheme();
 
   return (
     <Screen style={styles.screen}>
-      <View style={styles.hero}>
-        <Text variant="titleLarge" style={styles.brand}>
-          {appConfig.name}
-        </Text>
+      <View style={[styles.hero, { paddingTop: spacing['2xl'] }]}>
+        <ThreeLines size="lg" align="left" style={{ marginBottom: spacing.lg }} />
+        <PageTitle>{appConfig.name}</PageTitle>
         <Text variant="body" color="secondary" style={styles.tagline}>
           {appConfig.tagline}
         </Text>
-        <Text variant="bodySmall" color="tertiary" style={[styles.description, { marginTop: spacing.lg }]}>
-          Structure everyday operations the way you already think — in notebooks, lists, and
-          quiet notes. No dashboards. No jargon.
+        <Text variant="bodySmall" color="secondary" style={{ marginTop: spacing.lg, lineHeight: 22 }}>
+          Record and organize the work you already track — in notebooks, lists, and quiet notes.
+          Calm, simple, and built for real operations.
         </Text>
       </View>
 
@@ -42,16 +41,8 @@ const styles = StyleSheet.create({
   hero: {
     flex: 1,
     justifyContent: 'center',
-    paddingTop: 48,
-  },
-  brand: {
-    marginBottom: 8,
   },
   tagline: {
     maxWidth: 280,
-  },
-  description: {
-    lineHeight: 22,
-    maxWidth: 320,
   },
 });

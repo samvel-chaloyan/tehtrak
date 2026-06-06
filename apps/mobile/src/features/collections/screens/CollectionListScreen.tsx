@@ -4,7 +4,7 @@ import { ApiClientError } from '@/core/api';
 import { useCollections, useCreateCollection } from '@/features/collections/hooks/useCollections';
 import { AppScreenProps } from '@/navigation/types';
 import { useTheme } from '@/theme';
-import { Button, EmptyState, Input, Loader, Screen, Stack, Text } from '@/shared/ui';
+import { Button, EmptyNotebook, Input, Screen, SkeletonList, Stack, Text } from '@/shared/ui';
 import { CollectionCard } from '../components/CollectionCard';
 
 export function CollectionListScreen({ navigation, route }: AppScreenProps<'CollectionList'>) {
@@ -40,78 +40,80 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
   };
 
   if (isLoading) {
-    return <Loader fullScreen message="Loading collections…" />;
+    return (
+      <Screen edges={['bottom']}>
+        <SkeletonList count={4} />
+      </Screen>
+    );
   }
 
   return (
-    <Screen edges={['bottom']} padded={false}>
-      <Stack style={{ flex: 1, paddingHorizontal: spacing.md, paddingTop: spacing.md }}>
-        {showCreate ? (
-          <Stack gap="sm" style={{ marginBottom: spacing.md }}>
-            <Input label="Collection name" value={name} onChangeText={setName} placeholder="Winter Food Storage" />
-            <Input
-              label="Description (optional)"
-              value={description}
-              onChangeText={setDescription}
-              placeholder="What this notebook tracks"
-            />
-            {error ? (
-              <Text variant="caption" color="danger">
-                {error}
-              </Text>
-            ) : null}
-            <Stack horizontal gap="sm">
-              <Button label="Create" onPress={handleCreate} disabled={createCollection.isPending} />
-              <Button label="Cancel" variant="ghost" onPress={() => setShowCreate(false)} />
-            </Stack>
+    <Screen edges={['bottom']}>
+      {showCreate ? (
+        <Stack gap="sm" style={{ marginBottom: spacing.md }}>
+          <Input label="Collection name" value={name} onChangeText={setName} placeholder="Winter Food Storage" />
+          <Input
+            label="Description (optional)"
+            value={description}
+            onChangeText={setDescription}
+            placeholder="What this notebook tracks"
+          />
+          {error ? (
+            <Text variant="caption" color="danger">
+              {error}
+            </Text>
+          ) : null}
+          <Stack horizontal gap="sm">
+            <Button label="Create" onPress={handleCreate} disabled={createCollection.isPending} style={{ flex: 1 }} />
+            <Button label="Cancel" variant="ghost" onPress={() => setShowCreate(false)} />
           </Stack>
-        ) : (
-          <Button
-            label="New collection"
-            variant="secondary"
-            fullWidth
-            onPress={() => setShowCreate(true)}
-            style={{ marginBottom: spacing.md }}
-          />
-        )}
+        </Stack>
+      ) : (
+        <Button
+          label="New collection"
+          variant="secondary"
+          fullWidth
+          onPress={() => setShowCreate(true)}
+          style={{ marginBottom: spacing.md }}
+        />
+      )}
 
-        {isError ? (
-          <EmptyState
-            title="Could not load collections"
-            description="Pull to refresh or try again in a moment."
-            actionLabel="Retry"
-            onAction={() => refetch()}
-          />
-        ) : !collections?.length ? (
-          <EmptyState
-            title="No collections in this workspace"
-            description="Collections are the notebooks inside a workspace — winter storage, shift logs, intake registers."
-            actionLabel="Create collection"
-            onAction={() => setShowCreate(true)}
-          />
-        ) : (
-          <FlatList
-            data={collections}
-            keyExtractor={(item) => item.id}
-            refreshing={isRefetching}
-            onRefresh={refetch}
-            contentContainerStyle={{ gap: spacing.md, paddingBottom: spacing['2xl'] }}
-            showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <CollectionCard
-                collection={item}
-                onPress={() =>
-                  navigation.navigate('CollectionDetails', {
-                    collectionId: item.id,
-                    collectionName: item.name,
-                    workspaceId,
-                  })
-                }
-              />
-            )}
-          />
-        )}
-      </Stack>
+      {isError ? (
+        <EmptyNotebook
+          title="Could not load collections"
+          description="Pull to refresh or try again in a moment."
+          actionLabel="Retry"
+          onAction={() => refetch()}
+        />
+      ) : !collections?.length ? (
+        <EmptyNotebook
+          title="No collections yet"
+          description="Collections are the notebooks inside a workspace — winter storage, shift logs, intake registers."
+          actionLabel="Create collection"
+          onAction={() => setShowCreate(true)}
+        />
+      ) : (
+        <FlatList
+          data={collections}
+          keyExtractor={(item) => item.id}
+          refreshing={isRefetching}
+          onRefresh={refetch}
+          contentContainerStyle={{ gap: spacing.list, paddingBottom: spacing['2xl'] }}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <CollectionCard
+              collection={item}
+              onPress={() =>
+                navigation.navigate('CollectionDetails', {
+                  collectionId: item.id,
+                  collectionName: item.name,
+                  workspaceId,
+                })
+              }
+            />
+          )}
+        />
+      )}
     </Screen>
   );
 }

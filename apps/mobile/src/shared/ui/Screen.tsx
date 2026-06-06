@@ -25,6 +25,7 @@ export function Screen({
 
   const paddingTop = edges.includes('top') ? insets.top : 0;
   const paddingBottom = edges.includes('bottom') ? insets.bottom : 0;
+  const horizontalPadding = padded ? spacing.lg : 0;
 
   const containerStyle = [
     styles.container,
@@ -32,7 +33,7 @@ export function Screen({
       backgroundColor: colors.background,
       paddingTop,
       paddingBottom,
-      paddingHorizontal: padded ? spacing.md : 0,
+      paddingHorizontal: horizontalPadding,
     },
     style,
   ];
@@ -44,7 +45,7 @@ export function Screen({
         contentContainerStyle={[
           {
             paddingBottom: paddingBottom + spacing.lg,
-            paddingHorizontal: padded ? spacing.md : 0,
+            paddingHorizontal: horizontalPadding,
           },
           contentStyle,
         ]}

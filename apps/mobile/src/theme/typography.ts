@@ -8,16 +8,22 @@ export const fontFamily = {
 
 export const typography = {
   titleLarge: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: '600',
-    lineHeight: 32,
+    lineHeight: 34,
     letterSpacing: -0.3,
   },
-  title: {
-    fontSize: 20,
+  sectionTitle: {
+    fontSize: 18,
     fontWeight: '600',
-    lineHeight: 26,
-    letterSpacing: -0.2,
+    lineHeight: 24,
+    letterSpacing: -0.1,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '600',
+    lineHeight: 24,
+    letterSpacing: -0.1,
   },
   subtitle: {
     fontSize: 17,
@@ -35,15 +41,14 @@ export const typography = {
     lineHeight: 20,
   },
   caption: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '400',
-    lineHeight: 16,
+    lineHeight: 20,
   },
   label: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '500',
-    lineHeight: 18,
-    letterSpacing: 0.1,
+    lineHeight: 20,
   },
 } as const satisfies Record<string, TextStyle>;
 

@@ -4,29 +4,28 @@ import { useTheme } from '@/theme';
 export interface CardProps extends ViewProps {
   onPress?: PressableProps['onPress'];
   padded?: boolean;
-  elevated?: boolean;
+  selected?: boolean;
 }
 
 export function Card({
   children,
   onPress,
   padded = true,
-  elevated = false,
+  selected = false,
   style,
   ...props
 }: CardProps) {
-  const { colors, radius, spacing, shadows } = useTheme();
+  const { colors, radius, spacing } = useTheme();
 
   const cardStyle = [
     styles.card,
     {
-      backgroundColor: colors.surfaceElevated,
+      backgroundColor: colors.background,
       borderRadius: radius.lg,
-      borderColor: colors.borderLight,
+      borderColor: selected ? colors.primary : colors.border,
       borderWidth: 1,
       padding: padded ? spacing.md : 0,
     },
-    elevated ? shadows.card : null,
     style,
   ];
 

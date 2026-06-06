@@ -4,7 +4,7 @@ import { ApiClientError } from '@/core/api';
 import { useCreateField, useFields } from '@/features/properties/hooks/useFields';
 import { AppScreenProps } from '@/navigation/types';
 import { useTheme } from '@/theme';
-import { Button, Input, Loader, Screen, Stack, Text } from '@/shared/ui';
+import { Button, Input, Screen, SkeletonList, Stack, Text } from '@/shared/ui';
 import { PropertyType } from '@/types';
 
 const PROPERTY_TYPES: { type: PropertyType; label: string; hint: string }[] = [
@@ -58,15 +58,18 @@ export function CreatePropertyScreen({ navigation, route }: AppScreenProps<'Crea
   };
 
   if (isLoading) {
-    return <Loader fullScreen />;
+    return (
+      <Screen scroll edges={['bottom']}>
+        <SkeletonList count={3} />
+      </Screen>
+    );
   }
 
   return (
     <Screen scroll edges={['bottom']}>
       <Stack gap="lg">
-        <Text variant="bodySmall" color="secondary">
-          Properties define how entries are captured. This builder validates the metadata-driven
-          runtime — no collection-specific code.
+        <Text variant="body" color="secondary">
+          Properties describe what you record in each item — like columns in a notebook.
         </Text>
 
         <Input
@@ -93,6 +96,7 @@ export function CreatePropertyScreen({ navigation, route }: AppScreenProps<'Crea
                     borderColor: selected ? colors.primary : colors.border,
                     borderRadius: radius.md,
                     padding: spacing.md,
+                    gap: spacing.xs,
                   },
                 ]}
               >
@@ -119,7 +123,7 @@ export function CreatePropertyScreen({ navigation, route }: AppScreenProps<'Crea
             },
           ]}
         >
-          <Text variant="body">Required for new entries</Text>
+          <Text variant="body">Required for new items</Text>
           <Text variant="caption" color={required ? 'accent' : 'tertiary'}>
             {required ? 'Yes' : 'No'}
           </Text>
@@ -155,6 +159,5 @@ export function CreatePropertyScreen({ navigation, route }: AppScreenProps<'Crea
 const styles = StyleSheet.create({
   typeRow: {
     borderWidth: 1,
-    gap: 4,
   },
 });

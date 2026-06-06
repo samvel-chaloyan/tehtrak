@@ -3,7 +3,6 @@ import {
   StyleSheet,
   TextInput,
   TextInputProps,
-  View,
 } from 'react-native';
 import { useTheme } from '@/theme';
 import { Text } from './Text';
@@ -35,12 +34,12 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
           styles.input,
           typography.body,
           {
-            backgroundColor: colors.surface,
+            backgroundColor: colors.background,
             borderColor: error ? colors.danger : colors.border,
             borderRadius: radius.md,
             color: colors.textPrimary,
             paddingHorizontal: spacing.md,
-            paddingVertical: spacing.sm + 4,
+            paddingVertical: spacing.sm,
           },
           style,
         ]}

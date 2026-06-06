@@ -1,12 +1,21 @@
 import { useState } from 'react';
-import { FlatList, Pressable, StyleSheet, View } from 'react-native';
+import { FlatList, Pressable } from 'react-native';
 import { ApiClientError } from '@/core/api';
 import { useLogout } from '@/features/auth/hooks/useAuth';
 import { useCreateWorkspace, useWorkspaces } from '@/features/workspaces/hooks/useWorkspaces';
 import { AppScreenProps } from '@/navigation/types';
 import { useAppStore } from '@/store';
 import { useTheme } from '@/theme';
-import { Button, EmptyState, Input, Loader, Screen, Stack, Text } from '@/shared/ui';
+import {
+  Button,
+  EmptyNotebook,
+  Input,
+  Screen,
+  ScreenHeader,
+  SkeletonList,
+  Stack,
+  Text,
+} from '@/shared/ui';
 import { WorkspaceCard } from '../components/WorkspaceCard';
 
 export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceList'>) {
@@ -42,24 +51,30 @@ export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceLis
   };
 
   if (isLoading) {
-    return <Loader fullScreen message="Loading workspaces…" />;
+    return (
+      <Screen edges={['top', 'bottom']}>
+        <ScreenHeader
+          title="Your workspaces"
+          subtitle="Each workspace is a separate operational notebook."
+        />
+        <SkeletonList count={3} />
+      </Screen>
+    );
   }
 
   return (
     <Screen edges={['top', 'bottom']}>
-      <View style={[styles.header, { paddingTop: spacing.md, paddingBottom: spacing.lg }]}>
-        <Stack gap="xs">
-          <Text variant="titleLarge">Your workspaces</Text>
-          <Text variant="body" color="secondary">
-            Each workspace is a separate operational notebook.
-          </Text>
-        </Stack>
-        <Pressable onPress={() => logout.mutate()} hitSlop={12}>
-          <Text variant="caption" color="tertiary">
-            Sign out
-          </Text>
-        </Pressable>
-      </View>
+      <ScreenHeader
+        title="Your workspaces"
+        subtitle="Each workspace is a separate operational notebook."
+        action={
+          <Pressable onPress={() => logout.mutate()} hitSlop={12}>
+            <Text variant="caption" color="accent">
+              Sign out
+            </Text>
+          </Pressable>
+        }
+      />
 
       {showCreate ? (
         <Stack gap="sm" style={{ marginBottom: spacing.md }}>
@@ -79,7 +94,7 @@ export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceLis
               label="Create"
               onPress={handleCreate}
               disabled={createWorkspace.isPending}
-              style={styles.flex}
+              style={{ flex: 1 }}
             />
             <Button label="Cancel" variant="ghost" onPress={() => setShowCreate(false)} />
           </Stack>
@@ -95,16 +110,16 @@ export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceLis
       )}
 
       {isError ? (
-        <EmptyState
+        <EmptyNotebook
           title="Could not load workspaces"
           description="Check that Tehtrak is running and try again."
           actionLabel="Retry"
           onAction={() => refetch()}
         />
       ) : !workspaces?.length ? (
-        <EmptyState
+        <EmptyNotebook
           title="No workspaces yet"
-          description="Create your first workspace — a calm home for collections and daily operational notes."
+          description="Create your first workspace — a calm home for collections and daily notes."
           actionLabel="Create workspace"
           onAction={() => setShowCreate(true)}
         />
@@ -114,7 +129,7 @@ export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceLis
           keyExtractor={(item) => item.id}
           refreshing={isRefetching}
           onRefresh={refetch}
-          contentContainerStyle={{ gap: spacing.md, paddingBottom: spacing['2xl'] }}
+          contentContainerStyle={{ gap: spacing.list, paddingBottom: spacing['2xl'] }}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
             <WorkspaceCard
@@ -128,14 +143,3 @@ export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceLis
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-  flex: {
-    flex: 1,
-  },
-});

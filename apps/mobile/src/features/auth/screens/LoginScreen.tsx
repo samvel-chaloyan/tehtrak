@@ -4,7 +4,7 @@ import { ApiClientError } from '@/core/api';
 import { useLogin } from '@/features/auth/hooks/useAuth';
 import { AuthScreenProps } from '@/navigation/types';
 import { useTheme } from '@/theme';
-import { Button, Input, Screen, Stack, Text } from '@/shared/ui';
+import { Button, Input, Screen, ScreenHeader, Stack, Text } from '@/shared/ui';
 
 export function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
   const { spacing } = useTheme();
@@ -25,12 +25,10 @@ export function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
   return (
     <Screen scroll>
       <Stack gap="lg" style={{ paddingTop: spacing.lg }}>
-        <Stack gap="xs">
-          <Text variant="titleLarge">Welcome back</Text>
-          <Text variant="body" color="secondary">
-            Sign in to open your operational notebooks.
-          </Text>
-        </Stack>
+        <ScreenHeader
+          title="Welcome back"
+          subtitle="Sign in to open your operational notebooks."
+        />
 
         <Stack gap="md">
           <Input
@@ -63,7 +61,7 @@ export function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
           disabled={login.isPending}
         />
 
-        <Pressable onPress={() => navigation.navigate('Register')}>
+        <Pressable onPress={() => navigation.navigate('Register')} hitSlop={12}>
           <Text variant="bodySmall" color="secondary" style={styles.centered}>
             New here?{' '}
             <Text variant="bodySmall" color="accent">

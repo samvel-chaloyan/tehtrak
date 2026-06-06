@@ -10,7 +10,7 @@ interface WorkspaceCardProps {
 
 export function WorkspaceCard({ workspace, selected, onPress }: WorkspaceCardProps) {
   return (
-    <Card onPress={onPress} elevated={selected}>
+    <Card onPress={onPress} selected={selected}>
       <Stack horizontal align="center" gap="md">
         <View style={styles.emoji}>
           <Text variant="title">{workspace.emoji}</Text>

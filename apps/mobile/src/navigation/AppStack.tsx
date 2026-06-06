@@ -42,12 +42,12 @@ export function AppStack() {
       <Stack.Screen
         name="ItemDetails"
         component={ItemDetailsScreen}
-        options={{ title: 'Entry' }}
+        options={{ title: 'Item' }}
       />
       <Stack.Screen
         name="CreateItem"
         component={CreateItemScreen}
-        options={({ route }) => ({ title: `New in ${route.params.collectionName}` })}
+        options={({ route }) => ({ title: `New item · ${route.params.collectionName}` })}
       />
       <Stack.Screen
         name="CreateProperty"

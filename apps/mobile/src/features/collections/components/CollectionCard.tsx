@@ -21,7 +21,7 @@ export function CollectionCard({ collection, onPress }: CollectionCardProps) {
             {collection.description}
           </Text>
           <Text variant="caption" color="tertiary">
-            {collection.itemCount} entries · {formatRelativeTime(collection.lastActivityAt)}
+            {collection.itemCount} items · {formatRelativeTime(collection.lastActivityAt)}
           </Text>
         </Stack>
       </Stack>

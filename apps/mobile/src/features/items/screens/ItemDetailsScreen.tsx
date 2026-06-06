@@ -1,34 +1,42 @@
 import { useFields } from '@/features/properties/hooks/useFields';
 import { useRecord } from '@/features/items/hooks/useRecords';
 import { AppScreenProps } from '@/navigation/types';
-import { Card, Loader, Screen, SectionHeader, Stack, Text } from '@/shared/ui';
+import { useTheme } from '@/theme';
+import { Card, EmptyNotebook, Screen, SectionHeader, SkeletonList, Stack, Text } from '@/shared/ui';
 import { formatFieldValue } from '@/utils';
 
 export function ItemDetailsScreen({ route }: AppScreenProps<'ItemDetails'>) {
   const { itemId, collectionId, workspaceId } = route.params;
+  const { spacing } = useTheme();
   const { data: fields, isLoading: fieldsLoading } = useFields(workspaceId, collectionId);
-  const { data: item, isLoading: itemLoading } = useRecord(workspaceId, collectionId, itemId);
+  const { data: item, isLoading: itemLoading, isError } = useRecord(workspaceId, collectionId, itemId);
 
-  if (fieldsLoading || itemLoading) {
-    return <Loader fullScreen />;
-  }
+  const fieldList = fields ?? [];
+  const isLoading = fieldsLoading || itemLoading;
 
-  if (!item) {
+  if (isLoading) {
     return (
-      <Screen>
-        <Text variant="body" color="secondary">
-          This entry could not be found.
-        </Text>
+      <Screen scroll edges={['bottom']}>
+        <SkeletonList count={3} />
       </Screen>
     );
   }
 
-  const fieldList = fields ?? [];
+  if (isError || !item) {
+    return (
+      <Screen edges={['bottom']}>
+        <EmptyNotebook
+          title="Item not found"
+          description="This item may have been removed or is no longer available."
+        />
+      </Screen>
+    );
+  }
 
   return (
     <Screen scroll edges={['bottom']}>
       <Stack gap="md">
-        <SectionHeader title="Entry details" subtitle="Rendered from property metadata" />
+        <SectionHeader title="Item details" />
         {fieldList.map((field) => (
           <Card key={field.id} padded>
             <Stack gap="xs">
@@ -39,7 +47,7 @@ export function ItemDetailsScreen({ route }: AppScreenProps<'ItemDetails'>) {
             </Stack>
           </Card>
         ))}
-        <Text variant="caption" color="tertiary">
+        <Text variant="caption" color="secondary" style={{ marginTop: spacing.sm }}>
           Last updated {new Date(item.updatedAt).toLocaleString()}
         </Text>
       </Stack>

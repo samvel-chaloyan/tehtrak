@@ -11,7 +11,7 @@ export function Loader({ message, fullScreen = false }: LoaderProps) {
   const { colors, spacing } = useTheme();
 
   return (
-    <View style={[styles.container, fullScreen && styles.fullScreen]}>
+    <View style={[styles.container, { padding: spacing.lg }, fullScreen && styles.fullScreen]}>
       <ActivityIndicator size="large" color={colors.primary} />
       {message ? (
         <Text variant="bodySmall" color="secondary" style={{ marginTop: spacing.md }}>
@@ -26,7 +26,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 24,
   },
   fullScreen: {
     flex: 1,

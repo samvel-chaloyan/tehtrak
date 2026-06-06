@@ -13,7 +13,7 @@ export function getItemTitle(item: Item, fields: PropertyField[]): string {
     if (value != null && value !== '') return String(value);
   }
 
-  return 'Untitled entry';
+  return 'Untitled item';
 }
 
 export function getItemSubtitle(item: Item, fields: PropertyField[]): string | undefined {
