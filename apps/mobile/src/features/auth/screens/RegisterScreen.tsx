@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
-import { ApiClientError } from '@/core/api';
 import { useRegister } from '@/features/auth/hooks/useAuth';
 import { AuthScreenProps } from '@/navigation/types';
 import { useTheme } from '@/theme';
+import { getScreenErrorMessage } from '@/utils';
 import { Button, Input, Screen, ScreenHeader, Stack, Text } from '@/shared/ui';
 
 export function RegisterScreen({ navigation }: AuthScreenProps<'Register'>) {
@@ -23,7 +23,7 @@ export function RegisterScreen({ navigation }: AuthScreenProps<'Register'>) {
         displayName: name.trim(),
       });
     } catch (e) {
-      setError(e instanceof ApiClientError ? e.displayMessage : 'Could not create account. Try again.');
+      setError(getScreenErrorMessage(e, 'Could not create account. Try again.'));
     }
   };
 

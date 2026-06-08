@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { FlatList, Pressable } from 'react-native';
-import { ApiClientError } from '@/core/api';
 import { useLogout } from '@/features/auth/hooks/useAuth';
 import { useCreateWorkspace, useWorkspaces } from '@/features/workspaces/hooks/useWorkspaces';
 import { AppScreenProps } from '@/navigation/types';
@@ -16,6 +15,7 @@ import {
   Stack,
   Text,
 } from '@/shared/ui';
+import { getScreenErrorMessage } from '@/utils';
 import { WorkspaceCard } from '../components/WorkspaceCard';
 
 export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceList'>) {
@@ -44,9 +44,7 @@ export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceLis
       setShowCreate(false);
       openWorkspace(workspace.id, workspace.name);
     } catch (e) {
-      setCreateError(
-        e instanceof ApiClientError ? e.displayMessage : 'Could not create workspace.',
-      );
+      setCreateError(getScreenErrorMessage(e, 'Could not create workspace.'));
     }
   };
 
@@ -112,7 +110,7 @@ export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceLis
       {isError ? (
         <EmptyNotebook
           title="Could not load workspaces"
-          description="Check that Tehtrak is running and try again."
+          description="Pull to refresh or try again in a moment."
           actionLabel="Retry"
           onAction={() => refetch()}
         />

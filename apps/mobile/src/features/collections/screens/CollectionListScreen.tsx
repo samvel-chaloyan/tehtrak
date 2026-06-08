@@ -1,10 +1,18 @@
 import { useState } from 'react';
 import { FlatList } from 'react-native';
-import { ApiClientError } from '@/core/api';
 import { useCollections, useCreateCollection } from '@/features/collections/hooks/useCollections';
 import { AppScreenProps } from '@/navigation/types';
 import { useTheme } from '@/theme';
-import { Button, EmptyNotebook, Input, Screen, SkeletonList, Stack, Text } from '@/shared/ui';
+import {
+  Button,
+  EmptyNotebook,
+  Input,
+  Screen,
+  SkeletonList,
+  Stack,
+  Text,
+} from '@/shared/ui';
+import { getScreenErrorMessage } from '@/utils';
 import { CollectionCard } from '../components/CollectionCard';
 
 export function CollectionListScreen({ navigation, route }: AppScreenProps<'CollectionList'>) {
@@ -35,13 +43,20 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
         workspaceId,
       });
     } catch (e) {
-      setError(e instanceof ApiClientError ? e.displayMessage : 'Could not create collection.');
+      setError(getScreenErrorMessage(e, 'Could not create collection.'));
     }
   };
+
+  const intro = (
+    <Text variant="body" color="secondary" style={{ marginBottom: spacing.lg }}>
+      Collections in this workspace
+    </Text>
+  );
 
   if (isLoading) {
     return (
       <Screen edges={['bottom']}>
+        {intro}
         <SkeletonList count={4} />
       </Screen>
     );
@@ -49,6 +64,8 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
 
   return (
     <Screen edges={['bottom']}>
+      {intro}
+
       {showCreate ? (
         <Stack gap="sm" style={{ marginBottom: spacing.md }}>
           <Input label="Collection name" value={name} onChangeText={setName} placeholder="Winter Food Storage" />

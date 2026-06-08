@@ -65,7 +65,7 @@ export function CollectionDetailsScreen({
         <View style={{ paddingHorizontal: spacing.lg }}>
           <EmptyNotebook
             title="Could not load items"
-            description="Check your connection and try again."
+            description="Pull to refresh or try again in a moment."
             actionLabel="Retry"
             onAction={() => refetch()}
           />

@@ -4,6 +4,10 @@ You are implementing **Tehtrak** — a mobile-first configurable operational mem
 
 The documentation inside this repository is the source of truth.
 
+Implementation must follow documentation.
+
+If code and documentation conflict, documentation wins.
+
 Do not invent architecture, domain rules, UI patterns, or workflows that contradict the documentation.
 
 ---
@@ -106,8 +110,10 @@ Avoid technical terminology such as:
 
 * Schema
 * Entity
+* Metadata
 * Resource
 * Dataset
+* Configuration
 
 ---
 
@@ -200,7 +206,38 @@ outside the established design system.
 
 ---
 
-## Screen Creation Rules
+# Screen Quality Gate
+
+Before marking any screen complete, read:
+
+docs/frontend/screen-quality-checklist.md
+
+Every new screen, screen modification, refactor, or feature addition must pass the checklist.
+
+A screen is not considered complete simply because it works.
+
+It must satisfy:
+
+* Design Language
+* UI Constitution
+* UI System
+* Screen Quality Checklist
+
+When delivering UI work:
+
+1. Implement the screen.
+2. Self-audit against the checklist.
+3. Report:
+
+   * Passed checks
+   * Failed checks
+   * Follow-up recommendations
+
+Do not claim a screen is complete without performing the audit.
+
+---
+
+# Screen Creation Rules
 
 When creating a new screen:
 
@@ -218,6 +255,24 @@ Every screen must provide:
 * error state
 
 where applicable.
+
+---
+
+# Definition of Done
+
+A feature is complete only when:
+
+* Documentation requirements are satisfied
+* TypeScript passes
+* Build passes
+* Loading state exists
+* Empty state exists
+* Error state exists
+* UI follows Design Language
+* UI follows UI Constitution
+* Screen passes Screen Quality Checklist
+
+Working functionality alone is not considered complete.
 
 ---
 

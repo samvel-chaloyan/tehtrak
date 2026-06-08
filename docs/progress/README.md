@@ -2,6 +2,23 @@
 
 This folder holds UI milestones for university documentation, architecture presentations, and portfolio material.
 
+## Phase R3.5 — Demo experience & design compliance
+
+Capture with `EXPO_PUBLIC_DEMO_MODE=true` (no backend required):
+
+| # | Screen / flow | Filename suggestion |
+|---|----------------|---------------------|
+| 1 | Welcome (ThreeLines + positioning) | `r35-01-welcome.png` |
+| 2 | Sign in | `r35-02-sign-in.png` |
+| 3 | Workspace list (seeded data) | `r35-03-workspaces.png` |
+| 4 | Collection list | `r35-04-collections.png` |
+| 5 | Item list (Winter Food Storage) | `r35-05-items.png` |
+| 6 | Item details | `r35-06-item-details.png` |
+| 7 | Create item form | `r35-07-create-item.png` |
+| 8 | Add property | `r35-08-add-property.png` |
+| 9 | Empty state (EmptyNotebook + ThreeLines) | `r35-09-empty-state.png` |
+| 10 | App relaunch — session restored | `r35-10-session-restore.png` |
+
 ## Phase R2 — API integration
 
 | # | Screen / flow | Filename suggestion |
@@ -22,18 +39,20 @@ Capture these flows once the app runs locally:
 | 2 | Workspace list | `r1-02-workspaces.png` |
 | 3 | Collection list | `r1-03-collections.png` |
 | 4 | Item list (FlashList) | `r1-04-items.png` |
-| 5 | Dynamic form (create entry) | `r1-05-dynamic-form.png` |
+| 5 | Dynamic form (create item) | `r1-05-dynamic-form.png` |
 | 6 | Property builder | `r1-06-property-builder.png` |
-| 7 | Item details (metadata display) | `r1-07-item-details.png` |
+| 7 | Item details | `r1-07-item-details.png` |
 
 ## How to capture
 
-1. Start the app: `cd apps/mobile && npm start`
-2. Use iOS Simulator or Android emulator
-3. Save screenshots into this directory with the names above
+1. Copy `apps/mobile/.env.example` to `apps/mobile/.env`
+2. Start the app: `cd apps/mobile && npm start`
+3. Use iOS Simulator or Android emulator
+4. Save screenshots into this directory with the names above
 
 ## Notes
 
 - Prefer light mode (MVP)
 - Include at least one scenario with believable operational data (e.g. Winter Food Storage)
 - Empty states are worth capturing separately when testing fresh installs
+- Demo mode: sign in with any email and password

@@ -1,21 +1,42 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/core/api';
+import type { ApiUser } from '@/core/api/types';
+import { isDemoMode } from '@/config/demo';
+import { logDemo } from '@/config/demoDebug';
 import { useAppStore } from '@/store';
 import { fetchMe, loginUser, logoutUser, registerUser, restoreSession } from '../api';
 
-export function useSessionBootstrap() {
+function applyAuthenticatedUser(
+  user: ApiUser,
+  setUser: (user: ApiUser | null) => void,
+  setAuthenticated: (value: boolean) => void,
+) {
+  setUser(user);
+  setAuthenticated(true);
+}
+
+export function useSessionBootstrap(options?: { enabled?: boolean }) {
   const setAuthenticated = useAppStore((s) => s.setAuthenticated);
   const setUser = useAppStore((s) => s.setUser);
 
   return useQuery({
     queryKey: queryKeys.me,
+    enabled: options?.enabled ?? true,
     queryFn: async () => {
-      const user = await restoreSession();
-      if (user) {
-        setUser(user);
-        setAuthenticated(true);
-        return user;
+      try {
+        const user = await restoreSession();
+        if (user) {
+          applyAuthenticatedUser(user, setUser, setAuthenticated);
+          return user;
+        }
+      } catch (error) {
+        if (isDemoMode) {
+          logDemo('Session bootstrap failed — showing welcome');
+        } else {
+          throw error;
+        }
       }
+
       setAuthenticated(false);
       setUser(null);
       return null;
@@ -34,9 +55,11 @@ export function useLogin() {
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       loginUser(email, password),
     onSuccess: (data) => {
-      setUser(data.user);
-      setAuthenticated(true);
+      applyAuthenticatedUser(data.user, setUser, setAuthenticated);
       queryClient.setQueryData(queryKeys.me, data.user);
+      if (isDemoMode) {
+        logDemo('Login complete — entering app');
+      }
     },
   });
 }
@@ -57,9 +80,11 @@ export function useRegister() {
       displayName: string;
     }) => registerUser(email, password, displayName),
     onSuccess: (data) => {
-      setUser(data.user);
-      setAuthenticated(true);
+      applyAuthenticatedUser(data.user, setUser, setAuthenticated);
       queryClient.setQueryData(queryKeys.me, data.user);
+      if (isDemoMode) {
+        logDemo('Register complete — entering app');
+      }
     },
   });
 }
@@ -75,6 +100,9 @@ export function useLogout() {
       setUser(null);
       setAuthenticated(false);
       queryClient.clear();
+      if (isDemoMode) {
+        logDemo('Signed out — returning to welcome');
+      }
     },
   });
 }
@@ -83,6 +111,7 @@ export function useMe() {
   return useQuery({
     queryKey: queryKeys.me,
     queryFn: fetchMe,
-    enabled: useAppStore.getState().isAuthenticated,
+    enabled: useAppStore.getState().isAuthenticated && !isDemoMode,
+    retry: false,
   });
 }

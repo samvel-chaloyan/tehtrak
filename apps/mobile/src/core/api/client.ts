@@ -1,5 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { apiConfig } from '@/config/api';
+import { isDemoMode } from '@/config/demo';
+import { logDemo } from '@/config/demoDebug';
 import { clearTokens, getAccessToken, getRefreshToken, setTokens } from './authStorage';
 import { ApiClientError } from './errors';
 import { ApiResponse, RefreshResponse } from './types';
@@ -12,7 +14,17 @@ export const apiClient = axios.create({
 
 let refreshPromise: Promise<string | null> | null = null;
 
+function blockDemoNetwork(method: string, path: string): never {
+  logDemo(`Blocked ${method} ${path}`);
+  throw new ApiClientError('Demo mode active.', 'DEMO_MODE', 0);
+}
+
 apiClient.interceptors.request.use(async (config) => {
+  if (isDemoMode) {
+    const path = config.url ?? 'unknown';
+    blockDemoNetwork(config.method?.toUpperCase() ?? 'REQUEST', path);
+  }
+
   const token = await getAccessToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -23,6 +35,11 @@ apiClient.interceptors.request.use(async (config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError<ApiResponse<unknown>>) => {
+    if (isDemoMode) {
+      logDemo('Blocked response interceptor retry');
+      throw new ApiClientError('Demo mode active.', 'DEMO_MODE', 0);
+    }
+
     const original = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
     if (error.response?.status === 401 && original && !original._retry) {
@@ -40,6 +57,11 @@ apiClient.interceptors.response.use(
 );
 
 async function refreshAccessToken(): Promise<string | null> {
+  if (isDemoMode) {
+    logDemo('Blocked token refresh');
+    return null;
+  }
+
   if (!refreshPromise) {
     refreshPromise = (async () => {
       const refreshToken = await getRefreshToken();
@@ -81,6 +103,10 @@ function toApiError(error: AxiosError<ApiResponse<unknown>>): ApiClientError {
 }
 
 export async function apiGet<T>(path: string, params?: Record<string, unknown>): Promise<T> {
+  if (isDemoMode) {
+    blockDemoNetwork('GET', path);
+  }
+
   const { data } = await apiClient.get<ApiResponse<T>>(path, { params });
   if (!data.success || data.data === null) {
     throw ApiClientError.fromBody(400, data.error ?? undefined);
@@ -92,6 +118,10 @@ export async function apiGetWithMeta<T>(
   path: string,
   params?: Record<string, unknown>,
 ): Promise<{ data: T; meta: unknown }> {
+  if (isDemoMode) {
+    blockDemoNetwork('GET', path);
+  }
+
   const { data } = await apiClient.get<ApiResponse<T>>(path, { params });
   if (!data.success || data.data === null) {
     throw ApiClientError.fromBody(400, data.error ?? undefined);
@@ -100,6 +130,10 @@ export async function apiGetWithMeta<T>(
 }
 
 export async function apiPost<T>(path: string, body?: unknown): Promise<T> {
+  if (isDemoMode) {
+    blockDemoNetwork('POST', path);
+  }
+
   const { data } = await apiClient.post<ApiResponse<T>>(path, body);
   if (!data.success || data.data === null) {
     throw ApiClientError.fromBody(400, data.error ?? undefined);
@@ -108,6 +142,10 @@ export async function apiPost<T>(path: string, body?: unknown): Promise<T> {
 }
 
 export async function apiPatch<T>(path: string, body?: unknown): Promise<T> {
+  if (isDemoMode) {
+    blockDemoNetwork('PATCH', path);
+  }
+
   const { data } = await apiClient.patch<ApiResponse<T>>(path, body);
   if (!data.success || data.data === null) {
     throw ApiClientError.fromBody(400, data.error ?? undefined);
@@ -116,5 +154,9 @@ export async function apiPatch<T>(path: string, body?: unknown): Promise<T> {
 }
 
 export async function apiDelete(path: string): Promise<void> {
+  if (isDemoMode) {
+    blockDemoNetwork('DELETE', path);
+  }
+
   await apiClient.delete(path);
 }

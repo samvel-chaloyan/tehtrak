@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { ApiClientError } from '@/core/api';
 import { useCreateRecord } from '@/features/items/hooks/useRecords';
 import { useFields } from '@/features/properties/hooks/useFields';
 import { AppScreenProps } from '@/navigation/types';
 import { useTheme } from '@/theme';
 import { EmptyNotebook, Screen, SkeletonList, Stack, Text } from '@/shared/ui';
 import { ItemData } from '@/types';
+import { getScreenErrorMessage } from '@/utils';
 import { DynamicItemForm } from '../components/DynamicItemForm';
 
 export function CreateItemScreen({ navigation, route }: AppScreenProps<'CreateItem'>) {
@@ -21,9 +21,7 @@ export function CreateItemScreen({ navigation, route }: AppScreenProps<'CreateIt
       await createRecord.mutateAsync(data);
       navigation.goBack();
     } catch (e) {
-      setError(
-        e instanceof ApiClientError ? e.displayMessage : 'Could not save item. Try again.',
-      );
+      setError(getScreenErrorMessage(e, 'Could not save item. Try again.'));
     }
   };
 

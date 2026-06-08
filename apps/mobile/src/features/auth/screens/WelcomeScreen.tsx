@@ -15,7 +15,7 @@ export function WelcomeScreen({ navigation }: AuthScreenProps<'Welcome'>) {
         <Text variant="body" color="secondary" style={styles.tagline}>
           {appConfig.tagline}
         </Text>
-        <Text variant="bodySmall" color="secondary" style={{ marginTop: spacing.lg, lineHeight: 22 }}>
+        <Text variant="bodySmall" color="secondary" style={{ marginTop: spacing.lg }}>
           Record and organize the work you already track — in notebooks, lists, and quiet notes.
           Calm, simple, and built for real operations.
         </Text>

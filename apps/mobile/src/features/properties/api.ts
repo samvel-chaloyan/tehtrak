@@ -1,10 +1,18 @@
 import { apiDelete, apiGet, apiPost } from '@/core/api';
 import { mapField } from '@/core/api/mappers';
 import type { ApiField } from '@/core/api/types';
+import { isDemoMode } from '@/config/demo';
+import { logDemo } from '@/config/demoDebug';
+import { demoCreateField, demoDeleteField, demoFetchFields } from '@/demo/fields';
 import { PropertyType } from '@/types';
 import { slugifyKey } from '@/utils';
 
 export async function fetchFields(workspaceId: string, collectionId: string) {
+  if (isDemoMode) {
+    logDemo('fetchFields bypassed API');
+    return demoFetchFields(workspaceId, collectionId);
+  }
+
   const list = await apiGet<ApiField[]>(
     `/workspaces/${workspaceId}/collections/${collectionId}/fields`,
   );
@@ -22,6 +30,10 @@ export async function createField(
     sortOrder: number;
   },
 ) {
+  if (isDemoMode) {
+    return demoCreateField(workspaceId, collectionId, payload);
+  }
+
   const key = slugifyKey(payload.label);
   const dto = await apiPost<ApiField>(
     `/workspaces/${workspaceId}/collections/${collectionId}/fields`,
@@ -38,6 +50,10 @@ export async function createField(
 }
 
 export async function deleteField(workspaceId: string, collectionId: string, fieldId: string) {
+  if (isDemoMode) {
+    return demoDeleteField(workspaceId, collectionId, fieldId);
+  }
+
   await apiDelete(
     `/workspaces/${workspaceId}/collections/${collectionId}/fields/${fieldId}`,
   );

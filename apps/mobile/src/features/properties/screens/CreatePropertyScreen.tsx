@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
-import { ApiClientError } from '@/core/api';
 import { useCreateField, useFields } from '@/features/properties/hooks/useFields';
 import { AppScreenProps } from '@/navigation/types';
 import { useTheme } from '@/theme';
 import { Button, Input, Screen, SkeletonList, Stack, Text } from '@/shared/ui';
+import { getScreenErrorMessage } from '@/utils';
 import { PropertyType } from '@/types';
 
 const PROPERTY_TYPES: { type: PropertyType; label: string; hint: string }[] = [
@@ -53,7 +53,7 @@ export function CreatePropertyScreen({ navigation, route }: AppScreenProps<'Crea
       });
       navigation.goBack();
     } catch (e) {
-      setError(e instanceof ApiClientError ? e.displayMessage : 'Could not add property.');
+      setError(getScreenErrorMessage(e, 'Could not add property.'));
     }
   };
 
@@ -69,7 +69,7 @@ export function CreatePropertyScreen({ navigation, route }: AppScreenProps<'Crea
     <Screen scroll edges={['bottom']}>
       <Stack gap="lg">
         <Text variant="body" color="secondary">
-          Properties describe what you record in each item — like columns in a notebook.
+          Each property is a line on your notebook page — what you want to record for every item.
         </Text>
 
         <Input

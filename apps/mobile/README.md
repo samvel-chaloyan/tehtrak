@@ -6,14 +6,15 @@ Phase **R2** — API-backed operational runtime (auth, workspaces, collections, 
 
 - Expo + React Native + TypeScript
 - React Navigation
-- Zustand + MMKV
+- Zustand + AsyncStorage (demo mode)
 - React Hook Form + Zod
 - FlashList + Reanimated
 
 ## Run
 
-1. Start PostgreSQL and API — see [`services/api/README.md`](../../services/api/README.md)
-2. Mobile:
+### Demo mode (no backend)
+
+Copy `.env.example` to `.env` (or set `EXPO_PUBLIC_DEMO_MODE=true`):
 
 ```bash
 cd apps/mobile
@@ -21,7 +22,14 @@ npm install
 npm start
 ```
 
-Press `i` for iOS simulator or `a` for Android.
+Explore the full app with seeded mock data. Creates, edits, and deletes persist locally via AsyncStorage.
+
+### Real API
+
+Set `EXPO_PUBLIC_DEMO_MODE=false` (or remove it), then:
+
+1. Start PostgreSQL and API — see [`services/api/README.md`](../../services/api/README.md)
+2. `npm start` and press `i` / `a`
 
 **API URL:** defaults to `http://localhost:5163/v1` (iOS) or `http://10.0.2.2:5163/v1` (Android emulator). Override with `EXPO_PUBLIC_API_URL`.
 
@@ -41,6 +49,8 @@ src/
 ├── shared/ui/     # Design system primitives
 ├── navigation/    # Auth + App stacks
 ├── core/api/      # Axios client, envelope, token refresh
+├── demo/          # Demo mode services + AsyncStorage persistence (when EXPO_PUBLIC_DEMO_MODE=true)
+├── config/demo.ts # Single feature flag — routes feature APIs to demo or real backend
 ├── store/         # Zustand (session UI, selected workspace)
 ├── theme/         # Tokens (#29B5E8 primary)
 └── features/items # Metadata → Zod → RHF → field registry (unchanged from R1)
