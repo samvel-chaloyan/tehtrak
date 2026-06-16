@@ -15,7 +15,7 @@ export interface ButtonProps extends Omit<PressableProps, 'children'> {
 export function Button({
   label,
   variant = 'primary',
-  size = 'md',
+  size = 'lg',
   fullWidth = false,
   disabled,
   style,
@@ -25,17 +25,23 @@ export function Button({
 
   const variantStyles: Record<
     ButtonVariant,
-    { bg: string; text: 'inverse' | 'accent' | 'danger'; border?: string }
+    {
+      bg: string;
+      pressedBg?: string;
+      text: 'inverse' | 'primary' | 'secondary' | 'danger';
+      border?: string;
+    }
   > = {
-    primary: { bg: colors.primary, text: 'inverse' },
-    secondary: { bg: colors.background, text: 'accent', border: colors.primary },
-    ghost: { bg: 'transparent', text: 'accent' },
-    danger: { bg: colors.background, text: 'danger', border: colors.danger },
+    primary: { bg: colors.primary, pressedBg: colors.primaryPressed, text: 'inverse' },
+    secondary: { bg: colors.surface, text: 'primary', border: colors.borderSecondary },
+    ghost: { bg: 'transparent', text: 'secondary' },
+    danger: { bg: colors.surface, text: 'danger', border: colors.danger },
   };
 
   const v = variantStyles[variant];
   const height = size === 'lg' ? 52 : 48;
   const paddingHorizontal = size === 'lg' ? spacing.lg : spacing.md;
+  const borderRadius = size === 'lg' ? radius.button : radius.md;
 
   return (
     <Pressable
@@ -44,20 +50,21 @@ export function Button({
       style={({ pressed }) => [
         styles.base,
         {
-          backgroundColor: v.bg,
+          backgroundColor:
+            pressed && v.pressedBg ? v.pressedBg : v.bg,
           borderColor: v.border ?? 'transparent',
           borderWidth: v.border ? 1 : 0,
-          borderRadius: radius.md,
+          borderRadius,
           minHeight: height,
           paddingHorizontal,
-          opacity: disabled ? 0.5 : pressed ? 0.88 : 1,
+          opacity: disabled ? 0.5 : pressed && !v.pressedBg ? 0.88 : 1,
           width: fullWidth ? '100%' : undefined,
         },
         style as ViewStyle,
       ]}
       {...props}
     >
-      <Text variant="subtitle" color={v.text} style={styles.label}>
+      <Text variant="body" color={v.text} style={styles.label}>
         {label}
       </Text>
     </Pressable>
@@ -71,5 +78,6 @@ const styles = StyleSheet.create({
   },
   label: {
     textAlign: 'center',
+    fontWeight: '500',
   },
 });

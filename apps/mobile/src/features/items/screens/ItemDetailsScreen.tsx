@@ -2,8 +2,16 @@ import { useFields } from '@/features/properties/hooks/useFields';
 import { useRecord } from '@/features/items/hooks/useRecords';
 import { AppScreenProps } from '@/navigation/types';
 import { useTheme } from '@/theme';
-import { Card, EmptyNotebook, Screen, SectionHeader, SkeletonList, Stack, Text } from '@/shared/ui';
-import { formatFieldValue } from '@/utils';
+import {
+  EmptyNotebook,
+  NotebookField,
+  PageTitle,
+  Screen,
+  SkeletonList,
+  Stack,
+  Text,
+} from '@/shared/ui';
+import { formatFieldValue, formatRelativeTime, getItemTitle } from '@/utils';
 
 export function ItemDetailsScreen({ route }: AppScreenProps<'ItemDetails'>) {
   const { itemId, collectionId, workspaceId } = route.params;
@@ -13,6 +21,7 @@ export function ItemDetailsScreen({ route }: AppScreenProps<'ItemDetails'>) {
 
   const fieldList = fields ?? [];
   const isLoading = fieldsLoading || itemLoading;
+  const itemTitle = item ? getItemTitle(item, fieldList) : 'Item';
 
   if (isLoading) {
     return (
@@ -34,22 +43,24 @@ export function ItemDetailsScreen({ route }: AppScreenProps<'ItemDetails'>) {
   }
 
   return (
-    <Screen scroll edges={['bottom']}>
-      <Stack gap="md">
-        <SectionHeader title="Item details" />
-        {fieldList.map((field) => (
-          <Card key={field.id} padded>
-            <Stack gap="xs">
-              <Text variant="label" color="secondary">
-                {field.label}
-              </Text>
-              <Text variant="body">{formatFieldValue(field, item.data[field.key])}</Text>
-            </Stack>
-          </Card>
-        ))}
-        <Text variant="caption" color="secondary" style={{ marginTop: spacing.sm }}>
-          Last updated {new Date(item.updatedAt).toLocaleString()}
-        </Text>
+    <Screen scroll edges={['bottom', 'top']}>
+      <Stack gap="2xl">
+        <Stack gap="xs">
+          <PageTitle>{itemTitle}</PageTitle>
+          <Text variant="caption" color="tertiary">
+            Updated {formatRelativeTime(item.updatedAt)}
+          </Text>
+        </Stack>
+
+        <Stack gap="xl">
+          {fieldList.map((field) => (
+            <NotebookField
+              key={field.id}
+              label={field.label}
+              value={formatFieldValue(field, item.data[field.key])}
+            />
+          ))}
+        </Stack>
       </Stack>
     </Screen>
   );

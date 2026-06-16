@@ -26,9 +26,9 @@ export function DemoBanner() {
         },
       ]}
     >
-      <Text variant="caption" color="accent" style={styles.text}>
+      {/* <Text variant="caption" color="accent" style={styles.text}>
         Demo Mode · Backend disabled
-      </Text>
+      </Text> */}
     </View>
   );
 }

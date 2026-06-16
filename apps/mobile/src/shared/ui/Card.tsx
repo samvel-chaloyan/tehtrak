@@ -20,10 +20,10 @@ export function Card({
   const cardStyle = [
     styles.card,
     {
-      backgroundColor: colors.background,
+      backgroundColor: colors.surface,
       borderRadius: radius.lg,
-      borderColor: selected ? colors.primary : colors.border,
-      borderWidth: 1,
+      borderColor: colors.border,
+      borderWidth: selected ? 1 : StyleSheet.hairlineWidth,
       padding: padded ? spacing.md : 0,
     },
     style,

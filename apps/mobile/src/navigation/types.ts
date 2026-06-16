@@ -30,6 +30,7 @@ export type AppStackParamList = {
     collectionName: string;
     workspaceId: string;
   };
+  Settings: undefined;
 };
 
 export type RootStackParamList = {

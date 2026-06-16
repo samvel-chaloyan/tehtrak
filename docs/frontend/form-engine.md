@@ -1,5 +1,7 @@
 # Form Engine
 
+> **Documentation layer:** Implementation. For visual rules see [ui-constitution.md](./ui-constitution.md), [components.md](./components.md), and [ui-system.md](./ui-system.md). Index: [README.md](./README.md).
+
 Dynamic forms rendered from `Field[]` metadata. No hand-coded forms per collection.
 
 ## Pipeline

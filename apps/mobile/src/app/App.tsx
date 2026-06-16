@@ -9,9 +9,9 @@ import { logDemo } from '@/config/demoDebug';
 import { RootNavigator } from '@/navigation';
 import { ThemeProvider } from '@/theme';
 
-if (isDemoMode) {
-  logDemo('Demo mode active — backend disabled');
-}
+// if (isDemoMode) {
+//   logDemo('Demo mode active — backend disabled');
+// }
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -1,153 +1,182 @@
-# UI System
+# Tehtrak UI System
 
-> **Source of truth:** `design-language.md` and `ui-constitution.md` take precedence over this file when they conflict.
+## Purpose
 
-## Design direction
+This document defines **how components work together** — composition patterns and codebase layout.
 
-Clean, modern, calm — a notebook-first operational product.
+No token tables (see [design-tokens.md](./design-tokens.md)). No component anatomy (see [components.md](./components.md)). No screen-specific layouts (see [screen-patterns.md](./screen-patterns.md)).
 
-- Whitespace-forward layouts
-- Typography-driven hierarchy
-- Minimal chrome; content first
-- Calm neutral palette with one accent
+When documents conflict, follow hierarchy in [README.md](./README.md).
 
-## Design tokens
+---
 
-### Spacing scale (4px base)
+## Standard Screen Composition
 
-| Token | Value | Use |
-|-------|-------|-----|
-| `xs` | 4 | Tight gaps |
-| `sm` | 8 | Inline spacing |
-| `list` | 12 | Gap between list cards |
-| `md` | 16 | Card padding, form sections |
-| `lg` | 24 | Screen horizontal padding |
-| `xl` | 32 | Large section breaks |
-| `2xl` | 48 | Hero / empty state vertical padding |
+```
+Screen
+└── ScreenHeader (optional)
+    ├── PageTitle
+    ├── subtitle (body, secondary)
+    └── action slot → TextLink or compact control
+└── Content
+    ├── SectionHeader (optional)
+    ├── NotebookRow list | NotebookField page | form fields
+    └── EmptyNotebook (when no content)
+└── Footer action (optional, forms only)
+    └── Button primary
+```
 
-### Typography
+### Rules
 
-| Token | Size | Weight | Use |
-|-------|------|--------|-----|
-| `titleLarge` | 28 | 600 | Screen titles |
-| `sectionTitle` | 18 | 600 | Section headers |
-| `title` | 18 | 600 | Card emphasis |
-| `subtitle` | 17 | 500 | Card titles |
-| `body` | 16 | 400 | Default text |
-| `bodySmall` | 14 | 400 | Secondary text |
-| `caption` | 14 | 400 | Labels, hints |
-| `label` | 14 | 500 | Form labels |
+* One visual title per screen — native header **or** `ScreenHeader`, not both competing
+* Content area scrolls; header stays fixed
+* Actions in header or footer — not as full-width bars above lists
+* Empty content → `EmptyNotebook` replaces list
 
-Font: system default (SF Pro / Roboto). Custom font Phase 2.
+---
 
-### Elderly-friendly mode
+## List Screen Composition
 
-- `fontScale`: 1.0 (default) | 1.25 | 1.5
-- Applied via context; scales typography tokens
-- Minimum touch target: 48×48 dp always
+```
+Screen
+├── ScreenHeader
+│   ├── PageTitle + description
+│   └── TextLink ("New …")
+└── FlatList / ScrollView
+    ├── NotebookRow × n   (gap: list)
+    └── EmptyNotebook     (when n = 0)
+```
 
-### Colors (light mode MVP)
+Loading: `SkeletonList` in place of rows.
 
-| Token | Hex | Use |
-|-------|-----|-----|
-| `primary` | #29B5E8 | Primary actions, active states |
-| `background` | #FFFFFF | Screen bg, cards |
-| `surface` | #F8FAFC | Subtle fills, skeleton |
-| `border` | #E2E8F0 | Dividers, card borders |
-| `textPrimary` | #0F172A | Primary text |
-| `textSecondary` | #475569 | Secondary text |
-| `textTertiary` | #94A3B8 | Hints |
-| `danger` | #DC2626 | Delete, errors |
-| `success` | #16A34A | Confirmations |
-| `warning` | #D97706 | Warnings |
+---
 
-Dark mode: Phase 2.
+## Detail Screen Composition
 
-### Radius
+### Collection / workspace context
 
-| Token | Value |
-|-------|-------|
-| `sm` | 8 |
-| `md` | 12 |
-| `lg` | 16 |
-| `full` | 9999 |
+```
+Screen
+├── ScreenHeader (title + description)
+├── meta row (caption counts + TextLink actions)
+└── NotebookRow list | EmptyNotebook
+```
 
-### Shadows
+### Item detail
 
-Prefer borders over shadows. Heavy shadows are prohibited per UI Constitution.
+```
+Screen
+├── native header (item name)
+└── bordered page container
+    └── NotebookField × n
+```
 
-| Token | Use |
-|-------|-----|
-| `card` | Reserved; avoid in MVP |
-| `modal` | Modals only |
+Single notebook page — not one card per field.
 
-### Animation
+---
 
-| Token | Duration |
-|-------|----------|
-| `fast` | 150ms |
-| `normal` | 250ms |
-| `slow` | 350ms |
+## Form Screen Composition
 
-Easing: `ease-out` for enter, `ease-in` for exit.
+```
+Screen
+├── ScreenHeader or native title
+├── Stack of Input / field components
+└── Button primary (fullWidth, bottom area)
+```
 
-## Core components (`shared/ui/`)
+Dynamic field rendering: [form-engine.md](./form-engine.md).
 
-| Component | Purpose |
-|-----------|---------|
-| `ThreeLines` | Brand signature — empty states, welcome |
-| `ScreenHeader` | Standard page header (title, subtitle, action) |
-| `PageTitle` | Consistent screen title typography |
-| `Button` | primary, secondary, ghost, danger |
-| `Input` | single-line text |
-| `Screen` | safe area + padding |
-| `Card` | list items (notebook pages) |
-| `EmptyNotebook` | Standard empty state |
-| `EmptyState` | Alias for `EmptyNotebook` |
-| `SkeletonCard` | Card-shaped loading placeholder |
-| `SkeletonList` | List of skeleton cards |
-| `Loader` | Full-screen spinner (bootstrap only) |
-| `SectionHeader` | In-screen section titles |
-| `Stack` | Layout helper |
-| `Text` | Typography wrapper |
-| `BottomSheet` | selectors (Phase 2) |
-| `FAB` | primary create action (Phase 2) |
+Submit button in thumb zone. One primary button.
 
-## Layout rules
+---
 
-- Screen horizontal padding: `lg` (24)
-- List card gap: `list` (12)
-- Card padding: `md` (16)
-- Card radius: `lg` (16)
-- Bottom actions in thumb zone (bottom 33% of screen)
-- FAB: 56×56, 16 from bottom/right safe area
+## Auth Screen Composition
+
+```
+Screen (centered or top-weighted)
+├── ThreeLines
+├── PageTitle or Text title
+├── Input × n
+├── Button primary (sign in / register)
+└── Button ghost or TextLink (alternate path)
+```
+
+Auth screens may use primary buttons more prominently — no populated content to dominate.
+
+---
+
+## Action Hierarchy in Composition
+
+| Priority | Component | Placement |
+|----------|-----------|-----------|
+| 1 | Content (lists, fields) | Center / majority of screen |
+| 2 | TextLink | Header right, inline meta rows |
+| 3 | Button secondary | Empty states, supporting actions |
+| 4 | Button primary | Forms, auth, single commit |
+| 5 | Button danger | Destructive confirmations only |
+
+---
 
 ## Icons
 
-- Lucide React Native (consistent stroke)
-- 24px default; 20px inline
+Library: Lucide React Native (consistent stroke).
 
-## Accessibility
+| Context | Size |
+|---------|------|
+| Default | 24 |
+| Inline | 20 |
 
-- `accessibilityLabel` on all interactive elements
-- Color contrast ≥ 4.5:1 for body text
-- Support system font scaling
-- Minimum touch target: 44×44
+Icons accompany actions; they do not replace text labels in MVP.
 
-## File location
+---
+
+## Theme Files
 
 ```
-src/theme/
-├── tokens.ts
+apps/mobile/src/theme/
 ├── colors.ts
 ├── typography.ts
+├── spacing.ts
+├── radius.ts
+├── tokens.ts
 └── ThemeProvider.tsx
+```
 
-src/shared/ui/
-├── ThreeLines.tsx
+Access via `useTheme()` hook.
+
+---
+
+## Component Files
+
+```
+apps/mobile/src/shared/ui/
+├── Button.tsx
+├── TextLink.tsx
+├── Card.tsx
+├── NotebookRow.tsx
+├── NotebookField.tsx
+├── Input.tsx
+├── Screen.tsx
 ├── ScreenHeader.tsx
 ├── PageTitle.tsx
+├── SectionHeader.tsx
+├── ThreeLines.tsx
 ├── EmptyNotebook.tsx
 ├── SkeletonCard.tsx
-└── ...
+├── SkeletonList.tsx
+├── Loader.tsx
+├── Text.tsx
+├── Stack.tsx
+└── index.ts
 ```
+
+Import from `@/shared/ui`.
+
+---
+
+## Extension Rules
+
+1. New visual patterns require updates to [components.md](./components.md) first
+2. New composition patterns require updates to this file
+3. Prefer extending existing components over creating parallel primitives
+4. Do not duplicate token or typography values in component files — use `useTheme()`

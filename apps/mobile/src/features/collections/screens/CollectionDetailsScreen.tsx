@@ -1,19 +1,29 @@
-import { View } from 'react-native';
+import { useCallback } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useFields } from '@/features/properties/hooks/useFields';
 import { useRecords } from '@/features/items/hooks/useRecords';
 import { AppScreenProps } from '@/navigation/types';
 import { useTheme } from '@/theme';
-import { Button, Card, EmptyNotebook, Screen, SkeletonList, Stack, Text } from '@/shared/ui';
+import {
+  EmptyNotebook,
+  IndexFooter,
+  NotebookRow,
+  Screen,
+  ScreenMeta,
+  SkeletonList,
+  TextLink,
+  useNotebookIndexStyle,
+} from '@/shared/ui';
 import { getItemSubtitle, getItemTitle } from '@/utils';
-import { StyleSheet } from 'react-native';
 
 export function CollectionDetailsScreen({
   navigation,
   route,
 }: AppScreenProps<'CollectionDetails'>) {
   const { collectionId, collectionName, workspaceId } = route.params;
-  const { colors, spacing } = useTheme();
+  const { spacing } = useTheme();
+  const indexStyle = useNotebookIndexStyle();
   const { data: fields, isLoading: fieldsLoading } = useFields(workspaceId, collectionId);
   const { data: items, isLoading: itemsLoading, isError, refetch, isRefetching } = useRecords(
     workspaceId,
@@ -21,45 +31,43 @@ export function CollectionDetailsScreen({
   );
 
   const fieldList = fields ?? [];
+  const itemList = items ?? [];
   const isLoading = fieldsLoading || itemsLoading;
+
+  const openCreateItem = useCallback(
+    () => navigation.navigate('CreateItem', { collectionId, collectionName, workspaceId }),
+    [navigation, collectionId, collectionName, workspaceId],
+  );
+
+  const openCreateProperty = useCallback(
+    () => navigation.navigate('CreateProperty', { collectionId, collectionName, workspaceId }),
+    [navigation, collectionId, collectionName, workspaceId],
+  );
+
+  const propertyLabel = `${fieldList.length} ${fieldList.length === 1 ? 'property' : 'properties'}`;
+  const itemCountLabel = itemList.length === 1 ? '1 page' : `${itemList.length} pages`;
+  const metaLabel = itemList.length > 0 ? `${propertyLabel} · ${itemCountLabel}` : propertyLabel;
+
+  const footerActions = (
+    <IndexFooter style={{ paddingHorizontal: spacing.lg }}>
+      <View style={{ gap: spacing.md }}>
+        <TextLink label="Add item" onPress={openCreateItem} />
+        <TextLink label="Add property" onPress={openCreateProperty} emphasis={false} />
+      </View>
+    </IndexFooter>
+  );
 
   return (
     <Screen edges={['bottom']} padded={false} style={styles.screen}>
-      <View
-        style={[
-          styles.toolbar,
-          {
-            paddingHorizontal: spacing.lg,
-            paddingTop: spacing.md,
-            paddingBottom: spacing.md,
-            borderBottomColor: colors.border,
-          },
-        ]}
-      >
-        <Stack gap="sm">
-          <Button
-            label="Add item"
-            fullWidth
-            onPress={() =>
-              navigation.navigate('CreateItem', { collectionId, collectionName, workspaceId })
-            }
-          />
-          <Button
-            label="Add property"
-            variant="ghost"
-            onPress={() =>
-              navigation.navigate('CreateProperty', { collectionId, collectionName, workspaceId })
-            }
-          />
-        </Stack>
-        <Text variant="caption" color="secondary" style={{ marginTop: spacing.sm }}>
-          {fieldList.length} {fieldList.length === 1 ? 'property' : 'properties'}
-        </Text>
+      <View style={{ paddingHorizontal: spacing.lg }}>
+        <ScreenMeta label={metaLabel} />
       </View>
 
       {isLoading ? (
-        <View style={{ paddingHorizontal: spacing.lg, paddingTop: spacing.md }}>
-          <SkeletonList count={5} />
+        <View style={{ paddingHorizontal: spacing.lg }}>
+          <View style={indexStyle}>
+            <SkeletonList count={5} />
+          </View>
         </View>
       ) : isError ? (
         <View style={{ paddingHorizontal: spacing.lg }}>
@@ -70,32 +78,35 @@ export function CollectionDetailsScreen({
             onAction={() => refetch()}
           />
         </View>
-      ) : !items?.length ? (
+      ) : !itemList.length ? (
         <View style={{ paddingHorizontal: spacing.lg }}>
           <EmptyNotebook
-            title="No items yet"
-            description="Start recording your first item in this collection."
+            title="No pages yet"
+            description="Record your first item in this section."
             actionLabel="Add item"
-            onAction={() =>
-              navigation.navigate('CreateItem', { collectionId, collectionName, workspaceId })
-            }
+            onAction={openCreateItem}
           />
+          <IndexFooter>
+            <TextLink label="Add property" onPress={openCreateProperty} emphasis={false} />
+          </IndexFooter>
         </View>
       ) : (
         <FlashList
           style={styles.list}
-          data={items}
+          data={itemList}
           keyExtractor={(item) => item.id}
           refreshing={isRefetching}
           onRefresh={refetch}
           contentContainerStyle={{
-            paddingHorizontal: spacing.lg,
-            paddingTop: spacing.md,
-            paddingBottom: spacing['2xl'],
+            ...indexStyle,
+            marginHorizontal: spacing.lg,
+            paddingBottom: spacing.md,
           }}
-          ItemSeparatorComponent={() => <View style={{ height: spacing.list }} />}
-          renderItem={({ item }) => (
-            <Card
+          ListFooterComponent={footerActions}
+          renderItem={({ item, index }) => (
+            <NotebookRow
+              title={getItemTitle(item, fieldList)}
+              description={getItemSubtitle(item, fieldList)}
               onPress={() =>
                 navigation.navigate('ItemDetails', {
                   itemId: item.id,
@@ -104,16 +115,9 @@ export function CollectionDetailsScreen({
                   workspaceId,
                 })
               }
-            >
-              <Stack gap="xs">
-                <Text variant="subtitle">{getItemTitle(item, fieldList)}</Text>
-                {getItemSubtitle(item, fieldList) ? (
-                  <Text variant="bodySmall" color="secondary">
-                    {getItemSubtitle(item, fieldList)}
-                  </Text>
-                ) : null}
-              </Stack>
-            </Card>
+              showDivider={index < itemList.length - 1}
+              size="item"
+            />
           )}
         />
       )}
@@ -122,13 +126,6 @@ export function CollectionDetailsScreen({
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
-  list: {
-    flex: 1,
-  },
-  toolbar: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
+  screen: { flex: 1 },
+  list: { flex: 1 },
 });

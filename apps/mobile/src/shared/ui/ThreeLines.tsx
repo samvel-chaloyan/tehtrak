@@ -32,6 +32,8 @@ export function ThreeLines({ size = 'md', align = 'center', style }: ThreeLinesP
   const widths = LINE_WIDTHS[size];
   const lineHeight = LINE_HEIGHTS[size];
   const gap = GAPS[size];
+  const lineColors = [colors.border, colors.primary, colors.border];
+  const opacities = [0.5, 0.9, 0.5];
 
   return (
     <View
@@ -50,9 +52,9 @@ export function ThreeLines({ size = 'md', align = 'center', style }: ThreeLinesP
           style={{
             width,
             height: lineHeight,
-            backgroundColor: colors.border,
+            backgroundColor: lineColors[index],
             borderRadius: lineHeight,
-            opacity: 0.9 - index * 0.15,
+            opacity: opacities[index],
           }}
         />
       ))}

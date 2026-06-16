@@ -8,32 +8,32 @@ export const fontFamily = {
 
 export const typography = {
   titleLarge: {
-    fontSize: 28,
-    fontWeight: '600',
-    lineHeight: 34,
-    letterSpacing: -0.3,
+    fontSize: 32,
+    fontWeight: '700',
+    lineHeight: 38,
+    letterSpacing: -0.4,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: '600',
-    lineHeight: 24,
-    letterSpacing: -0.1,
+    lineHeight: 28,
+    letterSpacing: -0.2,
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '600',
-    lineHeight: 24,
+    lineHeight: 26,
     letterSpacing: -0.1,
   },
   subtitle: {
     fontSize: 17,
     fontWeight: '500',
-    lineHeight: 24,
+    lineHeight: 26,
   },
   body: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '400',
-    lineHeight: 24,
+    lineHeight: 26,
   },
   bodySmall: {
     fontSize: 14,

@@ -23,8 +23,8 @@ export function Screen({
   const insets = useSafeAreaInsets();
   const { colors, spacing } = useTheme();
 
-  const paddingTop = edges.includes('top') ? insets.top : 0;
-  const paddingBottom = edges.includes('bottom') ? insets.bottom : 0;
+  const paddingTop = (edges.includes('top') ? insets.top : 0) + spacing.lg;
+  const paddingBottom = (edges.includes('bottom') ? insets.bottom : 0) + spacing.xl;
   const horizontalPadding = padded ? spacing.lg : 0;
 
   const containerStyle = [
@@ -41,10 +41,10 @@ export function Screen({
   if (scroll) {
     return (
       <ScrollView
-        style={[styles.container, { backgroundColor: colors.background, paddingTop }]}
+        style={[styles.container, { backgroundColor: colors.background, paddingTop: insets.top + spacing.lg }]}
         contentContainerStyle={[
           {
-            paddingBottom: paddingBottom + spacing.lg,
+            paddingBottom: (edges.includes('bottom') ? insets.bottom : 0) + spacing.xl,
             paddingHorizontal: horizontalPadding,
           },
           contentStyle,

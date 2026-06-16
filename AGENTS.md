@@ -1,5 +1,41 @@
 # Agent Instructions (Cursor)
 
+IMPORTANT:
+
+Tehtrak is not a CRUD application.
+
+Tehtrak is a mobile-first operational notebook.
+
+Workspace → Collection → Item should feel like:
+
+Notebook → Section → Page
+
+not:
+
+Database → Table → Record
+
+When uncertain, choose the solution that feels more like a trusted notebook and less like management software.
+
+The product should feel:
+
+* calm
+* trustworthy
+* warm
+* organized
+* professional
+* human
+
+The product should not feel:
+
+* enterprise
+* dashboard-like
+* inventory software
+* database software
+* developer tooling
+* admin software
+
+---
+
 You are implementing **Tehtrak** — a mobile-first configurable operational memory system designed to feel like a calm operational notebook for real-world information.
 
 The documentation inside this repository is the source of truth.
@@ -58,6 +94,41 @@ These documents define:
 * product personality
 * visual principles
 * interaction principles
+
+---
+
+### Visual Identity System
+
+Read:
+
+* docs/frontend/design-tokens.md
+* docs/frontend/typography.md
+* docs/frontend/components.md
+* docs/frontend/screen-patterns.md
+* docs/frontend/ui-audit.md
+
+These documents define:
+
+* design tokens
+* spacing rules
+* typography hierarchy
+* component contracts
+* screen layouts
+* visual identity
+
+These documents are mandatory.
+
+Do not introduce new:
+
+* colors
+* spacing values
+* typography scales
+* radii
+* component variants
+* card styles
+* button styles
+
+unless the documentation is updated first.
 
 ---
 
@@ -185,55 +256,167 @@ Do not implement later milestones before earlier milestones are complete.
 
 # UI Rules
 
-Before creating or modifying any screen:
+Before creating or modifying any UI:
 
-1. Read docs/frontend/design-language.md
-2. Read docs/frontend/ui-constitution.md
-3. Read docs/frontend/ui-system.md
+Read:
+
+1. docs/frontend/design-language.md
+2. docs/frontend/ui-constitution.md
+3. docs/frontend/design-tokens.md
+4. docs/frontend/typography.md
+5. docs/frontend/components.md
+6. docs/frontend/screen-patterns.md
+7. docs/frontend/ui-audit.md
 
 All UI must comply with these documents.
 
-Do not invent:
+---
 
-* colors
-* spacing values
-* typography scales
-* component variants
-* interaction patterns
-* navigation patterns
+## Tehtrak Identity
 
-outside the established design system.
+Tehtrak is a calm operational notebook.
+
+UI should feel:
+
+* warm
+* trustworthy
+* calm
+* organized
+* professional
+* human
+
+UI should not feel:
+
+* enterprise
+* dashboard-like
+* admin software
+* inventory software
+* developer tooling
+* database management
+
+---
+
+## Visual Hierarchy
+
+Typography creates hierarchy.
+
+Do not use:
+
+* bright colors
+* heavy borders
+* large buttons
+* visual effects
+
+to compensate for poor hierarchy.
+
+---
+
+## Content First
+
+Content is always the hero.
+
+Actions support content.
+
+Lists should visually dominate screens.
+
+Buttons should never dominate screens.
+
+---
+
+## Accent Color
+
+Primary color should be used sparingly.
+
+Use primarily for:
+
+* active state
+* focused state
+* primary action
+
+Avoid decorative use.
+
+If a screen feels visually dominated by the primary color, reduce usage.
+
+---
+
+## Design Tokens
+
+Use documented design tokens only.
+
+Never introduce:
+
+* arbitrary spacing
+* arbitrary font sizes
+* arbitrary radii
+* arbitrary animation durations
+
+outside documented tokens.
+
+---
+
+## Components
+
+Reuse existing components whenever possible.
+
+Prefer extending existing components over creating new visual patterns.
+
+Do not create one-off UI styles.
 
 ---
 
 # Screen Quality Gate
 
-Before marking any screen complete, read:
+Before marking any UI work complete, read:
 
-docs/frontend/screen-quality-checklist.md
+* docs/frontend/ui-audit.md
 
-Every new screen, screen modification, refactor, or feature addition must pass the checklist.
+UI work is not complete after implementation.
 
-A screen is not considered complete simply because it works.
+UI work is complete only after:
+
+1. Implementation
+2. Audit
+3. Audit report
+
+---
+
+## Mandatory Audit
+
+Every new screen, screen modification, redesign, refactor, or feature addition must pass the UI Audit.
+
+A screen is not considered complete simply because it functions.
 
 It must satisfy:
 
 * Design Language
 * UI Constitution
-* UI System
-* Screen Quality Checklist
+* Design Tokens
+* Typography Rules
+* Component Rules
+* Screen Patterns
+* UI Audit
 
-When delivering UI work:
+---
 
-1. Implement the screen.
-2. Self-audit against the checklist.
-3. Report:
+## Required Report
 
-   * Passed checks
-   * Failed checks
-   * Follow-up recommendations
+When delivering UI work always provide:
 
-Do not claim a screen is complete without performing the audit.
+### UI Audit Results
+
+PASS
+
+* list passed items
+
+FAIL
+
+* list failed items
+
+RECOMMENDATIONS
+
+* future improvements
+
+Do not claim UI work is complete without providing the audit.
 
 ---
 
@@ -243,10 +426,14 @@ When creating a new screen:
 
 1. Follow the Design Language.
 2. Follow the UI Constitution.
-3. Reuse existing components first.
-4. Prefer composition over one-off implementations.
-5. Keep screens focused and uncluttered.
-6. Respect mobile-first layouts.
+3. Follow Design Tokens.
+4. Follow Typography Rules.
+5. Follow Component Rules.
+6. Follow Screen Patterns.
+7. Reuse existing components first.
+8. Prefer composition over one-off implementations.
+9. Keep screens focused and uncluttered.
+10. Respect mobile-first layouts.
 
 Every screen must provide:
 
@@ -270,6 +457,12 @@ A feature is complete only when:
 * Error state exists
 * UI follows Design Language
 * UI follows UI Constitution
+* Design Tokens respected
+* Typography Rules respected
+* Component Rules respected
+* Screen Patterns respected
+* UI Audit completed
+* UI Audit report provided
 * Screen passes Screen Quality Checklist
 
 Working functionality alone is not considered complete.
@@ -296,17 +489,17 @@ Avoid building future phases early.
 
 # Stack Reference
 
-| Area         | Technology                           |
-| ------------ | ------------------------------------ |
-| Mobile       | React Native, Expo, TypeScript       |
-| State        | Zustand, TanStack Query              |
-| Forms        | React Hook Form, Zod                 |
-| API          | Axios                                |
-| Auth Storage | SecureStore                          |
-| Backend      | ASP.NET Core                         |
+| Area | Technology |
+|--------|------------|
+| Mobile | React Native, Expo, TypeScript |
+| State | Zustand, TanStack Query |
+| Forms | React Hook Form, Zod |
+| API | Axios |
+| Auth Storage | SecureStore |
+| Backend | ASP.NET Core |
 | Architecture | Clean Architecture, Modular Monolith |
-| Database     | PostgreSQL                           |
-| Offline      | SQLite (offline phase only)          |
+| Database | PostgreSQL |
+| Offline | SQLite (offline phase only) |
 
 ---
 
@@ -332,6 +525,10 @@ Follow:
 Do not invent architecture.
 
 Do not guess domain behavior.
+
+Do not invent UI patterns.
+
+Do not invent visual styles.
 
 Either:
 

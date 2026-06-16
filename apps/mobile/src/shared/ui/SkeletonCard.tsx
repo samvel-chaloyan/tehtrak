@@ -7,7 +7,7 @@ export interface SkeletonCardProps {
 }
 
 export function SkeletonCard({ lines = 2 }: SkeletonCardProps) {
-  const { colors, radius, spacing } = useTheme();
+  const { colors, spacing } = useTheme();
   const opacity = useRef(new Animated.Value(0.5)).current;
 
   useEffect(() => {
@@ -15,12 +15,12 @@ export function SkeletonCard({ lines = 2 }: SkeletonCardProps) {
       Animated.sequence([
         Animated.timing(opacity, {
           toValue: 1,
-          duration: 800,
+          duration: 200,
           useNativeDriver: true,
         }),
         Animated.timing(opacity, {
           toValue: 0.5,
-          duration: 800,
+          duration: 200,
           useNativeDriver: true,
         }),
       ]),
@@ -35,11 +35,10 @@ export function SkeletonCard({ lines = 2 }: SkeletonCardProps) {
       style={[
         styles.card,
         {
-          backgroundColor: colors.background,
-          borderColor: colors.border,
-          borderRadius: radius.lg,
-          padding: spacing.md,
+          paddingVertical: spacing.md,
+          paddingHorizontal: spacing.md,
           opacity,
+          gap: spacing.sm,
         },
       ]}
     >
@@ -47,7 +46,7 @@ export function SkeletonCard({ lines = 2 }: SkeletonCardProps) {
         style={[
           styles.line,
           styles.titleLine,
-          { backgroundColor: colors.surface, borderRadius: radius.sm },
+          { backgroundColor: colors.border, borderRadius: spacing.xs },
         ]}
       />
       {Array.from({ length: lines }).map((_, index) => (
@@ -55,7 +54,11 @@ export function SkeletonCard({ lines = 2 }: SkeletonCardProps) {
           key={index}
           style={[
             styles.line,
-            { backgroundColor: colors.surface, borderRadius: radius.sm, width: index === lines - 1 ? '60%' : '85%' },
+            {
+              backgroundColor: colors.border,
+              borderRadius: spacing.xs,
+              width: index === lines - 1 ? '55%' : '80%',
+            },
           ]}
         />
       ))}
@@ -65,16 +68,14 @@ export function SkeletonCard({ lines = 2 }: SkeletonCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    borderWidth: 1,
-    gap: 8,
+    width: '100%',
   },
   line: {
     height: 14,
-    width: '85%',
+    width: '80%',
   },
   titleLine: {
     height: 18,
-    width: '45%',
-    marginBottom: 4,
+    width: '40%',
   },
 });

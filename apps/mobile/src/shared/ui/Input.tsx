@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, useState } from 'react';
 import {
   StyleSheet,
   TextInput,
@@ -15,10 +15,17 @@ export interface InputProps extends TextInputProps {
 }
 
 export const Input = forwardRef<TextInput, InputProps>(function Input(
-  { label, hint, error, style, ...props },
+  { label, hint, error, style, onFocus, onBlur, ...props },
   ref,
 ) {
   const { colors, radius, spacing, typography } = useTheme();
+  const [focused, setFocused] = useState(false);
+
+  const borderColor = error
+    ? colors.danger
+    : focused
+      ? colors.textTertiary
+      : colors.border;
 
   return (
     <Stack gap="xs" style={styles.wrapper}>
@@ -30,16 +37,24 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
       <TextInput
         ref={ref}
         placeholderTextColor={colors.textTertiary}
+        onFocus={(e) => {
+          setFocused(true);
+          onFocus?.(e);
+        }}
+        onBlur={(e) => {
+          setFocused(false);
+          onBlur?.(e);
+        }}
         style={[
           styles.input,
           typography.body,
           {
-            backgroundColor: colors.background,
-            borderColor: error ? colors.danger : colors.border,
+            backgroundColor: colors.surface,
+            borderColor,
             borderRadius: radius.md,
             color: colors.textPrimary,
             paddingHorizontal: spacing.md,
-            paddingVertical: spacing.sm,
+            paddingVertical: spacing.md,
           },
           style,
         ]}
@@ -63,7 +78,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   input: {
-    borderWidth: 1,
-    minHeight: 48,
+    borderWidth: StyleSheet.hairlineWidth,
+    minHeight: 52,
   },
 });

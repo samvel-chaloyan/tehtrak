@@ -1,43 +1,42 @@
-# Tehtrak Design Language v1
+# Tehtrak Design Language
 
 ## Purpose
 
-Tehtrak is a calm operational notebook.
+This document defines what Tehtrak should **feel like**.
 
-It helps people organize real-world information through simple collections, properties, and items.
+It answers: *What should Tehtrak feel like?*
 
-Tehtrak is not a database tool.
-
-Tehtrak is not an ERP.
-
-Tehtrak is not enterprise software.
-
-Tehtrak is a trusted place where people record, organize, and maintain operational knowledge.
+For enforceable rules, see [ui-constitution.md](./ui-constitution.md). For visual values, see [design-tokens.md](./design-tokens.md).
 
 ---
 
-# Core Product Philosophy
+## Product Identity
 
-People already manage information.
+Tehtrak is a calm operational notebook.
 
-Many do it using:
+It helps people organize real-world information through workspaces, collections, items, and properties.
 
-* notebooks
-* paper forms
-* spreadsheets
-* whiteboards
-* memory
+Tehtrak is **not**:
 
-Tehtrak exists to make that process digital without making it complicated.
+* a database tool
+* inventory software
+* admin software
+* an ERP or enterprise dashboard
+* developer tooling
 
-The product should always feel approachable, human, and practical.
+Tehtrak **is** a trusted place where people record, organize, and maintain operational knowledge.
+
+---
+
+## Emotional Tone
 
 Users should feel:
 
-* organized
-* calm
-* confident
-* in control
+* **calm** — no urgency, no noise
+* **trustworthy** — stable, predictable, professional
+* **warm** — human, approachable, not cold or corporate
+* **organized** — clear structure without rigidity
+* **in control** — confident about what they are looking at and what to do next
 
 Users should never feel:
 
@@ -45,220 +44,134 @@ Users should never feel:
 * rushed
 * confused
 * buried in configuration
+* like they are using business software
 
 ---
 
-# Paper Before Software
+## Notebook-First Philosophy
 
-The primary inspiration for Tehtrak is a notebook.
+### Paper before software
 
-Not a dashboard.
-
-Not a database.
-
-Not an admin panel.
+The primary inspiration is a **notebook**, not a dashboard, database, or admin panel.
 
 When making design decisions, prefer:
 
-Notebook → Software
+**Notebook → Software**
 
-Examples:
+### Domain metaphor
 
-Good:
+| Product concept | Feels like |
+|-----------------|------------|
+| Workspace | Notebook |
+| Collection | Section |
+| Item | Page |
+| Property | Field on the page |
 
-* Collection
-* Property
-* Item
-* Notes
+Avoid framing that evokes databases:
 
-Avoid:
-
-* Schema
-* Entity
-* Resource
-* Data Object
+| Avoid | Prefer |
+|-------|--------|
+| Schema | Collection structure |
+| Entity | Item |
+| Resource | Collection |
+| Record (user-facing) | Item |
+| Dataset | Workspace |
 
 ---
 
-# Real World First
+## Real World First
 
-Tehtrak stores real things.
-
-Examples:
+Tehtrak stores real operational information:
 
 * Winter Food Storage
 * Parking Log
 * Tool Inventory
 * Garden Harvest
 * Customer Visits
-* Warehouse Intake
 
-The interface should constantly remind users of the real-world process they are managing.
-
-Content should feel tangible.
+The interface should remind users of the real-world process they are managing. Content should feel tangible and purposeful.
 
 ---
 
-# Calm Productivity
+## Visual Identity
 
-Many modern productivity apps compete for attention.
+### Content over decoration
 
-Tehtrak should do the opposite.
+Information is the hero. The UI exists to support content.
 
-No hype.
+Avoid large illustrations, decorative graphics, unnecessary badges, and visual clutter.
 
-No urgency.
+Prefer whitespace, structure, typography, and hierarchy.
 
-No aggressive notifications.
-
-No unnecessary animations.
-
-The application should feel stable and trustworthy.
-
----
-
-# Content Over Decoration
-
-Information is the hero.
-
-The UI exists to support the content.
-
-Avoid:
-
-* large illustrations
-* decorative graphics
-* unnecessary badges
-* visual clutter
-
-Prefer:
-
-* whitespace
-* structure
-* typography
-* hierarchy
-
----
-
-# The Three Lines
+### The Three Lines
 
 The visual symbol of Tehtrak is three horizontal lines.
 
-Meaning:
+**Meaning:** record · structure · memory
 
-* record
-* structure
-* memory
-
-Representation:
-
----
-
----
-
----
-
-These lines represent written information.
-
-They are the visual foundation of the brand.
+They represent written information — the visual foundation of the brand.
 
 They may appear in:
 
-* logo
-* onboarding
+* logo and splash
+* welcome and onboarding
 * empty states
 * loading placeholders
-* splash screens
-* marketing material
 
-They should remain simple and recognizable.
+They should remain simple and recognizable. See [components.md](./components.md) for the `ThreeLines` component.
 
----
+### Color character
 
-# Color Philosophy
+* **White** dominates — paper, openness, simplicity
+* **Primary blue** accents — clarity, trust, organization; used sparingly, never as decoration
 
-Primary Blue
-
-#29B5E8
-
-Meaning:
-
-* clarity
-* trust
-* organization
-* freshness
-
-Blue should be used intentionally.
-
-Never flood entire screens with blue.
-
-Blue highlights important actions and active states.
+Exact values: [design-tokens.md](./design-tokens.md). Usage rules: [ui-constitution.md](./ui-constitution.md).
 
 ---
 
-White
+## Calm Productivity
 
-#FFFFFF
+Tehtrak does not compete for attention.
 
-Meaning:
+No hype. No urgency. No aggressive notifications. No unnecessary animation.
 
-* paper
-* openness
-* simplicity
-
-White should dominate the interface.
+The application should feel stable and trustworthy — a notebook you return to, not an app that demands attention.
 
 ---
 
-# Voice and Tone
+## Voice and Tone
 
-Tehtrak speaks like a helpful assistant.
+Tehtrak speaks like a helpful assistant, not a technical system.
 
-Not a technical system.
+| Good | Avoid |
+|------|-------|
+| Add your first item | Initialize dataset |
+| Create a collection | Configure schema |
+| No items yet | No records found |
+| This notebook is empty | Empty result set |
 
-Good:
-
-"Add your first item"
-
-"Create a collection"
-
-"No records yet"
-
-Avoid:
-
-"Initialize dataset"
-
-"Configure schema"
-
-"Instantiate entity"
+Use product language: Workspace, Collection, Item, Property.
 
 ---
 
-# Design Principles
+## Screen Clarity
 
-Every screen should satisfy:
+Every screen should answer within three seconds:
 
 1. What am I looking at?
 2. What can I do here?
 3. What should I do next?
 
-Users should understand the answer within three seconds.
-
 If not, simplify the screen.
 
 ---
 
-# Final Rule
+## Decision Priority
 
-Whenever there is uncertainty between:
+When uncertain, choose:
 
-* beautiful vs clear
-* clever vs understandable
-* feature-rich vs focused
-
-Choose:
-
-clear
-understandable
-focused
+* clear over beautiful
+* understandable over clever
+* focused over feature-rich
 
 Every time.

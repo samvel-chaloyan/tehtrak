@@ -1,5 +1,7 @@
 # Offline Storage
 
+> **Documentation layer:** Implementation. Not part of the design hierarchy. Index: [README.md](./README.md).
+
 ## SQLite schema (mobile)
 
 Database name: `matian.db`

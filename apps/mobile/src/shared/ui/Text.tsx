@@ -22,7 +22,7 @@ export function Text({
     tertiary: colors.textTertiary,
     accent: colors.primary,
     danger: colors.danger,
-    inverse: colors.background,
+    inverse: colors.textInverse,
   };
 
   return (

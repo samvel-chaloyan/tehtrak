@@ -75,7 +75,7 @@
     ]
   },
   "packageFolders": {
-    "/var/folders/31/pw0kzz791nqcrccp2r4zctcm0000gn/T/cursor-sandbox-cache/1c0a0e74a845f96cad54b65ec8362805/nuget": {}
+    "/Users/sam/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
@@ -83,7 +83,7 @@
       "projectUniqueName": "/Users/sam/Desktop/sam/workspace/tehtrak/services/api/src/Application/Tehtrak.Application.csproj",
       "projectName": "Tehtrak.Application",
       "projectPath": "/Users/sam/Desktop/sam/workspace/tehtrak/services/api/src/Application/Tehtrak.Application.csproj",
-      "packagesPath": "/var/folders/31/pw0kzz791nqcrccp2r4zctcm0000gn/T/cursor-sandbox-cache/1c0a0e74a845f96cad54b65ec8362805/nuget",
+      "packagesPath": "/Users/sam/.nuget/packages/",
       "outputPath": "/Users/sam/Desktop/sam/workspace/tehtrak/services/api/src/Application/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [

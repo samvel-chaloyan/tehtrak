@@ -1,5 +1,7 @@
 # Navigation
 
+> **Documentation layer:** Implementation. For screen layout and action placement see [screen-patterns.md](./screen-patterns.md). Index: [README.md](./README.md).
+
 ## Library
 
 React Navigation v6+ (native stack + bottom tabs).

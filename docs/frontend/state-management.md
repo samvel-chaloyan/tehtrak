@@ -1,5 +1,7 @@
 # State Management
 
+> **Documentation layer:** Implementation. Not part of the design hierarchy. Index: [README.md](./README.md).
+
 ## Division of responsibility
 
 | Concern | Tool | Example |

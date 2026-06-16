@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { useCreateField, useFields } from '@/features/properties/hooks/useFields';
 import { AppScreenProps } from '@/navigation/types';
 import { useTheme } from '@/theme';
@@ -17,7 +17,7 @@ const PROPERTY_TYPES: { type: PropertyType; label: string; hint: string }[] = [
 
 export function CreatePropertyScreen({ navigation, route }: AppScreenProps<'CreateProperty'>) {
   const { collectionId, workspaceId } = route.params;
-  const { colors, radius, spacing } = useTheme();
+  const { colors, spacing } = useTheme();
   const { data: existingFields, isLoading } = useFields(workspaceId, collectionId);
   const createField = useCreateField(workspaceId, collectionId);
 
@@ -67,7 +67,7 @@ export function CreatePropertyScreen({ navigation, route }: AppScreenProps<'Crea
 
   return (
     <Screen scroll edges={['bottom']}>
-      <Stack gap="lg">
+      <Stack gap="xl">
         <Text variant="body" color="secondary">
           Each property is a line on your notebook page — what you want to record for every item.
         </Text>
@@ -83,48 +83,53 @@ export function CreatePropertyScreen({ navigation, route }: AppScreenProps<'Crea
           <Text variant="label" color="secondary">
             Property type
           </Text>
-          {PROPERTY_TYPES.map((item) => {
+          {PROPERTY_TYPES.map((item, index) => {
             const selected = type === item.type;
             return (
-              <Pressable
-                key={item.type}
-                onPress={() => setType(item.type)}
-                style={[
-                  styles.typeRow,
-                  {
-                    backgroundColor: selected ? colors.primaryMuted : colors.surface,
-                    borderColor: selected ? colors.primary : colors.border,
-                    borderRadius: radius.md,
-                    padding: spacing.md,
-                    gap: spacing.xs,
-                  },
-                ]}
-              >
-                <Text variant="subtitle" color={selected ? 'accent' : 'primary'}>
-                  {item.label}
-                </Text>
-                <Text variant="caption" color="tertiary">
-                  {item.hint}
-                </Text>
-              </Pressable>
+              <View key={item.type}>
+                <Pressable
+                  onPress={() => setType(item.type)}
+                  style={({ pressed }) => [
+                    {
+                      paddingVertical: spacing.lg,
+                      gap: spacing.xs,
+                      opacity: pressed ? 0.82 : 1,
+                    },
+                  ]}
+                >
+                  <Text variant="subtitle" style={selected ? { fontWeight: '600' } : undefined}>
+                    {item.label}
+                  </Text>
+                  <Text variant="caption" color="tertiary">
+                    {item.hint}
+                  </Text>
+                </Pressable>
+                {index < PROPERTY_TYPES.length - 1 ? (
+                  <View
+                    style={{
+                      height: StyleSheet.hairlineWidth,
+                      backgroundColor: colors.border,
+                      marginLeft: spacing.md,
+                    }}
+                  />
+                ) : null}
+              </View>
             );
           })}
         </Stack>
 
         <Pressable
           onPress={() => setRequired((v) => !v)}
-          style={[
-            styles.typeRow,
+          style={({ pressed }) => [
             {
-              backgroundColor: colors.surface,
-              borderColor: colors.border,
-              borderRadius: radius.md,
-              padding: spacing.md,
+              paddingVertical: spacing.md,
+              gap: spacing.xs,
+              opacity: pressed ? 0.82 : 1,
             },
           ]}
         >
           <Text variant="body">Required for new items</Text>
-          <Text variant="caption" color={required ? 'accent' : 'tertiary'}>
+          <Text variant="caption" color="secondary">
             {required ? 'Yes' : 'No'}
           </Text>
         </Pressable>
@@ -155,9 +160,3 @@ export function CreatePropertyScreen({ navigation, route }: AppScreenProps<'Crea
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  typeRow: {
-    borderWidth: 1,
-  },
-});

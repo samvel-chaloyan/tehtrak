@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { FlatList, Pressable } from 'react-native';
-import { useLogout } from '@/features/auth/hooks/useAuth';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { useCreateWorkspace, useWorkspaces } from '@/features/workspaces/hooks/useWorkspaces';
 import { AppScreenProps } from '@/navigation/types';
 import { useAppStore } from '@/store';
@@ -8,21 +7,29 @@ import { useTheme } from '@/theme';
 import {
   Button,
   EmptyNotebook,
+  IndexFooter,
   Input,
+  PageHeader,
   Screen,
-  ScreenHeader,
+  ScreenMeta,
   SkeletonList,
   Stack,
   Text,
+  TextLink,
+  useNotebookIndexStyle,
 } from '@/shared/ui';
 import { getScreenErrorMessage } from '@/utils';
 import { WorkspaceCard } from '../components/WorkspaceCard';
 
+function workspaceCountLabel(count: number) {
+  return count === 1 ? '1 notebook' : `${count} notebooks`;
+}
+
 export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceList'>) {
-  const { spacing } = useTheme();
+  const { colors, spacing } = useTheme();
+  const indexStyle = useNotebookIndexStyle();
   const { data: workspaces, isLoading, isError, refetch, isRefetching } = useWorkspaces();
   const createWorkspace = useCreateWorkspace();
-  const logout = useLogout();
   const selectedWorkspaceId = useAppStore((s) => s.selectedWorkspaceId);
   const selectWorkspace = useAppStore((s) => s.selectWorkspace);
   const [showCreate, setShowCreate] = useState(false);
@@ -48,96 +55,117 @@ export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceLis
     }
   };
 
+  const header = (
+    <PageHeader
+      title="Workspaces"
+      subtitle="Your operational notebooks."
+      action={
+        <TextLink
+          label="Settings"
+          emphasis={false}
+          onPress={() => navigation.navigate('Settings')}
+        />
+      }
+    />
+  );
+
+  const createPanel = showCreate ? (
+    <Stack gap="md" style={{ marginBottom: spacing.lg }}>
+      <View style={{ height: StyleSheet.hairlineWidth, backgroundColor: colors.border }} />
+      <Stack gap="sm">
+        <Text variant="sectionTitle">New workspace</Text>
+        <Input label="Name" value={newName} onChangeText={setNewName} placeholder="Family Home" autoFocus />
+        {createError ? (
+          <Text variant="caption" color="danger">
+            {createError}
+          </Text>
+        ) : null}
+        <Stack horizontal gap="sm">
+          <Button label="Create" onPress={handleCreate} disabled={createWorkspace.isPending} style={{ flex: 1 }} />
+          <Button label="Cancel" variant="ghost" onPress={() => setShowCreate(false)} />
+        </Stack>
+      </Stack>
+    </Stack>
+  ) : null;
+
+  const listFooter = !showCreate ? (
+    <IndexFooter>
+      <TextLink label="New workspace" onPress={() => setShowCreate(true)} />
+    </IndexFooter>
+  ) : null;
+
   if (isLoading) {
     return (
       <Screen edges={['top', 'bottom']}>
-        <ScreenHeader
-          title="Your workspaces"
-          subtitle="Each workspace is a separate operational notebook."
-        />
-        <SkeletonList count={3} />
+        {header}
+        <View style={indexStyle}>
+          <SkeletonList count={3} />
+        </View>
       </Screen>
     );
   }
 
-  return (
-    <Screen edges={['top', 'bottom']}>
-      <ScreenHeader
-        title="Your workspaces"
-        subtitle="Each workspace is a separate operational notebook."
-        action={
-          <Pressable onPress={() => logout.mutate()} hitSlop={12}>
-            <Text variant="caption" color="accent">
-              Sign out
-            </Text>
-          </Pressable>
-        }
-      />
-
-      {showCreate ? (
-        <Stack gap="sm" style={{ marginBottom: spacing.md }}>
-          <Input
-            label="Workspace name"
-            value={newName}
-            onChangeText={setNewName}
-            placeholder="Family Home"
-          />
-          {createError ? (
-            <Text variant="caption" color="danger">
-              {createError}
-            </Text>
-          ) : null}
-          <Stack horizontal gap="sm">
-            <Button
-              label="Create"
-              onPress={handleCreate}
-              disabled={createWorkspace.isPending}
-              style={{ flex: 1 }}
-            />
-            <Button label="Cancel" variant="ghost" onPress={() => setShowCreate(false)} />
-          </Stack>
-        </Stack>
-      ) : (
-        <Button
-          label="New workspace"
-          variant="secondary"
-          fullWidth
-          onPress={() => setShowCreate(true)}
-          style={{ marginBottom: spacing.md }}
-        />
-      )}
-
-      {isError ? (
+  if (isError) {
+    return (
+      <Screen edges={['top', 'bottom']}>
+        {header}
+        {createPanel}
         <EmptyNotebook
           title="Could not load workspaces"
           description="Pull to refresh or try again in a moment."
           actionLabel="Retry"
           onAction={() => refetch()}
         />
-      ) : !workspaces?.length ? (
-        <EmptyNotebook
-          title="No workspaces yet"
-          description="Create your first workspace — a calm home for collections and daily notes."
-          actionLabel="Create workspace"
-          onAction={() => setShowCreate(true)}
-        />
-      ) : (
-        <FlatList
-          data={workspaces}
-          keyExtractor={(item) => item.id}
-          refreshing={isRefetching}
-          onRefresh={refetch}
-          contentContainerStyle={{ gap: spacing.list, paddingBottom: spacing['2xl'] }}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <WorkspaceCard
-              workspace={item}
-              selected={item.id === selectedWorkspaceId}
-              onPress={() => openWorkspace(item.id, item.name)}
-            />
-          )}
-        />
-      )}
+      </Screen>
+    );
+  }
+
+  if (!workspaces?.length) {
+    return (
+      <Screen edges={['top', 'bottom']}>
+        {header}
+        {createPanel}
+        {!showCreate ? (
+          <EmptyNotebook
+            title="No notebooks yet"
+            description="Create a workspace to begin organizing collections and daily notes."
+            actionLabel="New workspace"
+            onAction={() => setShowCreate(true)}
+          />
+        ) : null}
+      </Screen>
+    );
+  }
+
+  return (
+    <Screen edges={['top', 'bottom']}>
+      {header}
+      {createPanel}
+      <ScreenMeta label={workspaceCountLabel(workspaces.length)} />
+
+      <FlatList
+        style={styles.list}
+        data={workspaces}
+        keyExtractor={(item) => item.id}
+        refreshing={isRefetching}
+        onRefresh={refetch}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[styles.listContent, indexStyle]}
+        ListFooterComponent={listFooter}
+        renderItem={({ item, index }) => (
+          <WorkspaceCard
+            workspace={item}
+            selected={item.id === selectedWorkspaceId}
+            onPress={() => openWorkspace(item.id, item.name)}
+            showDivider={index < workspaces.length - 1}
+          />
+        )}
+      />
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  list: { flex: 1 },
+  listContent: { flexGrow: 1 },
+});

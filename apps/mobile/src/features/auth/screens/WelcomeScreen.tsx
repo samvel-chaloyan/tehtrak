@@ -1,4 +1,3 @@
-import { StyleSheet, View } from 'react-native';
 import { appConfig } from '@/config/app';
 import { AuthScreenProps } from '@/navigation/types';
 import { useTheme } from '@/theme';
@@ -8,41 +7,32 @@ export function WelcomeScreen({ navigation }: AuthScreenProps<'Welcome'>) {
   const { spacing } = useTheme();
 
   return (
-    <Screen style={styles.screen}>
-      <View style={[styles.hero, { paddingTop: spacing['2xl'] }]}>
-        <ThreeLines size="lg" align="left" style={{ marginBottom: spacing.lg }} />
-        <PageTitle>{appConfig.name}</PageTitle>
-        <Text variant="body" color="secondary" style={styles.tagline}>
-          {appConfig.tagline}
-        </Text>
-        <Text variant="bodySmall" color="secondary" style={{ marginTop: spacing.lg }}>
-          Record and organize the work you already track — in notebooks, lists, and quiet notes.
-          Calm, simple, and built for real operations.
-        </Text>
-      </View>
+    <Screen scroll>
+      <Stack gap="2xl" style={{ paddingTop: spacing.lg, paddingBottom: spacing.xl }}>
+        <Stack gap="lg">
+          <ThreeLines size="lg" align="left" />
+          <Stack gap="sm">
+            <PageTitle>{appConfig.name}</PageTitle>
+            <Text variant="body" color="secondary">
+              {appConfig.tagline}
+            </Text>
+          </Stack>
+          <Text variant="bodySmall" color="secondary">
+            Record and organize real-world operations — collections, items, and quiet notes in one
+            calm place.
+          </Text>
+        </Stack>
 
-      <Stack gap="sm" style={{ paddingBottom: spacing.lg }}>
-        <Button label="Sign in" fullWidth onPress={() => navigation.navigate('Login')} />
-        <Button
-          label="Create account"
-          variant="secondary"
-          fullWidth
-          onPress={() => navigation.navigate('Register')}
-        />
+        <Stack gap="sm">
+          <Button label="Sign in" fullWidth onPress={() => navigation.navigate('Login')} />
+          <Button
+            label="Create account"
+            variant="ghost"
+            fullWidth
+            onPress={() => navigation.navigate('Register')}
+          />
+        </Stack>
       </Stack>
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  screen: {
-    justifyContent: 'space-between',
-  },
-  hero: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  tagline: {
-    maxWidth: 280,
-  },
-});

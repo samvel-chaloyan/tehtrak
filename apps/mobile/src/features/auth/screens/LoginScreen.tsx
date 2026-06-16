@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet } from 'react-native';
 import { useLogin } from '@/features/auth/hooks/useAuth';
 import { AuthScreenProps } from '@/navigation/types';
 import { useTheme } from '@/theme';
 import { getScreenErrorMessage } from '@/utils';
-import { Button, Input, Screen, ScreenHeader, Stack, Text } from '@/shared/ui';
+import { Button, Input, PageHeader, Screen, Stack, Text, TextLink } from '@/shared/ui';
 
 export function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
   const { spacing } = useTheme();
@@ -24,8 +23,8 @@ export function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
 
   return (
     <Screen scroll>
-      <Stack gap="lg" style={{ paddingTop: spacing.lg }}>
-        <ScreenHeader
+      <Stack gap="lg">
+        <PageHeader
           title="Welcome back"
           subtitle="Sign in to open your operational notebooks."
         />
@@ -61,21 +60,13 @@ export function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
           disabled={login.isPending}
         />
 
-        <Pressable onPress={() => navigation.navigate('Register')} hitSlop={12}>
-          <Text variant="bodySmall" color="secondary" style={styles.centered}>
-            New here?{' '}
-            <Text variant="bodySmall" color="accent">
-              Create an account
-            </Text>
+        <Stack gap="xs" align="center" style={{ paddingTop: spacing.sm }}>
+          <Text variant="bodySmall" color="secondary">
+            New here?
           </Text>
-        </Pressable>
+          <TextLink label="Create an account" emphasis={false} onPress={() => navigation.navigate('Register')} />
+        </Stack>
       </Stack>
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  centered: {
-    textAlign: 'center',
-  },
-});

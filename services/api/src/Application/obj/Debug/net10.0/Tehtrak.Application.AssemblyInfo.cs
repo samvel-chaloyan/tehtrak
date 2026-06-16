@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Tehtrak.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+972a7ce8f1c283b22f9e34db46f79a7405c61676")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8ac8683e98835e41baeb3a4ca1bf578f5a81c8ce")]
 [assembly: System.Reflection.AssemblyProductAttribute("Tehtrak.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Tehtrak.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

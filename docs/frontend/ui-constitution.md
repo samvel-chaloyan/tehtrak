@@ -1,372 +1,187 @@
-# Tehtrak UI Constitution v1
+# Tehtrak UI Constitution
 
 ## Purpose
 
-This document defines the visual and interaction rules for every Tehtrak screen.
+This document defines **non-negotiable UI rules**.
 
-All new screens, components, and flows must follow these rules.
+It answers: *What design rules may never be violated?*
 
-Do not invent styles outside this system without updating this document.
+For product feeling, see [design-language.md](./design-language.md). For exact values, see [design-tokens.md](./design-tokens.md) and [typography.md](./typography.md). For component anatomy, see [components.md](./components.md).
 
----
-
-# Layout
-
-## Screen Padding
-
-Default:
-
-24
-
-Never less than:
-
-16
+All screens, components, and flows must follow these rules. Do not invent styles outside this system without updating documentation first.
 
 ---
 
-## Vertical Rhythm
+## Content First
 
-Allowed spacing values:
+Content is always the hero. Actions support content.
 
-4
-8
-12
-16
-24
-32
-48
-
-Do not use arbitrary spacing.
+* Lists and readable information must visually dominate populated screens
+* Buttons must not be the largest or most prominent element on populated screens
+* Primary actions may appear in headers or at natural completion points — not as full-width bars above content
+* Prefer text links for secondary and inline actions on populated screens
 
 ---
 
-# Typography
+## Typography-First Hierarchy
 
-## Screen Title
+Hierarchy comes from typography, not color, borders, or effects.
 
-Size: 28
+* Page title is visually dominant on every screen
+* Section titles separate content groups
+* Body text carries primary reading content
+* Metadata and captions are visually quiet
 
-Weight: 600
+Do not use bright colors, heavy borders, large buttons, or visual effects to compensate for weak hierarchy.
 
-Examples:
-
-* Workspaces
-* Collections
-* Winter Food
-
----
-
-## Section Title
-
-Size: 18
-
-Weight: 600
+Rules and scale: [typography.md](./typography.md).
 
 ---
 
-## Body
+## Accent Color Philosophy
 
-Size: 16
+Primary color is an accent, not a theme.
 
-Weight: 400
+Use primary color only for:
 
----
+* one primary action per screen (when a button is appropriate)
+* active or selected state
+* focused input state
 
-## Caption
+Do not use primary color for:
 
-Size: 14
+* decoration
+* large background fills
+* secondary buttons
+* list row backgrounds
+* conveying hierarchy that typography should handle
 
-Weight: 400
+**Rule of thumb:** primary color should occupy less than 10% of visible screen area. If a screen feels blue, reduce accent usage.
 
-Color: secondary text
-
----
-
-# Colors
-
-Primary:
-#29B5E8
-
-Text Primary:
-#0F172A
-
-Text Secondary:
-#475569
-
-Background:
-#FFFFFF
-
-Surface:
-#F8FAFC
-
-Border:
-#E2E8F0
-
-Success:
-#16A34A
-
-Warning:
-#D97706
-
-Error:
-#DC2626
+Exact values: [design-tokens.md](./design-tokens.md).
 
 ---
 
-# Cards
+## Layout
 
-Cards are notebook pages.
+### Screen padding
 
-Rules:
+Default horizontal padding: `lg` (24). Minimum: `md` (16).
 
-* white background
-* subtle border
-* radius 16
-* padding 16
+### Vertical rhythm
 
-Prefer borders over shadows.
+Use spacing tokens only. No arbitrary values.
 
-Heavy shadows are prohibited.
+Allowed scale: [design-tokens.md](./design-tokens.md).
 
----
+### Cards and lists
 
-# Buttons
+* Notebook rows use subtle borders, not heavy shadows
+* Prefer borders over shadows
+* Heavy shadows are prohibited
+* List gap between rows: `list` (12)
+* Entire row is tappable
 
-## Primary
-
-Background:
-Primary Blue
-
-Text:
-White
-
-Height:
-48
-
-Radius:
-12
-
-Used for:
-
-* create
-* save
-* continue
-
-Only one primary button should exist per screen.
+Component anatomy: [components.md](./components.md).
 
 ---
 
-## Secondary
+## Actions
 
-White background
+### One primary action
 
-Blue border
+Maximum one primary button per screen.
 
-Blue text
+### Button hierarchy
 
----
+| Variant | Role |
+|---------|------|
+| Primary | Single main commit action (save, continue, sign in) |
+| Secondary | Supporting actions; visually quiet |
+| Ghost | Tertiary or navigational actions |
+| Danger | Destructive actions only |
 
-## Ghost
+On populated screens, prefer `TextLink` over buttons for create/add actions.
 
-No background
-
-Blue text
-
-Used for lightweight actions.
-
----
-
-## Danger
-
-White background
-
-Red border
-
-Red text
-
-Used for destructive actions only.
+Variants and sizing: [components.md](./components.md).
 
 ---
 
-# Forms
+## Forms
 
-## Input Fields
+* Labels always above the field — never floating labels
+* Errors below the field, concise and human-readable
+* Validate on submit for speed; focus first invalid field on error
 
-Height:
-48
-
-Radius:
-12
-
-Border:
-1px
-
-Background:
-White
+Form implementation: [form-engine.md](./form-engine.md). Input anatomy: [components.md](./components.md).
 
 ---
 
-## Labels
+## Navigation Chrome
 
-Always above the field.
+* Header: back, title, optional single action
+* Never overload the header — maximum one accent action
+* Native stack titles and in-screen `ScreenHeader` must not compete for dominance
 
-Never use floating labels.
-
----
-
-## Validation
-
-Errors appear:
-
-* below field
-* red text
-* concise wording
-
-Example:
-
-"Name is required"
-
-Not:
-
-"Validation failed"
+Screen-specific placement: [screen-patterns.md](./screen-patterns.md).
 
 ---
 
-# Lists
+## States
 
-Workspace lists
+### Empty
 
-Collection lists
+Every list screen requires an empty state. Structure and component: [components.md](./components.md) (`EmptyNotebook`). Placement: [screen-patterns.md](./screen-patterns.md).
 
-Item lists
+### Loading
 
-All use card-based layouts.
+Prefer skeleton placeholders over spinners. Full-screen loaders only during app startup and authentication bootstrap.
 
-Spacing between cards:
+### Error
 
-12
+Human-readable messages. Retry when recovery is possible.
 
-Entire card is tappable.
-
----
-
-# Empty States
-
-Required structure:
-
-1. Three Tehtrak lines
-2. Title
-3. Short description
-4. Primary action
-
-Example:
+State verification: [screen-quality-checklist.md](./screen-quality-checklist.md).
 
 ---
 
----
+## Icons
+
+Icons support content. Icons are not content.
+
+* Simple outline style
+* No 3D, colorful, or decorative iconography
+
+Library: [ui-system.md](./ui-system.md).
 
 ---
 
-No items yet
+## Motion
 
-Start recording your first item.
+* Duration: token values in [design-tokens.md](./design-tokens.md)
+* Allowed: fade, subtle scale, slide
+* Prohibited: bounce, exaggerated spring, playful effects
 
-[ Add Item ]
-
----
-
-# Loading States
-
-Prefer skeleton placeholders.
-
-Avoid full-screen spinners.
-
-Full-screen loaders are allowed only during:
-
-* app startup
-* authentication bootstrap
+Tehtrak should feel calm in motion.
 
 ---
 
-# Navigation
+## Accessibility
 
-Top Bar:
+* Minimum touch target: 44×44 (preferred 48×48 for primary actions)
+* Maintain accessible color contrast
+* Do not communicate information using color alone
+* `accessibilityLabel` on all interactive elements
 
-* Back button
-* Title
-* Optional action
-
-Never overload the header.
-
-Maximum:
-
-One primary action.
+Verification: [screen-quality-checklist.md](./screen-quality-checklist.md).
 
 ---
 
-# Icons
+## Compliance
 
-Use simple outline icons.
+Before shipping UI:
 
-Avoid:
+1. [ui-audit.md](./ui-audit.md) — design pass
+2. [screen-quality-checklist.md](./screen-quality-checklist.md) — engineering pass
 
-* 3D icons
-* colorful icons
-* decorative iconography
-
-Icons support content.
-
-Icons are not content.
-
----
-
-# Animations
-
-Duration:
-
-150ms–250ms
-
-Allowed:
-
-* fade
-* scale
-* slide
-
-Avoid:
-
-* bounce
-* exaggerated spring motion
-* playful effects
-
-Tehtrak should feel calm.
-
----
-
-# Accessibility
-
-Minimum touch target:
-
-44x44
-
-Maintain accessible color contrast.
-
-Do not communicate information using color alone.
-
----
-
-# Screen Quality Checklist
-
-Before shipping any screen, verify:
-
-[ ] Purpose is immediately clear
-[ ] One primary action exists
-[ ] Uses approved spacing values
-[ ] Uses approved colors
-[ ] Uses approved typography
-[ ] Empty state exists
-[ ] Loading state exists
-[ ] Error state exists
-[ ] Supports accessibility basics
-[ ] Feels consistent with existing screens
-
-If any item fails, the screen is not complete.
+A functioning screen that fails either audit is not complete.

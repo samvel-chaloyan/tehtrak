@@ -1,8 +1,8 @@
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from '@/theme';
-import { Button } from './Button';
 import { Stack } from './Stack';
 import { Text } from './Text';
+import { TextLink } from './TextLink';
 import { ThreeLines } from './ThreeLines';
 
 export interface EmptyNotebookProps {
@@ -22,20 +22,18 @@ export function EmptyNotebook({
 
   return (
     <View style={[styles.container, { paddingVertical: spacing['2xl'] }]}>
-      <Stack gap="md" align="center">
+      <Stack gap="lg" align="center">
         <ThreeLines size="md" align="center" />
-        <Text variant="sectionTitle" style={styles.centered}>
-          {title}
-        </Text>
-        <Text variant="body" color="secondary" style={styles.centered}>
-          {description}
-        </Text>
+        <Stack gap="sm" align="center">
+          <Text variant="sectionTitle" style={styles.centered}>
+            {title}
+          </Text>
+          <Text variant="body" color="secondary" style={styles.centered}>
+            {description}
+          </Text>
+        </Stack>
         {actionLabel && onAction ? (
-          <Button
-            label={actionLabel}
-            onPress={onAction}
-            style={{ marginTop: spacing.sm }}
-          />
+          <TextLink label={actionLabel} onPress={onAction} />
         ) : null}
       </Stack>
     </View>
@@ -49,5 +47,6 @@ const styles = StyleSheet.create({
   },
   centered: {
     textAlign: 'center',
+    maxWidth: 300,
   },
 });
