@@ -20,7 +20,7 @@ System default (SF Pro on iOS, Roboto on Android).
 
 | Variant | Size | Weight | Line height | Use |
 |---------|------|--------|-------------|-----|
-| `titleLarge` | 32 | 700 | 38 | Page title — once per screen |
+| `titleLarge` | 28 | 600 | 34 | Page title — once per screen |
 | `sectionTitle` | 22 | 600 | 28 | Section headers |
 | `title` | 20 | 600 | 26 | Card / list row titles |
 | `subtitle` | 17 | 500 | 26 | Emphasized inline text |

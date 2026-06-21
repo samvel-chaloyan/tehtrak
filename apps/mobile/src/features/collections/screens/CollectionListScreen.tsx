@@ -8,6 +8,7 @@ import {
   EmptyNotebook,
   IndexFooter,
   Input,
+  NotebookRow,
   Screen,
   ScreenMeta,
   SkeletonList,
@@ -16,8 +17,7 @@ import {
   TextLink,
   useNotebookIndexStyle,
 } from '@/shared/ui';
-import { getScreenErrorMessage } from '@/utils';
-import { CollectionCard } from '../components/CollectionCard';
+import { formatRelativeTime, getScreenErrorMessage } from '@/utils';
 
 function collectionCountLabel(count: number) {
   return count === 1 ? '1 section' : `${count} sections`;
@@ -41,7 +41,6 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
       const collection = await createCollection.mutateAsync({
         name: name.trim(),
         description: description.trim() || undefined,
-        icon: '📓',
       });
       setShowCreate(false);
       setName('');
@@ -145,19 +144,25 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.listContent, indexStyle]}
         ListFooterComponent={listFooter}
-        renderItem={({ item, index }) => (
-          <CollectionCard
-            collection={item}
-            onPress={() =>
-              navigation.navigate('CollectionDetails', {
-                collectionId: item.id,
-                collectionName: item.name,
-                workspaceId,
-              })
-            }
-            showDivider={index < collections.length - 1}
-          />
-        )}
+        renderItem={({ item, index }) => {
+          const meta = `${item.itemCount} ${item.itemCount === 1 ? 'item' : 'items'} · ${formatRelativeTime(item.lastActivityAt)}`;
+          return (
+            <NotebookRow
+              title={item.name}
+              description={item.description || undefined}
+              meta={meta}
+              onPress={() =>
+                navigation.navigate('CollectionDetails', {
+                  collectionId: item.id,
+                  collectionName: item.name,
+                  workspaceId,
+                })
+              }
+              showDivider={index < collections.length - 1}
+              size="collection"
+            />
+          );
+        }}
       />
     </Screen>
   );

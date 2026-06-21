@@ -8,9 +8,9 @@ export const fontFamily = {
 
 export const typography = {
   titleLarge: {
-    fontSize: 32,
-    fontWeight: '700',
-    lineHeight: 38,
+    fontSize: 28,
+    fontWeight: '600',
+    lineHeight: 34,
     letterSpacing: -0.4,
   },
   sectionTitle: {

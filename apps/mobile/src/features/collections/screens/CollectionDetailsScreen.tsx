@@ -58,19 +58,15 @@ export function CollectionDetailsScreen({
   );
 
   return (
-    <Screen edges={['bottom']} padded={false} style={styles.screen}>
-      <View style={{ paddingHorizontal: spacing.lg }}>
-        <ScreenMeta label={metaLabel} />
-      </View>
+    <Screen edges={['bottom']} style={styles.screen}>
+      <ScreenMeta label={metaLabel} />
 
       {isLoading ? (
-        <View style={{ paddingHorizontal: spacing.lg }}>
-          <View style={indexStyle}>
-            <SkeletonList count={5} />
-          </View>
+        <View style={indexStyle}>
+          <SkeletonList count={5} />
         </View>
       ) : isError ? (
-        <View style={{ paddingHorizontal: spacing.lg }}>
+        <View>
           <EmptyNotebook
             title="Could not load items"
             description="Pull to refresh or try again in a moment."
@@ -79,7 +75,7 @@ export function CollectionDetailsScreen({
           />
         </View>
       ) : !itemList.length ? (
-        <View style={{ paddingHorizontal: spacing.lg }}>
+        <View>
           <EmptyNotebook
             title="No pages yet"
             description="Record your first item in this section."
@@ -99,7 +95,6 @@ export function CollectionDetailsScreen({
           onRefresh={refetch}
           contentContainerStyle={{
             ...indexStyle,
-            marginHorizontal: spacing.lg,
             paddingBottom: spacing.md,
           }}
           ListFooterComponent={footerActions}

@@ -9,6 +9,7 @@ import {
   EmptyNotebook,
   IndexFooter,
   Input,
+  NotebookRow,
   PageHeader,
   Screen,
   ScreenMeta,
@@ -19,7 +20,6 @@ import {
   useNotebookIndexStyle,
 } from '@/shared/ui';
 import { getScreenErrorMessage } from '@/utils';
-import { WorkspaceCard } from '../components/WorkspaceCard';
 
 function workspaceCountLabel(count: number) {
   return count === 1 ? '1 notebook' : `${count} notebooks`;
@@ -153,11 +153,13 @@ export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceLis
         contentContainerStyle={[styles.listContent, indexStyle]}
         ListFooterComponent={listFooter}
         renderItem={({ item, index }) => (
-          <WorkspaceCard
-            workspace={item}
-            selected={item.id === selectedWorkspaceId}
+          <NotebookRow
+            title={item.name}
+            description={item.description || undefined}
+            meta={item.id === selectedWorkspaceId ? 'Active notebook' : undefined}
             onPress={() => openWorkspace(item.id, item.name)}
             showDivider={index < workspaces.length - 1}
+            size="workspace"
           />
         )}
       />

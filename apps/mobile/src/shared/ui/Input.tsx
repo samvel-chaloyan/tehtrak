@@ -24,7 +24,7 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
   const borderColor = error
     ? colors.danger
     : focused
-      ? colors.textTertiary
+      ? colors.primary
       : colors.border;
 
   return (

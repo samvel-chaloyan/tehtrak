@@ -297,7 +297,7 @@ Brand signature — visual anchor for empty, welcome, and loading states.
 | `size` | `sm` \| `md` \| `lg` |
 | `align` | `left` \| `center` |
 
-Three horizontal lines. No animation in MVP.
+Three horizontal lines. The middle line uses `primary` color. No animation in MVP.
 
 ---
 
@@ -316,7 +316,6 @@ Description (body, secondary)
 TextLink action (optional)
 ```
 
----
 
 ## SkeletonCard
 

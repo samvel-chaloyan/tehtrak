@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useCreateField, useFields } from '@/features/properties/hooks/useFields';
 import { AppScreenProps } from '@/navigation/types';
 import { useTheme } from '@/theme';
-import { Button, Input, Screen, SkeletonList, Stack, Text } from '@/shared/ui';
+import { Button, Input, NotebookRow, Screen, SectionHeader, SkeletonList, Stack, Text } from '@/shared/ui';
 import { getScreenErrorMessage } from '@/utils';
 import { PropertyType } from '@/types';
 
@@ -17,14 +17,14 @@ const PROPERTY_TYPES: { type: PropertyType; label: string; hint: string }[] = [
 
 export function CreatePropertyScreen({ navigation, route }: AppScreenProps<'CreateProperty'>) {
   const { collectionId, workspaceId } = route.params;
-  const { colors, spacing } = useTheme();
+  const { colors, radius, spacing } = useTheme();
   const { data: existingFields, isLoading } = useFields(workspaceId, collectionId);
   const createField = useCreateField(workspaceId, collectionId);
 
   const [label, setLabel] = useState('');
   const [type, setType] = useState<PropertyType>('text');
   const [required, setRequired] = useState(true);
-  const [optionsText, setOptionsText] = useState('Option A\nOption B\nOption C');
+  const [optionsText, setOptionsText] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   const handleSave = async () => {
@@ -80,59 +80,36 @@ export function CreatePropertyScreen({ navigation, route }: AppScreenProps<'Crea
         />
 
         <Stack gap="sm">
-          <Text variant="label" color="secondary">
-            Property type
-          </Text>
-          {PROPERTY_TYPES.map((item, index) => {
-            const selected = type === item.type;
-            return (
-              <View key={item.type}>
-                <Pressable
+          <SectionHeader title="Property type" />
+          <View style={[styles.typeList, { borderColor: colors.border, borderRadius: radius.lg }]}>
+            {PROPERTY_TYPES.map((item) => {
+              const selected = type === item.type;
+              return (
+                <NotebookRow
+                  key={item.type}
+                  title={item.label}
+                  description={item.hint}
+                  size="collection"
                   onPress={() => setType(item.type)}
-                  style={({ pressed }) => [
-                    {
-                      paddingVertical: spacing.lg,
-                      gap: spacing.xs,
-                      opacity: pressed ? 0.82 : 1,
-                    },
-                  ]}
-                >
-                  <Text variant="subtitle" style={selected ? { fontWeight: '600' } : undefined}>
-                    {item.label}
-                  </Text>
-                  <Text variant="caption" color="tertiary">
-                    {item.hint}
-                  </Text>
-                </Pressable>
-                {index < PROPERTY_TYPES.length - 1 ? (
-                  <View
-                    style={{
-                      height: StyleSheet.hairlineWidth,
-                      backgroundColor: colors.border,
-                      marginLeft: spacing.md,
-                    }}
-                  />
-                ) : null}
-              </View>
-            );
-          })}
+                  showDivider
+                  meta={selected ? 'Selected' : undefined}
+                />
+              );
+            })}
+          </View>
         </Stack>
 
-        <Pressable
-          onPress={() => setRequired((v) => !v)}
-          style={({ pressed }) => [
-            {
-              paddingVertical: spacing.md,
-              gap: spacing.xs,
-              opacity: pressed ? 0.82 : 1,
-            },
-          ]}
+        <View
+          style={[styles.requiredRow, { borderColor: colors.border, borderRadius: radius.lg }]}
+          onStartShouldSetResponder={() => true}
+          onResponderRelease={() => setRequired((v) => !v)}
         >
-          <Text variant="body">Required for new items</Text>
-          <Text variant="caption" color="secondary">
-            {required ? 'Yes' : 'No'}
-          </Text>
-        </Pressable>
+          <NotebookRow
+            title="Required for new items"
+            description={required ? 'Yes' : 'No, can be left empty'}
+            size="collection"
+          />
+        </View>
 
         {type === 'select' ? (
           <Input
@@ -141,6 +118,7 @@ export function CreatePropertyScreen({ navigation, route }: AppScreenProps<'Crea
             onChangeText={setOptionsText}
             multiline
             style={{ minHeight: 100, textAlignVertical: 'top' }}
+            placeholder="Option A&#10;Option B&#10;Option C"
           />
         ) : null}
 
@@ -160,3 +138,14 @@ export function CreatePropertyScreen({ navigation, route }: AppScreenProps<'Crea
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  typeList: {
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: 'hidden',
+  },
+  requiredRow: {
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: 'hidden',
+  },
+});
