@@ -10,9 +10,21 @@ export function useNotebookIndexStyle(): ViewStyle {
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
     paddingVertical: spacing.xs,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.border,
+    borderWidth: 1,
+    borderColor: colors.primary,
   };
+}
+
+export interface NotebookIndexFrameProps {
+  children: ReactNode;
+  style?: StyleProp<ViewStyle>;
+}
+
+/** Fixed blue border frame; scrollable content goes inside. */
+export function NotebookIndexFrame({ children, style }: NotebookIndexFrameProps) {
+  const indexStyle = useNotebookIndexStyle();
+
+  return <View style={[indexStyle, styles.frame, style]}>{children}</View>;
 }
 
 export interface NotebookIndexProps {
@@ -41,3 +53,10 @@ export function IndexFooter({ children, style }: IndexFooterProps) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  frame: {
+    flex: 1,
+    overflow: 'hidden',
+  },
+});

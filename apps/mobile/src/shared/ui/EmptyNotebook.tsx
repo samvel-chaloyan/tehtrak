@@ -25,7 +25,7 @@ export function EmptyNotebook({
       <Stack gap="lg" align="center">
         <ThreeLines size="md" align="center" />
         <Stack gap="sm" align="center">
-          <Text variant="sectionTitle" style={styles.centered}>
+          <Text variant="sectionTitle" color="secondary" style={styles.centered}>
             {title}
           </Text>
           <Text variant="body" color="secondary" style={styles.centered}>

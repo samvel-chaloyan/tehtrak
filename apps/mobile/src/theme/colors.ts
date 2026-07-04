@@ -18,7 +18,7 @@ export const colors = {
   successMuted: '#F2F8F2',
   warning: '#D4A15A',
   overlay: 'rgba(30, 36, 48, 0.4)',
-  primaryBorder: 'rgba(92, 169, 214, 0.28)',
+  primaryBorder: 'rgba(41, 181, 232, 0.4)',
 } as const;
 
 export type Colors = typeof colors;

@@ -12,6 +12,7 @@ export function AuthStack() {
       screenOptions={{
         headerShown: false,
         animation: 'fade',
+        keyboardHandlingEnabled: false,
       }}
     >
       <Stack.Screen name="Welcome" component={WelcomeScreen} />

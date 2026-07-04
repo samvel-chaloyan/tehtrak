@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { ScrollView, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import { Keyboard, Pressable, ScrollView, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/theme';
 
@@ -50,6 +50,8 @@ export function Screen({
           contentStyle,
         ]}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        automaticallyAdjustKeyboardInsets={false}
         showsVerticalScrollIndicator={false}
       >
         {children}
@@ -57,7 +59,11 @@ export function Screen({
     );
   }
 
-  return <View style={containerStyle}>{children}</View>;
+  return (
+    <Pressable style={containerStyle} onPress={Keyboard.dismiss} accessible={false}>
+      {children}
+    </Pressable>
+  );
 }
 
 const styles = StyleSheet.create({

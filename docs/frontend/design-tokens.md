@@ -14,7 +14,7 @@ For rules, see [ui-constitution.md](./ui-constitution.md). Implementation: `apps
 
 | Token | Value |
 |-------|-------|
-| `primary` | `#5CA9D6` |
+| `primary` | `#29B5E8` |
 | `primaryPressed` | `#4E9BC7` |
 | `primaryMuted` | `#EEF6FA` |
 
@@ -38,8 +38,8 @@ For rules, see [ui-constitution.md](./ui-constitution.md). Implementation: `apps
 
 | Token | Value |
 |-------|-------|
-| `textPrimary` | `#1E2430` |
-| `textSecondary` | `#667085` |
+| `textPrimary` | `#1E2430` | Main reading text — soft black, not pure black |
+| `textSecondary` | `#667085` | Dark gray — supporting text, labels, auth body copy |
 | `textTertiary` | `#98A2B3` |
 | `textInverse` | `#FFFFFF` |
 

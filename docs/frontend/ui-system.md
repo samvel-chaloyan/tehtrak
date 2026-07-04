@@ -12,19 +12,20 @@ When documents conflict, follow hierarchy in [README.md](./README.md).
 
 ## Standard Screen Composition
 
+Authenticated app screens use **`AppScreenShell`** — custom header (`ScreenLineHeader`), scrollable content, optional `FixedFooterFrame` bottom action.
+
 ```
-Screen
-└── ScreenHeader (optional)
-    ├── PageTitle
-    ├── subtitle (body, secondary)
-    └── action slot → TextLink or compact control
-└── Content
-    ├── SectionHeader (optional)
-    ├── NotebookRow list | NotebookField page | form fields
-    └── EmptyNotebook (when no content)
-└── Footer action (optional, forms only)
-    └── Button primary
+AppScreenShell
+├── ScreenLineHeader (context title + subtitle)
+├── Content (scroll when needed)
+│   ├── PageTitle (when content needs its own hero title)
+│   ├── NotebookRow list | NotebookField page | form fields
+│   └── EmptyNotebook | EmptyListContent (when no content)
+└── Footer action (optional, forms only via FixedFooterFrame)
+    └── OutlineButton primary
 ```
+
+Settings and other simple screens may still use legacy **`Screen`** with a native stack title.
 
 ### Rules
 
@@ -65,13 +66,13 @@ Screen
 ### Item detail
 
 ```
-Screen
-├── native header (item name)
-└── bordered page container
-    └── NotebookField × n
+AppScreenShell — title "Item", subtitle collection name
+└── NotebookPage (primary border frame)
+    ├── NotebookPageHeader — item name + updated caption
+    └── NotebookPageRow × n — view values or embedded edit inputs
 ```
 
-Single notebook page — not one card per field.
+View and edit share one screen. Footer toggles between Edit and Save.
 
 ---
 
@@ -150,21 +151,22 @@ Access via `useTheme()` hook.
 
 ```
 apps/mobile/src/shared/ui/
+├── AppScreenShell.tsx
+├── FixedFooterFrame.tsx
+├── ScreenBottomBar.tsx
+├── KeyboardDismissView.tsx
 ├── Button.tsx
+├── OutlineButton.tsx
 ├── TextLink.tsx
-├── Card.tsx
+├── RowActions.tsx
 ├── NotebookRow.tsx
 ├── NotebookField.tsx
 ├── Input.tsx
-├── Screen.tsx
-├── ScreenHeader.tsx
+├── Screen.tsx          (Settings and legacy screens)
+├── ScreenLineHeader.tsx
 ├── PageTitle.tsx
-├── SectionHeader.tsx
-├── ThreeLines.tsx
 ├── EmptyNotebook.tsx
-├── SkeletonCard.tsx
 ├── SkeletonList.tsx
-├── Loader.tsx
 ├── Text.tsx
 ├── Stack.tsx
 └── index.ts

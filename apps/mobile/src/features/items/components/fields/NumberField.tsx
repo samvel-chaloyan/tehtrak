@@ -5,16 +5,21 @@ import { PropertyField } from '@/types';
 interface NumberFieldProps<T extends FieldValues> {
   field: PropertyField;
   control: Control<T>;
+  embedded?: boolean;
 }
 
-export function NumberField<T extends FieldValues>({ field, control }: NumberFieldProps<T>) {
+export function NumberField<T extends FieldValues>({
+  field,
+  control,
+  embedded = false,
+}: NumberFieldProps<T>) {
   return (
     <Controller
       control={control}
       name={field.key as Path<T>}
       render={({ field: rhf, fieldState }) => (
         <Input
-          label={`${field.label}${field.required ? ' *' : ''}`}
+          label={embedded ? undefined : `${field.label}${field.required ? ' *' : ''}`}
           value={rhf.value != null && rhf.value !== '' ? String(rhf.value) : ''}
           onChangeText={(text) => {
             if (text === '') {
@@ -26,7 +31,8 @@ export function NumberField<T extends FieldValues>({ field, control }: NumberFie
           onBlur={rhf.onBlur}
           error={fieldState.error?.message}
           keyboardType="decimal-pad"
-          placeholder="0"
+          placeholder={embedded ? '0' : '0'}
+          variant={embedded ? 'plain' : 'default'}
         />
       )}
     />

@@ -1,173 +1,148 @@
-import { useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
-import { useCreateWorkspace, useWorkspaces } from '@/features/workspaces/hooks/useWorkspaces';
+import { StyleSheet, View } from 'react-native';
+
+import {
+  useDeleteWorkspace,
+  useWorkspaces,
+} from '@/features/workspaces/hooks/useWorkspaces';
 import { AppScreenProps } from '@/navigation/types';
 import { useAppStore } from '@/store';
-import { useTheme } from '@/theme';
 import {
-  Button,
-  EmptyNotebook,
-  IndexFooter,
-  Input,
+  AppScreenShell,
+  EmptyListContent,
+  NotebookListShelf,
   NotebookRow,
-  PageHeader,
-  Screen,
-  ScreenMeta,
+  ScrollIndicatorFlatList,
+  SingleBottomButton,
   SkeletonList,
-  Stack,
-  Text,
-  TextLink,
-  useNotebookIndexStyle,
 } from '@/shared/ui';
-import { getScreenErrorMessage } from '@/utils';
+import { confirmDelete } from '@/utils/confirmDelete';
 
 function workspaceCountLabel(count: number) {
-  return count === 1 ? '1 notebook' : `${count} notebooks`;
+  return count === 1 ? '1 workspace' : `${count} workspaces`;
 }
 
 export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceList'>) {
-  const { colors, spacing } = useTheme();
-  const indexStyle = useNotebookIndexStyle();
   const { data: workspaces, isLoading, isError, refetch, isRefetching } = useWorkspaces();
-  const createWorkspace = useCreateWorkspace();
+  const deleteWorkspace = useDeleteWorkspace();
   const selectedWorkspaceId = useAppStore((s) => s.selectedWorkspaceId);
   const selectWorkspace = useAppStore((s) => s.selectWorkspace);
-  const [showCreate, setShowCreate] = useState(false);
-  const [newName, setNewName] = useState('');
-  const [createError, setCreateError] = useState<string | null>(null);
 
   const openWorkspace = (workspaceId: string, workspaceName: string) => {
     selectWorkspace(workspaceId);
     navigation.navigate('CollectionList', { workspaceId, workspaceName });
   };
 
-  const handleCreate = async () => {
-    setCreateError(null);
-    const name = newName.trim();
-    if (!name) return;
-    try {
-      const workspace = await createWorkspace.mutateAsync(name);
-      setNewName('');
-      setShowCreate(false);
-      openWorkspace(workspace.id, workspace.name);
-    } catch (e) {
-      setCreateError(getScreenErrorMessage(e, 'Could not create workspace.'));
-    }
-  };
-
-  const header = (
-    <PageHeader
-      title="Workspaces"
-      subtitle="Your operational notebooks."
-      action={
-        <TextLink
-          label="Settings"
-          emphasis={false}
-          onPress={() => navigation.navigate('Settings')}
-        />
-      }
+  const newWorkspaceFooter = (
+    <SingleBottomButton
+      action={{
+        label: 'New workspace',
+        icon: 'add-outline',
+        onPress: () => navigation.navigate('CreateWorkspace'),
+      }}
     />
   );
 
-  const createPanel = showCreate ? (
-    <Stack gap="md" style={{ marginBottom: spacing.lg }}>
-      <View style={{ height: StyleSheet.hairlineWidth, backgroundColor: colors.border }} />
-      <Stack gap="sm">
-        <Text variant="sectionTitle">New workspace</Text>
-        <Input label="Name" value={newName} onChangeText={setNewName} placeholder="Family Home" autoFocus />
-        {createError ? (
-          <Text variant="caption" color="danger">
-            {createError}
-          </Text>
-        ) : null}
-        <Stack horizontal gap="sm">
-          <Button label="Create" onPress={handleCreate} disabled={createWorkspace.isPending} style={{ flex: 1 }} />
-          <Button label="Cancel" variant="ghost" onPress={() => setShowCreate(false)} />
-        </Stack>
-      </Stack>
-    </Stack>
-  ) : null;
+  const retryFooter = (
+    <SingleBottomButton
+      action={{
+        label: 'Retry',
+        onPress: () => refetch(),
+      }}
+    />
+  );
 
-  const listFooter = !showCreate ? (
-    <IndexFooter>
-      <TextLink label="New workspace" onPress={() => setShowCreate(true)} />
-    </IndexFooter>
-  ) : null;
+  const shellProps = {
+    navigation,
+    title: 'Workspaces',
+    subtitle: 'Your operational notebooks.',
+    subtitleUnderline: true,
+  };
 
   if (isLoading) {
     return (
-      <Screen edges={['top', 'bottom']}>
-        {header}
-        <View style={indexStyle}>
+      <AppScreenShell {...shellProps}>
+        <NotebookListShelf countLabel={workspaceCountLabel(0)}>
           <SkeletonList count={3} />
-        </View>
-      </Screen>
+        </NotebookListShelf>
+      </AppScreenShell>
     );
   }
 
   if (isError) {
     return (
-      <Screen edges={['top', 'bottom']}>
-        {header}
-        {createPanel}
-        <EmptyNotebook
+      <AppScreenShell {...shellProps} footer={retryFooter}>
+        <EmptyListContent
           title="Could not load workspaces"
           description="Pull to refresh or try again in a moment."
-          actionLabel="Retry"
-          onAction={() => refetch()}
         />
-      </Screen>
+      </AppScreenShell>
     );
   }
 
-  if (!workspaces?.length) {
+  const count = workspaces?.length ?? 0;
+
+  if (!count) {
     return (
-      <Screen edges={['top', 'bottom']}>
-        {header}
-        {createPanel}
-        {!showCreate ? (
-          <EmptyNotebook
-            title="No notebooks yet"
-            description="Create a workspace to begin organizing collections and daily notes."
-            actionLabel="New workspace"
-            onAction={() => setShowCreate(true)}
+      <AppScreenShell {...shellProps} footer={newWorkspaceFooter}>
+        <NotebookListShelf countLabel={workspaceCountLabel(count)}>
+          <EmptyListContent
+            title="No workspaces yet"
+            description="Create a workspace to begin organizing collections and items."
           />
-        ) : null}
-      </Screen>
+        </NotebookListShelf>
+      </AppScreenShell>
     );
   }
+
+  const workspaceList = workspaces ?? [];
 
   return (
-    <Screen edges={['top', 'bottom']}>
-      {header}
-      {createPanel}
-      <ScreenMeta label={workspaceCountLabel(workspaces.length)} />
-
-      <FlatList
-        style={styles.list}
-        data={workspaces}
-        keyExtractor={(item) => item.id}
-        refreshing={isRefetching}
-        onRefresh={refetch}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={[styles.listContent, indexStyle]}
-        ListFooterComponent={listFooter}
-        renderItem={({ item, index }) => (
-          <NotebookRow
-            title={item.name}
-            description={item.description || undefined}
-            meta={item.id === selectedWorkspaceId ? 'Active notebook' : undefined}
-            onPress={() => openWorkspace(item.id, item.name)}
-            showDivider={index < workspaces.length - 1}
-            size="workspace"
+    <AppScreenShell {...shellProps} footer={newWorkspaceFooter}>
+      <View style={styles.content}>
+        <NotebookListShelf countLabel={workspaceCountLabel(count)}>
+          <ScrollIndicatorFlatList
+            data={workspaceList}
+            keyExtractor={(item) => item.id}
+            refreshing={isRefetching}
+            onRefresh={refetch}
+            contentContainerStyle={styles.listContent}
+            renderItem={({ item, index }) => (
+              <NotebookRow
+                title={item.name}
+                description={item.description || undefined}
+                meta={item.id === selectedWorkspaceId ? 'Active workspace' : undefined}
+                onPress={() => openWorkspace(item.id, item.name)}
+                onEdit={() =>
+                  navigation.navigate('EditWorkspace', {
+                    workspaceId: item.id,
+                    workspaceName: item.name,
+                    workspaceDescription: item.description,
+                  })
+                }
+                onDelete={() =>
+                  confirmDelete(
+                    'Delete workspace?',
+                    `Remove "${item.name}" and everything inside it?`,
+                    () => deleteWorkspace.mutate(item.id),
+                  )
+                }
+                showDivider={index < workspaceList.length - 1}
+                size="workspace"
+              />
+            )}
           />
-        )}
-      />
-    </Screen>
+        </NotebookListShelf>
+      </View>
+    </AppScreenShell>
   );
 }
 
 const styles = StyleSheet.create({
-  list: { flex: 1 },
-  listContent: { flexGrow: 1 },
+  content: {
+    flex: 1,
+    minHeight: 0,
+  },
+  listContent: {
+    flexGrow: 1,
+  },
 });

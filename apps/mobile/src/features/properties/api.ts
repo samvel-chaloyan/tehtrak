@@ -1,9 +1,9 @@
-import { apiDelete, apiGet, apiPost } from '@/core/api';
+import { apiDelete, apiGet, apiPatch, apiPost } from '@/core/api';
 import { mapField } from '@/core/api/mappers';
 import type { ApiField } from '@/core/api/types';
 import { isDemoMode } from '@/config/demo';
 import { logDemo } from '@/config/demoDebug';
-import { demoCreateField, demoDeleteField, demoFetchFields } from '@/demo/fields';
+import { demoCreateField, demoDeleteField, demoFetchFields, demoUpdateField } from '@/demo/fields';
 import { PropertyType } from '@/types';
 import { slugifyKey } from '@/utils';
 
@@ -45,6 +45,28 @@ export async function createField(
       config: payload.config ?? {},
       sortOrder: payload.sortOrder,
     },
+  );
+  return mapField(dto);
+}
+
+export async function updateField(
+  workspaceId: string,
+  collectionId: string,
+  fieldId: string,
+  payload: {
+    label?: string;
+    required?: boolean;
+    sortOrder?: number;
+    config?: Record<string, unknown>;
+  },
+) {
+  if (isDemoMode) {
+    return demoUpdateField(workspaceId, collectionId, fieldId, payload);
+  }
+
+  const dto = await apiPatch<ApiField>(
+    `/workspaces/${workspaceId}/collections/${collectionId}/fields/${fieldId}`,
+    payload,
   );
   return mapField(dto);
 }

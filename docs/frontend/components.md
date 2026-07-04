@@ -128,7 +128,8 @@ Meta (optional, caption tertiary)
 
 ### States
 
-* **Pressed** — opacity 0.75
+* **Pressable workspace rows** — title uses `accent`; description stays `secondary`
+* **Pressed** — `primaryMuted` background
 * No borders on individual rows
 * No emoji
 
@@ -169,7 +170,25 @@ Use on: Workspace list, Settings, Auth forms.
 
 Quiet caption below native navigation. Never repeats the nav title.
 
-Example: `2 sections · Family Home`
+Example: `4 collections`
+
+---
+
+## NotebookPage
+
+### Purpose
+
+Bordered notebook page for a single item — framed content with header and property rows.
+
+### Components
+
+| Component | Role |
+|-----------|------|
+| `NotebookPage` | Primary border frame (reuses index surface style) |
+| `NotebookPageHeader` | Item name, updated caption, optional trailing action |
+| `NotebookPageRow` | Label + value or input, inset divider between rows |
+
+Use on item detail (view and edit). View mode shows formatted values; edit mode uses embedded plain inputs in the same rows.
 
 ---
 
@@ -177,7 +196,7 @@ Example: `2 sections · Family Home`
 
 ### Purpose
 
-Readable property on an item page — not a form field row.
+Readable property on an item page — legacy simple field layout. Prefer `NotebookPageRow` inside `NotebookPage` for item detail screens.
 
 ### Anatomy
 
@@ -221,6 +240,13 @@ Error text     ← caption, danger (below)
 ```
 
 Radius: `md`. Border: 1px `border`. Background: `background`.
+
+### Variants
+
+| Variant | Use |
+|---------|-----|
+| `default` | Standalone form fields (create flows) |
+| `plain` | Embedded in `NotebookPageRow` — no box, label provided by row |
 
 ### States
 
@@ -294,10 +320,11 @@ Brand signature — visual anchor for empty, welcome, and loading states.
 
 | Prop | Description |
 |------|-------------|
-| `size` | `sm` \| `md` \| `lg` |
+| `size` | `sm` \| `md` \| `lg` \| `xl` \| `2xl` |
+| `tone` | `default` (outer lines muted, middle `primary`) \| `brand` (all `primary`) |
 | `align` | `left` \| `center` |
 
-Three horizontal lines. The middle line uses `primary` color. No animation in MVP.
+Three horizontal lines. Default tone: middle line `primary`, outer lines muted. Brand tone: all lines `primary`. No animation in MVP.
 
 ---
 

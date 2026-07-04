@@ -1,19 +1,38 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { ScrollView, StyleSheet } from 'react-native';
+
+import { DynamicItemForm, DynamicItemFormHandle } from '@/features/items/components/DynamicItemForm';
 import { useCreateRecord } from '@/features/items/hooks/useRecords';
 import { useFields } from '@/features/properties/hooks/useFields';
 import { AppScreenProps } from '@/navigation/types';
 import { useTheme } from '@/theme';
-import { EmptyNotebook, Screen, SkeletonList, Stack, Text } from '@/shared/ui';
+import {
+  AppScreenShell,
+  EmptyListContent,
+  SingleBottomButton,
+  SkeletonList,
+  Text,
+} from '@/shared/ui';
 import { ItemData } from '@/types';
 import { getScreenErrorMessage } from '@/utils';
-import { DynamicItemForm } from '../components/DynamicItemForm';
 
 export function CreateItemScreen({ navigation, route }: AppScreenProps<'CreateItem'>) {
-  const { collectionId, workspaceId } = route.params;
+  const { collectionId, collectionName, workspaceId } = route.params;
   const { spacing } = useTheme();
+  const formRef = useRef<DynamicItemFormHandle>(null);
   const { data: fields, isLoading } = useFields(workspaceId, collectionId);
   const createRecord = useCreateRecord(workspaceId, collectionId);
   const [error, setError] = useState<string | null>(null);
+
+  const fieldList = fields ?? [];
+
+  const shellProps = {
+    navigation,
+    title: 'New item',
+    subtitle: collectionName,
+    subtitleUnderline: true,
+    onBack: () => navigation.goBack(),
+  };
 
   const handleSubmit = async (data: ItemData) => {
     setError(null);
@@ -25,45 +44,79 @@ export function CreateItemScreen({ navigation, route }: AppScreenProps<'CreateIt
     }
   };
 
+  const footer = (
+    <SingleBottomButton
+      action={{
+        label: createRecord.isPending ? 'Saving…' : 'Save item',
+        onPress: () => formRef.current?.submit(),
+        disabled: createRecord.isPending || fieldList.length === 0,
+      }}
+    />
+  );
+
   if (isLoading) {
     return (
-      <Screen scroll edges={['bottom']}>
+      <AppScreenShell {...shellProps}>
         <SkeletonList count={4} />
-      </Screen>
+      </AppScreenShell>
     );
   }
 
-  const fieldList = fields ?? [];
+  if (fieldList.length === 0) {
+    return (
+      <AppScreenShell
+        {...shellProps}
+        footer={
+          <SingleBottomButton
+            action={{
+              label: 'Add field',
+              icon: 'add-outline',
+              onPress: () =>
+                navigation.navigate('CustomizeFields', {
+                  collectionId,
+                  collectionName,
+                  workspaceId,
+                }),
+            }}
+          />
+        }
+      >
+        <EmptyListContent
+          title="Add a field first"
+          description="Items are recorded using the fields in this collection. Add at least one field to get started."
+        />
+      </AppScreenShell>
+    );
+  }
 
   return (
-    <Screen scroll edges={['bottom']}>
-      <Stack gap="md" style={{ paddingBottom: spacing.lg }}>
+    <AppScreenShell {...shellProps} footer={footer}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={{ paddingBottom: spacing.lg }}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        automaticallyAdjustKeyboardInsets={false}
+        showsVerticalScrollIndicator={false}
+      >
         {error ? (
-          <Text variant="bodySmall" color="danger">
+          <Text variant="bodySmall" color="danger" style={{ marginBottom: spacing.md }}>
             {error}
           </Text>
         ) : null}
-        {fieldList.length === 0 ? (
-          <EmptyNotebook
-            title="Add a property first"
-            description="Items are recorded using the properties in this collection. Add at least one property to get started."
-            actionLabel="Add property"
-            onAction={() =>
-              navigation.navigate('CreateProperty', {
-                collectionId,
-                collectionName: route.params.collectionName,
-                workspaceId,
-              })
-            }
-          />
-        ) : (
-          <DynamicItemForm
-            fields={fieldList}
-            onSubmit={handleSubmit}
-            submitLabel={createRecord.isPending ? 'Saving…' : 'Save item'}
-          />
-        )}
-      </Stack>
-    </Screen>
+        <DynamicItemForm
+          ref={formRef}
+          fields={fieldList}
+          onSubmit={handleSubmit}
+          hideSubmitButton
+        />
+      </ScrollView>
+    </AppScreenShell>
   );
 }
+
+const styles = StyleSheet.create({
+  scroll: {
+    flex: 1,
+  },
+});

@@ -14,12 +14,14 @@ See [components.md](./components.md) for anatomy. See [ui-constitution.md](./ui-
 
 One title source per screen. Never duplicate.
 
+**Bottom actions:** Every primary bottom button (New, Create, Continue, Save, etc.) uses the same slot via `FixedFooterFrame` + `ScreenBottomBar` — 52px button, `md` top padding, `xl` bottom inset above the safe area, `lg` horizontal padding. App screens and auth screens share this layout.
+
 | Screen type | Title source | In-screen header |
 |-------------|--------------|------------------|
-| Workspace list | `PageHeader` (no native header) | Yes |
-| Collection list | Native large title (workspace name) | `ScreenMeta` only |
-| Collection details | Native large title (collection name) | `ScreenMeta` only |
-| Item details | None in nav | `PageTitle` in content |
+| Workspace list | None (custom header) | Yes |
+| Collection list | None (custom header) | Yes |
+| Collection details | None (custom header) | Yes |
+| Item details | None (custom header) | Yes — item name in shell subtitle |
 | Settings | Native title | `PageHeader` optional subtitle |
 | Auth | None | `PageHeader` |
 
@@ -48,77 +50,181 @@ Tight vertical rhythm. No excessive dead space between copy and actions.
 Notebook shelf — not dashboard.
 
 ```
-PageHeader
-  Title: Workspaces
-  Subtitle: Your operational notebooks.
-  Action: Settings (TextLink, secondary)
+ScreenLineHeader
+  blue line
+  top row: BrandMenuButton | page title (accent, right)
+  context row (when nested):
+    left: ShellBackLink — chevron + Back, primaryBorder underline (under logo)
+    right: parent name (secondary, primaryBorder underline when nested)
+  subtitle row — tagline (secondary, right-aligned, primaryBorder underline) on root screens
 
-ScreenMeta — "N notebooks"
+AppDrawer — logo, brand, Search · Favorites · Recent · Settings · Help · About · Sign out
 
-NotebookIndex (one grouped surface)
+NotebookListShelf — frame + "N workspaces" meta (right-aligned, shown even when empty)
+
+NotebookIndexFrame (fixed blue border, scroll inside)
   NotebookRow size=workspace × n
   divider between rows
 
-IndexFooter
-  TextLink — New workspace
+SingleBottomButton — New workspace
 ```
 
-No sign out here. No gear icon. No card-per-row layout.
+Navigates to **Create Workspace** — no inline create on the list screen.
+
+**NotebookRow** — pencil (edit) and red X (delete) on each row. Edit opens **Edit Workspace**; delete confirms before removing.
+
+---
+
+## Create Workspace
+
+Dedicated screen — list not visible behind.
+
+```
+ScreenLineHeader — New workspace | Your operational notebooks.
+Name + optional description (placeholder: Your operational notebook)
+SingleBottomButton — Create (fixed at bottom; does not move with keyboard)
+```
+
+On success, navigates into the new workspace's collection list.
+
+---
+
+## Edit Workspace
+
+```
+ScreenLineHeader — Edit workspace
+Name + description
+SingleBottomButton — Save
+```
+
+Delete is available from the list row icon — not repeated on this screen.
 
 ---
 
 ## Collection List
 
+Sections inside the active notebook — same shelf pattern as workspaces, visually subordinate row styling.
+
 ```
-[Native header: workspace name]
+ScreenLineHeader
+  blue line
+  top row: BrandMenuButton | Collections (accent, right)
+  context row:
+    left: ShellBackLink
+    right: {workspace name} + primaryBorder underline
 
-ScreenMeta — "N sections · {workspace}"
+NotebookListShelf — frame + "N collections" meta (right-aligned, shown even when empty)
 
-NotebookIndex
+NotebookIndexFrame (fixed blue border, scroll inside)
   NotebookRow size=collection × n
+  divider between rows
 
-IndexFooter
-  TextLink — New collection
+SingleBottomButton — New collection (+ icon)
 ```
 
-Collections are visually subordinate to workspace rows.
+Navigates to Create Collection step 1 — no inline create on the list screen.
+
+**NotebookRow** — edit and delete on each row. Edit opens **Edit Collection**.
+
+---
+
+## Edit Collection
+
+```
+ScreenLineHeader — Edit collection | {workspace name}
+Name + optional description
+SingleBottomButton — Save
+```
+
+Delete is available from the list row icon — not repeated on this screen.
+
+---
+
+## Create Collection (step 1)
+
+```
+ScreenLineHeader — New collection | {workspace name}
+Name + optional description
+SingleBottomButton — Continue
+```
+
+Creates the collection, then navigates to page template setup.
+
+---
+
+## Collection Structure (step 2)
+
+```
+ScreenLineHeader — Item template | {collection name}
+Intro copy — tap the fields each item should have
+
+FieldChip bubbles — Name, Description, Count (toggle on/off)
+Custom field — name input + Text / Number chips + Add to template link
+Added custom fields appear as selected chips (tap to remove)
+
+SingleBottomButton — Finish
+```
+
+Finish saves selected fields and opens the collection. Back from collection list — not through setup again.
+
+---
+
+## Customize Fields
+
+Same field editor accessed later from Collection Details.
+
+```
+ScreenLineHeader — Customize fields | {collection name}
+NotebookIndexFrame — existing fields (label, type, required)
+NotebookRow — delete on each field
+SingleBottomButton — Add field (only action; no duplicate link in list)
+```
+
+**Add field** screen — name + Text / Number chips only.
 
 ---
 
 ## Collection Details
 
+Items inside the active collection — same shelf pattern, item-sized rows.
+
 ```
-[Native header: collection name]
+ScreenLineHeader
+  blue line
+  top row: BrandMenuButton | Items (accent, right)
+  context row:
+    left: ShellBackLink
+    right: {collection name} + primaryBorder underline
 
-ScreenMeta — "N properties · N pages"
+NotebookListShelf
+  frame + "N items · N fields each" meta (right-aligned)
+  footerLeft: TextLink — Customize fields (compact OutlineButton, bordered)
 
-NotebookIndex
-  NotebookRow size=item × n
+NotebookIndexFrame (fixed blue border, scroll inside)
+  NotebookRow size=item × n (delete on row)
+  divider between rows
+  EmptyListContent when empty (text only — no ThreeLines logo inside frame)
 
-IndexFooter
-  TextLink — Add item
-  TextLink — Add property (secondary)
+SingleBottomButton — Add item (+ icon, fixed bottom)
 ```
-
-No header toolbar. Actions below content.
 
 ---
 
 ## Item Details
 
-Reading a page — not viewing a record.
+Reading a page — not viewing a record. One screen for view and edit.
 
 ```
-PageTitle — item name
-caption — Updated {relative time}
+AppScreenShell — title Item, subtitle collection name (underlined)
 
-NotebookField × n
-  label (caption, tertiary)
-  value (body)
-  gap xl between fields
+NotebookPage (primary border frame)
+  NotebookPageHeader — Updated caption only (item name lives in shell subtitle)
+  NotebookPageRow × n — label + value (view) or highlighted edit control (edit)
+
+SingleBottomButton — Edit (view) or Save (edit). Back dismisses unsaved edits.
 ```
 
-No bordered card. No table layout. No duplicate nav title.
+Tap Edit or the list-row pencil to enter edit mode on the same page. Delete stays on the items list row.
 
 ---
 

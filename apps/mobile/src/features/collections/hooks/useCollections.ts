@@ -1,6 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/core/api';
-import { createCollection, fetchCollections } from '../api';
+import {
+  createCollection,
+  deleteCollection,
+  fetchCollections,
+  updateCollection,
+} from '../api';
 
 export function useCollections(workspaceId: string) {
   return useQuery({
@@ -15,6 +20,33 @@ export function useCreateCollection(workspaceId: string) {
   return useMutation({
     mutationFn: (payload: { name: string; description?: string; icon?: string }) =>
       createCollection(workspaceId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.collections(workspaceId) });
+    },
+  });
+}
+
+export function useUpdateCollection(workspaceId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      collectionId,
+      ...payload
+    }: {
+      collectionId: string;
+      name?: string;
+      description?: string;
+    }) => updateCollection(workspaceId, collectionId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.collections(workspaceId) });
+    },
+  });
+}
+
+export function useDeleteCollection(workspaceId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (collectionId: string) => deleteCollection(workspaceId, collectionId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.collections(workspaceId) });
     },

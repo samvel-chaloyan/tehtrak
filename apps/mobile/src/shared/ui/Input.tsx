@@ -8,18 +8,36 @@ import { useTheme } from '@/theme';
 import { Text } from './Text';
 import { Stack } from './Stack';
 
+type InputLabelColor = 'primary' | 'secondary' | 'tertiary' | 'accent';
+type InputValueColor = 'primary' | 'secondary';
+
 export interface InputProps extends TextInputProps {
   label?: string;
+  labelColor?: InputLabelColor;
+  valueColor?: InputValueColor;
   hint?: string;
   error?: string;
+  variant?: 'default' | 'plain';
 }
 
 export const Input = forwardRef<TextInput, InputProps>(function Input(
-  { label, hint, error, style, onFocus, onBlur, ...props },
+  {
+    label,
+    labelColor = 'secondary',
+    valueColor = 'primary',
+    hint,
+    error,
+    variant = 'default',
+    style,
+    onFocus,
+    onBlur,
+    ...props
+  },
   ref,
 ) {
   const { colors, radius, spacing, typography } = useTheme();
   const [focused, setFocused] = useState(false);
+  const isPlain = variant === 'plain';
 
   const borderColor = error
     ? colors.danger
@@ -29,8 +47,8 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
 
   return (
     <Stack gap="xs" style={styles.wrapper}>
-      {label ? (
-        <Text variant="label" color="secondary">
+      {label && !isPlain ? (
+        <Text variant="label" color={labelColor}>
           {label}
         </Text>
       ) : null}
@@ -48,14 +66,23 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
         style={[
           styles.input,
           typography.body,
-          {
-            backgroundColor: colors.surface,
-            borderColor,
-            borderRadius: radius.md,
-            color: colors.textPrimary,
-            paddingHorizontal: spacing.md,
-            paddingVertical: spacing.md,
-          },
+          isPlain
+            ? {
+                backgroundColor: 'transparent',
+                borderWidth: 0,
+                color: valueColor === 'secondary' ? colors.textSecondary : colors.textPrimary,
+                paddingHorizontal: 0,
+                paddingVertical: 0,
+                minHeight: undefined,
+              }
+            : {
+                backgroundColor: colors.surface,
+                borderColor,
+                borderRadius: radius.md,
+                color: valueColor === 'secondary' ? colors.textSecondary : colors.textPrimary,
+                paddingHorizontal: spacing.md,
+                paddingVertical: spacing.md,
+              },
           style,
         ]}
         {...props}

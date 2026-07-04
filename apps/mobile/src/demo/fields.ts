@@ -61,6 +61,46 @@ export async function demoCreateField(
   return created;
 }
 
+export async function demoUpdateField(
+  workspaceId: string,
+  collectionId: string,
+  fieldId: string,
+  payload: {
+    label?: string;
+    required?: boolean;
+    sortOrder?: number;
+    config?: Record<string, unknown>;
+  },
+): Promise<PropertyField> {
+  await demoDelay();
+  let updated!: PropertyField;
+
+  await mutateDemoData((data) => {
+    if (!findCollection(data, workspaceId, collectionId)) {
+      throw new Error('Collection not found');
+    }
+
+    const index = data.fields.findIndex(
+      (field) => field.id === fieldId && field.collectionId === collectionId,
+    );
+    if (index === -1) {
+      throw new Error('Field not found');
+    }
+
+    const current = data.fields[index];
+    updated = {
+      ...current,
+      label: payload.label?.trim() ?? current.label,
+      required: payload.required ?? current.required,
+      sortOrder: payload.sortOrder ?? current.sortOrder,
+      config: (payload.config as PropertyField['config']) ?? current.config,
+    };
+    data.fields[index] = updated;
+  });
+
+  return updated;
+}
+
 export async function demoDeleteField(
   workspaceId: string,
   collectionId: string,

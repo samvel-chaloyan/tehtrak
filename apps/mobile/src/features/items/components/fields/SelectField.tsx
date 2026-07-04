@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Modal, Pressable, StyleSheet, View } from 'react-native';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme';
 import { Stack, Text } from '@/shared/ui';
 import { PropertyField } from '@/types';
@@ -8,9 +9,14 @@ import { PropertyField } from '@/types';
 interface SelectFieldProps<T extends FieldValues> {
   field: PropertyField;
   control: Control<T>;
+  embedded?: boolean;
 }
 
-export function SelectField<T extends FieldValues>({ field, control }: SelectFieldProps<T>) {
+export function SelectField<T extends FieldValues>({
+  field,
+  control,
+  embedded = false,
+}: SelectFieldProps<T>) {
   const { colors, radius, spacing } = useTheme();
   const [open, setOpen] = useState(false);
   const options = field.config?.options ?? [];
@@ -25,26 +31,33 @@ export function SelectField<T extends FieldValues>({ field, control }: SelectFie
         return (
           <>
             <Stack gap="xs">
-              <Text variant="label" color="secondary">
-                {field.label}
-                {field.required ? ' *' : ''}
-              </Text>
+              {!embedded ? (
+                <Text variant="label" color="secondary">
+                  {field.label}
+                  {field.required ? ' *' : ''}
+                </Text>
+              ) : null}
               <Pressable
                 onPress={() => setOpen(true)}
                 style={[
-                  styles.trigger,
-                  {
-                    backgroundColor: colors.surface,
-                    borderColor: fieldState.error ? colors.danger : colors.border,
-                    borderRadius: radius.md,
-                    paddingHorizontal: spacing.md,
-                    paddingVertical: spacing.sm + 4,
-                  },
+                  embedded ? styles.embeddedTrigger : styles.trigger,
+                  embedded
+                    ? undefined
+                    : {
+                        backgroundColor: colors.surface,
+                        borderColor: fieldState.error ? colors.danger : colors.border,
+                        borderRadius: radius.md,
+                        paddingHorizontal: spacing.md,
+                        paddingVertical: spacing.sm + 4,
+                      },
                 ]}
               >
                 <Text variant="body" color={selected ? 'primary' : 'tertiary'}>
                   {selected?.label ?? 'Choose an option'}
                 </Text>
+                {embedded ? (
+                  <Ionicons name="chevron-down" size={18} color={colors.textTertiary} />
+                ) : null}
               </Pressable>
               {fieldState.error ? (
                 <Text variant="caption" color="danger">
@@ -119,6 +132,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     minHeight: 48,
     justifyContent: 'center',
+  },
+  embeddedTrigger: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    minHeight: 24,
+    width: '100%',
   },
   option: {},
 });

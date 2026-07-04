@@ -12,14 +12,17 @@ export async function demoFetchWorkspaces(): Promise<Workspace[]> {
   return (await getDemoData()).workspaces;
 }
 
-export async function demoCreateWorkspace(name: string): Promise<Workspace> {
+export async function demoCreateWorkspace(payload: {
+  name: string;
+  description?: string;
+}): Promise<Workspace> {
   await demoDelay();
   let created!: Workspace;
   await mutateDemoData((data) => {
     created = {
       id: createId('ws'),
-      name: name.trim(),
-      description: 'Your operational notebook',
+      name: payload.name.trim(),
+      description: payload.description?.trim() || 'Your operational notebook',
       emoji: workspaceEmojiForIndex(data.workspaces.length),
     };
     data.workspaces.push(created);
@@ -27,13 +30,19 @@ export async function demoCreateWorkspace(name: string): Promise<Workspace> {
   return created;
 }
 
-export async function demoUpdateWorkspace(id: string, name: string): Promise<Workspace> {
+export async function demoUpdateWorkspace(
+  id: string,
+  payload: { name?: string; description?: string },
+): Promise<Workspace> {
   await demoDelay();
   let updated!: Workspace;
   await mutateDemoData((data) => {
     const workspace = data.workspaces.find((w) => w.id === id);
     if (!workspace) throw new Error('Workspace not found');
-    workspace.name = name.trim();
+    if (payload.name !== undefined) workspace.name = payload.name.trim();
+    if (payload.description !== undefined) {
+      workspace.description = payload.description.trim();
+    }
     updated = { ...workspace };
   });
   return updated;

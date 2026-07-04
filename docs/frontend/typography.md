@@ -37,7 +37,8 @@ System default (SF Pro on iOS, Roboto on Android).
 2. Card/list titles use `title` (20/600)
 3. Metadata uses `caption` with `textTertiary`
 4. Never use color to replace typographic hierarchy
-5. Do not introduce arbitrary font sizes outside this scale
+5. Main reading text uses `textPrimary` — soft black, not pure `#000000`
+6. Do not introduce arbitrary font sizes outside this scale
 
 ---
 

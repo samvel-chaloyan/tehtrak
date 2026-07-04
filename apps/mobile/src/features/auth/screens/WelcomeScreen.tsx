@@ -1,142 +1,97 @@
-import React from 'react';
-import {
-  Image,
-  Pressable,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { AuthBrandTitle } from '@/features/auth/components/AuthBrandTitle';
+import { AuthFooter } from '@/features/auth/components/AuthScreenLayout';
 import { appConfig } from '@/config/app';
 import { AuthScreenProps } from '@/navigation/types';
-import { Text } from '@/shared/ui';
-import { colors } from '@/theme/colors';
+import { FixedFooterFrame } from '@/shared/ui/FixedFooterFrame';
+import { KeyboardDismissView } from '@/shared/ui/KeyboardDismissView';
+import { useScreenContentHeight } from '@/shared/ui/useScreenContentHeight';
+import { Stack, Text } from '@/shared/ui';
+import { useTheme } from '@/theme';
 
-export function WelcomeScreen({
-  navigation,
-}: AuthScreenProps<'Welcome'>) {
+const WELCOME_LINES = [
+  appConfig.tagline,
+  'Record what matters in your work',
+  'Organize it into sections you trust',
+  'Return whenever you need clarity',
+] as const;
+
+export function WelcomeScreen({ navigation }: AuthScreenProps<'Welcome'>) {
+  const { colors, spacing } = useTheme();
+  const insets = useSafeAreaInsets();
+  const contentHeight = useScreenContentHeight();
+
   return (
-    <View style={styles.container}>
-      <View style={styles.hero}>
-        <Image
-          source={require('../../../../assets/tehtrak.jpg')}
-          resizeMode="contain"
-          style={styles.logo}
-        />
-
-        <Text style={styles.title}>
-          {appConfig.name}
-        </Text>
-
-        <Text style={styles.subtitle}>
-          Your operational notebook
-        </Text>
-      </View>
-
-      <View style={styles.actions}>
-        <Pressable
-          style={({ pressed }) => [
-            styles.button,
-            pressed && styles.buttonPressed,
-          ]}
-          onPress={() => navigation.navigate('Login')}
+    <KeyboardDismissView
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.surface,
+          paddingTop: insets.top + spacing.lg,
+        },
+      ]}
+    >
+      <View style={[styles.frame, { height: contentHeight }]}>
+        <FixedFooterFrame
+          buttonCount={2}
+          footer={
+            <AuthFooter
+              config={{
+                mode: 'dual',
+                primaryAction: {
+                  label: 'Sign in',
+                  onPress: () => navigation.navigate('Login'),
+                },
+                secondaryAction: {
+                  label: 'Create account',
+                  onPress: () => navigation.navigate('Register'),
+                },
+              }}
+            />
+          }
         >
-          {({ pressed }) => (
-            <Text
-              style={[
-                styles.buttonText,
-                pressed && styles.buttonTextPressed,
-              ]}
-            >
-              Sign in
-            </Text>
-          )}
-        </Pressable>
+          <View style={styles.hero}>
+            <Stack gap="xl" align="center">
+              <AuthBrandTitle />
 
-        <Pressable
-          style={({ pressed }) => [
-            styles.button,
-            pressed && styles.buttonPressed,
-          ]}
-          onPress={() => navigation.navigate('Register')}
-        >
-          {({ pressed }) => (
-            <Text
-              style={[
-                styles.buttonText,
-                pressed && styles.buttonTextPressed,
-              ]}
-            >
-              Create account
-            </Text>
-          )}
-        </Pressable>
+              <Stack gap="xs" align="center" style={styles.copy}>
+                {WELCOME_LINES.map((line, index) => (
+                  <Text
+                    key={line}
+                    variant={index === 0 ? 'body' : 'bodySmall'}
+                    color="secondary"
+                    style={styles.line}
+                  >
+                    {line}
+                  </Text>
+                ))}
+              </Stack>
+            </Stack>
+          </View>
+        </FixedFooterFrame>
       </View>
-    </View>
+    </KeyboardDismissView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary,
-    justifyContent: 'space-between',
-    paddingHorizontal: 32,
-    paddingTop: 80,
-    paddingBottom: 64,
+    overflow: 'hidden',
   },
-
+  frame: {
+    overflow: 'hidden',
+  },
   hero: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
   },
-
-  logo: {
-    width: 180,
-    height: 180,
-    marginBottom: 32,
+  copy: {
+    maxWidth: 280,
   },
-
-  title: {
-    color: '#FFFFFF',
-    fontSize: 40,
-    fontWeight: '700',
-    letterSpacing: -1,
-    marginBottom: 12,
-  },
-
-  subtitle: {
-    color: 'rgba(255,255,255,0.9)',
-    fontSize: 20,
+  line: {
     textAlign: 'center',
-    lineHeight: 28,
-  },
-
-  actions: {
-    gap: 16,
-  },
-
-  button: {
-    height: 58,
-    borderRadius: 18,
-    borderWidth: 2,
-    borderColor: '#FFFFFF',
-    backgroundColor: 'transparent',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  buttonPressed: {
-    backgroundColor: '#FFFFFF',
-  },
-
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-
-  buttonTextPressed: {
-    color: colors.primary,
   },
 });

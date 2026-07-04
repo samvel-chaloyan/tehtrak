@@ -1,11 +1,17 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Platform } from 'react-native';
 import { CollectionDetailsScreen } from '@/features/collections/screens/CollectionDetailsScreen';
 import { CollectionListScreen } from '@/features/collections/screens/CollectionListScreen';
+import { CollectionStructureScreen } from '@/features/collections/screens/CollectionStructureScreen';
+import { CreateCollectionScreen } from '@/features/collections/screens/CreateCollectionScreen';
+import { EditCollectionScreen } from '@/features/collections/screens/EditCollectionScreen';
 import { CreateItemScreen } from '@/features/items/screens/CreateItemScreen';
 import { ItemDetailsScreen } from '@/features/items/screens/ItemDetailsScreen';
 import { CreatePropertyScreen } from '@/features/properties/screens/CreatePropertyScreen';
+import { EditPropertyScreen } from '@/features/properties/screens/EditPropertyScreen';
+import { CustomizeFieldsScreen } from '@/features/properties/screens/CustomizeFieldsScreen';
 import { SettingsScreen } from '@/features/settings/screens/SettingsScreen';
+import { CreateWorkspaceScreen } from '@/features/workspaces/screens/CreateWorkspaceScreen';
+import { EditWorkspaceScreen } from '@/features/workspaces/screens/EditWorkspaceScreen';
 import { WorkspaceListScreen } from '@/features/workspaces/screens/WorkspaceListScreen';
 import { useTheme } from '@/theme';
 import { AppStackParamList } from './types';
@@ -15,8 +21,6 @@ const Stack = createNativeStackNavigator<AppStackParamList>();
 
 export function AppStack() {
   const { colors, typography } = useTheme();
-
-  const largeTitle = Platform.OS === 'ios';
 
   return (
     <Stack.Navigator
@@ -38,6 +42,7 @@ export function AppStack() {
           color: colors.textPrimary,
         },
         contentStyle: { backgroundColor: colors.background },
+        keyboardHandlingEnabled: false,
       }}
     >
       <Stack.Screen
@@ -46,35 +51,64 @@ export function AppStack() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
+        name="CreateWorkspace"
+        component={CreateWorkspaceScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="EditWorkspace"
+        component={EditWorkspaceScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
         name="CollectionList"
         component={CollectionListScreen}
-        options={({ route }) => ({
-          title: route.params.workspaceName,
-          headerLargeTitle: largeTitle,
-        })}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="CreateCollection"
+        component={CreateCollectionScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="EditCollection"
+        component={EditCollectionScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="CollectionStructure"
+        component={CollectionStructureScreen}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="CollectionDetails"
         component={CollectionDetailsScreen}
-        options={({ route }) => ({
-          title: route.params.collectionName,
-          headerLargeTitle: largeTitle,
-        })}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="ItemDetails"
         component={ItemDetailsScreen}
-        options={{ title: '' }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="CreateItem"
         component={CreateItemScreen}
-        options={{ title: 'New item' }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="CreateProperty"
         component={CreatePropertyScreen}
-        options={{ title: 'Add property' }}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="EditProperty"
+        component={EditPropertyScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="CustomizeFields"
+        component={CustomizeFieldsScreen}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="Settings"

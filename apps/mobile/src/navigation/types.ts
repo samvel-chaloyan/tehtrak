@@ -8,7 +8,27 @@ export type AuthStackParamList = {
 
 export type AppStackParamList = {
   WorkspaceList: undefined;
+  CreateWorkspace: undefined;
+  EditWorkspace: {
+    workspaceId: string;
+    workspaceName: string;
+    workspaceDescription: string;
+  };
   CollectionList: { workspaceId: string; workspaceName: string };
+  CreateCollection: { workspaceId: string; workspaceName: string };
+  EditCollection: {
+    workspaceId: string;
+    workspaceName: string;
+    collectionId: string;
+    collectionName: string;
+    collectionDescription: string;
+  };
+  CollectionStructure: {
+    workspaceId: string;
+    workspaceName: string;
+    collectionId: string;
+    collectionName: string;
+  };
   CollectionDetails: {
     collectionId: string;
     collectionName: string;
@@ -19,6 +39,7 @@ export type AppStackParamList = {
     collectionId: string;
     collectionName: string;
     workspaceId: string;
+    edit?: boolean;
   };
   CreateItem: {
     collectionId: string;
@@ -26,6 +47,20 @@ export type AppStackParamList = {
     workspaceId: string;
   };
   CreateProperty: {
+    collectionId: string;
+    collectionName: string;
+    workspaceId: string;
+  };
+  EditProperty: {
+    fieldId: string;
+    fieldLabel: string;
+    fieldType: 'text' | 'number';
+    fieldRequired: boolean;
+    collectionId: string;
+    collectionName: string;
+    workspaceId: string;
+  };
+  CustomizeFields: {
     collectionId: string;
     collectionName: string;
     workspaceId: string;

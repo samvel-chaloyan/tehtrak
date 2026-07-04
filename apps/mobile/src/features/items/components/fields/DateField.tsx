@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme';
 import { Stack, Text } from '@/shared/ui';
 import { PropertyField } from '@/types';
@@ -10,9 +11,14 @@ import { formatDateDisplay } from '@/utils';
 interface DateFieldProps<T extends FieldValues> {
   field: PropertyField;
   control: Control<T>;
+  embedded?: boolean;
 }
 
-export function DateField<T extends FieldValues>({ field, control }: DateFieldProps<T>) {
+export function DateField<T extends FieldValues>({
+  field,
+  control,
+  embedded = false,
+}: DateFieldProps<T>) {
   const { colors, radius, spacing } = useTheme();
   const [showPicker, setShowPicker] = useState(false);
 
@@ -31,29 +37,40 @@ export function DateField<T extends FieldValues>({ field, control }: DateFieldPr
           }
         };
 
+        const trigger = (
+          <Pressable
+            onPress={() => setShowPicker(true)}
+            style={[
+              embedded ? styles.embeddedTrigger : styles.trigger,
+              embedded
+                ? undefined
+                : {
+                    backgroundColor: colors.surface,
+                    borderColor: fieldState.error ? colors.danger : colors.border,
+                    borderRadius: radius.md,
+                    paddingHorizontal: spacing.md,
+                    paddingVertical: spacing.sm + 4,
+                  },
+            ]}
+          >
+            <Text variant="body" color={rhf.value ? 'primary' : 'tertiary'}>
+              {display}
+            </Text>
+            {embedded ? (
+              <Ionicons name="calendar-outline" size={18} color={colors.textTertiary} />
+            ) : null}
+          </Pressable>
+        );
+
         return (
           <Stack gap="xs">
-            <Text variant="label" color="secondary">
-              {field.label}
-              {field.required ? ' *' : ''}
-            </Text>
-            <Pressable
-              onPress={() => setShowPicker(true)}
-              style={[
-                styles.trigger,
-                {
-                  backgroundColor: colors.surface,
-                  borderColor: fieldState.error ? colors.danger : colors.border,
-                  borderRadius: radius.md,
-                  paddingHorizontal: spacing.md,
-                  paddingVertical: spacing.sm + 4,
-                },
-              ]}
-            >
-              <Text variant="body" color={rhf.value ? 'primary' : 'tertiary'}>
-                {display}
+            {!embedded ? (
+              <Text variant="label" color="secondary">
+                {field.label}
+                {field.required ? ' *' : ''}
               </Text>
-            </Pressable>
+            ) : null}
+            {trigger}
             {fieldState.error ? (
               <Text variant="caption" color="danger">
                 {fieldState.error.message}
@@ -88,5 +105,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     minHeight: 48,
     justifyContent: 'center',
+  },
+  embeddedTrigger: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    minHeight: 24,
+    width: '100%',
   },
 });

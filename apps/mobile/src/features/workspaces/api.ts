@@ -20,21 +20,24 @@ export async function fetchWorkspaces() {
   return list.map((w, i) => mapWorkspace(w, i));
 }
 
-export async function createWorkspace(name: string) {
+export async function createWorkspace(payload: { name: string; description?: string }) {
   if (isDemoMode) {
-    return demoCreateWorkspace(name);
+    return demoCreateWorkspace(payload);
   }
 
-  const dto = await apiPost<ApiWorkspace>('/workspaces', { name });
+  const dto = await apiPost<ApiWorkspace>('/workspaces', payload);
   return mapWorkspace(dto);
 }
 
-export async function updateWorkspace(id: string, name: string) {
+export async function updateWorkspace(
+  id: string,
+  payload: { name?: string; description?: string },
+) {
   if (isDemoMode) {
-    return demoUpdateWorkspace(id, name);
+    return demoUpdateWorkspace(id, payload);
   }
 
-  const dto = await apiPatch<ApiWorkspace>(`/workspaces/${id}`, { name });
+  const dto = await apiPatch<ApiWorkspace>(`/workspaces/${id}`, payload);
   return mapWorkspace(dto);
 }
 

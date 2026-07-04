@@ -7,45 +7,74 @@ import { PropertyField } from '@/types';
 interface BooleanFieldProps<T extends FieldValues> {
   field: PropertyField;
   control: Control<T>;
+  embedded?: boolean;
 }
 
-export function BooleanField<T extends FieldValues>({ field, control }: BooleanFieldProps<T>) {
+export function BooleanField<T extends FieldValues>({
+  field,
+  control,
+  embedded = false,
+}: BooleanFieldProps<T>) {
   const { colors, radius, spacing } = useTheme();
 
   return (
     <Controller
       control={control}
       name={field.key as Path<T>}
-      render={({ field: rhf }) => (
-        <Pressable
-          style={[
-            styles.row,
-            {
-              backgroundColor: colors.surface,
-              borderColor: colors.border,
-              borderRadius: radius.md,
-              paddingHorizontal: spacing.md,
-              paddingVertical: spacing.sm,
-            },
-          ]}
-          onPress={() => rhf.onChange(!rhf.value)}
-        >
-          <View style={styles.labelWrap}>
-            <Text variant="body">{field.label}</Text>
-            {field.required ? (
-              <Text variant="caption" color="tertiary">
-                Required
-              </Text>
+      render={({ field: rhf }) => {
+        const row = (
+          <>
+            {!embedded ? (
+              <View style={styles.labelWrap}>
+                <Text variant="body">{field.label}</Text>
+                {field.required ? (
+                  <Text variant="caption" color="tertiary">
+                    Required
+                  </Text>
+                ) : null}
+              </View>
             ) : null}
-          </View>
-          <Switch
-            value={Boolean(rhf.value)}
-            onValueChange={rhf.onChange}
-            trackColor={{ false: colors.border, true: colors.primaryMuted }}
-            thumbColor={rhf.value ? colors.primary : colors.background}
-          />
-        </Pressable>
-      )}
+            <Switch
+              value={Boolean(rhf.value)}
+              onValueChange={rhf.onChange}
+              trackColor={{ false: colors.border, true: colors.primaryMuted }}
+              thumbColor={rhf.value ? colors.primary : colors.background}
+            />
+          </>
+        );
+
+        if (embedded) {
+          return (
+            <View style={styles.embeddedRow}>
+              <Text variant="body">{rhf.value ? 'Yes' : 'No'}</Text>
+              <Switch
+                value={Boolean(rhf.value)}
+                onValueChange={rhf.onChange}
+                trackColor={{ false: colors.border, true: colors.primaryMuted }}
+                thumbColor={rhf.value ? colors.primary : colors.background}
+              />
+            </View>
+          );
+        }
+
+        return (
+          <Pressable
+            style={[
+              styles.row,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+                borderRadius: radius.md,
+                paddingHorizontal: spacing.md,
+                paddingVertical: spacing.sm,
+              },
+            ]}
+            onPress={() => rhf.onChange(!rhf.value)}
+          >
+            {row}
+          </Pressable>
+        );
+      }}
     />
   );
 }
@@ -57,6 +86,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     minHeight: 52,
+  },
+  embeddedRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
   },
   labelWrap: {
     flex: 1,

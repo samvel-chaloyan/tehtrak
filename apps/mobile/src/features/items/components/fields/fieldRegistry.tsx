@@ -7,9 +7,14 @@ import { NumberField } from './NumberField';
 import { SelectField } from './SelectField';
 import { TextField } from './TextField';
 
+export interface FieldRenderOptions {
+  embedded?: boolean;
+}
+
 type FieldComponent<T extends FieldValues> = ComponentType<{
   field: PropertyField;
   control: Control<T>;
+  embedded?: boolean;
 }>;
 
 export const fieldRegistry: Record<PropertyType, FieldComponent<FieldValues>> = {
@@ -23,7 +28,10 @@ export const fieldRegistry: Record<PropertyType, FieldComponent<FieldValues>> = 
 export function renderPropertyField<T extends FieldValues>(
   field: PropertyField,
   control: Control<T>,
+  options?: FieldRenderOptions,
 ) {
   const Component = fieldRegistry[field.type] as FieldComponent<T>;
-  return <Component key={field.id} field={field} control={control} />;
+  return (
+    <Component key={field.id} field={field} control={control} embedded={options?.embedded} />
+  );
 }
