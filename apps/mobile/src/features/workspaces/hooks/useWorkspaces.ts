@@ -15,6 +15,7 @@ export function useCreateWorkspace() {
     mutationFn: (payload: { name: string; description?: string }) => createWorkspace(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.workspaces });
+      queryClient.invalidateQueries({ queryKey: queryKeys.workspaceSummaries });
     },
   });
 }
@@ -42,6 +43,7 @@ export function useDeleteWorkspace() {
     mutationFn: (id: string) => deleteWorkspace(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.workspaces });
+      queryClient.invalidateQueries({ queryKey: queryKeys.workspaceSummaries });
     },
   });
 }

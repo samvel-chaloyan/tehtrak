@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
 import { Text } from './Text';
 import { BRAND_LOGO_MARGIN_LEFT } from './brandLogoLayout';
@@ -8,13 +8,42 @@ import { useTheme } from '@/theme';
 export interface ShellBackLinkProps {
   onPress: () => void;
   label?: string;
+  /** Align flush with card inner edge — no logo offset margin */
+  alignToCard?: boolean;
+  /** Chevron only — soft nav capsule under the brand header */
+  compact?: boolean;
+  style?: StyleProp<ViewStyle>;
 }
 
-export function ShellBackLink({ onPress, label = 'Back' }: ShellBackLinkProps) {
-  const { colors, spacing } = useTheme();
+export function ShellBackLink({
+  onPress,
+  label = 'Back',
+  alignToCard = false,
+  compact = false,
+  style,
+}: ShellBackLinkProps) {
+  const { colors } = useTheme();
+
+  if (compact) {
+    return (
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Go back"
+        hitSlop={8}
+        onPress={onPress}
+        style={({ pressed }) => [
+          styles.compactButton,
+          style,
+          { opacity: pressed ? 0.7 : 1 },
+        ]}
+      >
+        <Ionicons name="chevron-back" size={20} color={colors.textSecondary} />
+      </Pressable>
+    );
+  }
 
   return (
-    <View style={[styles.wrap, { gap: spacing.xs, marginLeft: BRAND_LOGO_MARGIN_LEFT }]}>
+    <View style={[!alignToCard && { marginLeft: BRAND_LOGO_MARGIN_LEFT }]}>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Go back"
@@ -27,23 +56,19 @@ export function ShellBackLink({ onPress, label = 'Back' }: ShellBackLinkProps) {
           {label}
         </Text>
       </Pressable>
-      <View style={[styles.line, { backgroundColor: colors.primaryBorder }]} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: {
-    alignSelf: 'flex-start',
-    alignItems: 'stretch',
+  compactButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 36,
+    height: 36,
   },
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  line: {
-    height: 1,
-    borderRadius: 999,
-    alignSelf: 'stretch',
   },
 });

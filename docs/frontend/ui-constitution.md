@@ -62,6 +62,19 @@ Exact values: [design-tokens.md](./design-tokens.md).
 
 ---
 
+## Aesthetic Color
+
+Prefer soft, muted variants — never harsh direct colors.
+
+* Reading text uses `textPrimary` (warm dark gray), never pure black
+* Large fills and swipe backgrounds use `*Muted` tokens
+* Icons on muted washes use `*Emphasis` tokens (`successEmphasis`, `dangerEmphasis`)
+* Full `success` and `danger` are reserved for small accents — errors, validation, tight borders
+
+The interface should feel calm and paper-like, not alarmist or high-contrast.
+
+---
+
 ## Layout
 
 ### Screen padding

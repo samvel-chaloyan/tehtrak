@@ -1,8 +1,11 @@
-import { Alert } from 'react-native';
+import { presentConfirm } from '@/shared/ui/sheetController';
 
 export function confirmDelete(title: string, message: string, onConfirm: () => void) {
-  Alert.alert(title, message, [
-    { text: 'Cancel', style: 'cancel' },
-    { text: 'Delete', style: 'destructive', onPress: onConfirm },
-  ]);
+  presentConfirm({
+    title,
+    message,
+    confirmLabel: 'Delete',
+    cancelLabel: 'Cancel',
+    onConfirm,
+  });
 }

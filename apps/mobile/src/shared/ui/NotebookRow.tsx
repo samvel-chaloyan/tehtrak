@@ -9,11 +9,43 @@ export type NotebookRowSize = 'workspace' | 'collection' | 'item';
 
 const SIZE_CONFIG: Record<
   NotebookRowSize,
-  { title: TypographyVariant; description: TypographyVariant; paddingVertical: 'lg' | 'md' }
+  {
+    title: TypographyVariant;
+    description: TypographyVariant;
+    paddingVertical: 'lg' | 'md' | 'xl' | '2xl';
+    titleWeight: '600' | '500';
+    titleGap: 'xs' | 'sm' | 'md';
+    metaGap: 'sm' | 'md';
+    inset: boolean;
+  }
 > = {
-  workspace: { title: 'title', description: 'body', paddingVertical: 'lg' },
-  collection: { title: 'subtitle', description: 'bodySmall', paddingVertical: 'md' },
-  item: { title: 'subtitle', description: 'bodySmall', paddingVertical: 'md' },
+  workspace: {
+    title: 'subtitle',
+    description: 'bodySmall',
+    paddingVertical: 'xl',
+    titleWeight: '600',
+    titleGap: 'xs',
+    metaGap: 'sm',
+    inset: true,
+  },
+  collection: {
+    title: 'subtitle',
+    description: 'bodySmall',
+    paddingVertical: 'md',
+    titleWeight: '500',
+    titleGap: 'xs',
+    metaGap: 'sm',
+    inset: true,
+  },
+  item: {
+    title: 'subtitle',
+    description: 'bodySmall',
+    paddingVertical: 'md',
+    titleWeight: '500',
+    titleGap: 'xs',
+    metaGap: 'sm',
+    inset: true,
+  },
 };
 
 export interface NotebookRowProps {
@@ -40,7 +72,7 @@ export function NotebookRow({
   const { colors, spacing } = useTheme();
   const config = SIZE_CONFIG[size];
   const paddingVertical = spacing[config.paddingVertical];
-  const titleColor = onPress && size === 'workspace' ? 'accent' : 'secondary';
+  const horizontalPadding = config.inset ? spacing.lg : 0;
   const hasActions = Boolean(onEdit || onDelete);
 
   const rowContent = (
@@ -49,13 +81,17 @@ export function NotebookRow({
         styles.row,
         {
           paddingVertical,
-          paddingLeft: spacing.lg,
-          paddingRight: hasActions ? spacing.sm : spacing.lg,
+          paddingLeft: horizontalPadding,
+          paddingRight: hasActions ? spacing.sm : horizontalPadding,
         },
       ]}
     >
       <View style={styles.textBlock}>
-        <Text variant={config.title} color={titleColor}>
+        <Text
+          variant={config.title}
+          color="primary"
+          style={{ fontWeight: config.titleWeight }}
+        >
           {title}
         </Text>
         {description ? (
@@ -63,13 +99,17 @@ export function NotebookRow({
             variant={config.description}
             color="secondary"
             numberOfLines={size === 'workspace' ? 3 : 2}
-            style={{ marginTop: spacing.xs }}
+            style={{ marginTop: spacing[config.titleGap] }}
           >
             {description}
           </Text>
         ) : null}
         {meta ? (
-          <Text variant="caption" color="tertiary" style={{ marginTop: spacing.sm }}>
+          <Text
+            variant="caption"
+            color="tertiary"
+            style={{ marginTop: spacing[config.metaGap] }}
+          >
             {meta}
           </Text>
         ) : null}
@@ -84,7 +124,9 @@ export function NotebookRow({
         <Pressable
           accessibilityRole="button"
           onPress={onPress}
-          style={({ pressed }) => [pressed && { backgroundColor: colors.primaryMuted }]}
+          style={({ pressed }) => [
+            pressed && { backgroundColor: colors.background },
+          ]}
         >
           {rowContent}
         </Pressable>
@@ -96,8 +138,8 @@ export function NotebookRow({
           style={[
             styles.divider,
             {
-              backgroundColor: colors.primaryBorder,
-              marginLeft: spacing.lg,
+              backgroundColor: colors.border,
+              marginLeft: horizontalPadding,
             },
           ]}
         />
@@ -118,6 +160,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   divider: {
-    height: 1,
+    height: StyleSheet.hairlineWidth,
   },
 });

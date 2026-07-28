@@ -2,6 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAppStore } from '@/store';
 import { useTheme } from '@/theme';
+import { fontFamily } from '@/theme/typography';
 import { AppStack } from './AppStack';
 import { AuthStack } from './AuthStack';
 import { RootStackParamList } from './types';
@@ -25,10 +26,10 @@ export function RootNavigator() {
           notification: colors.primary,
         },
         fonts: {
-          regular: { fontFamily: 'System', fontWeight: '400' },
-          medium: { fontFamily: 'System', fontWeight: '500' },
-          bold: { fontFamily: 'System', fontWeight: '600' },
-          heavy: { fontFamily: 'System', fontWeight: '700' },
+          regular: { fontFamily: fontFamily.regular, fontWeight: '400' },
+          medium: { fontFamily: fontFamily.medium, fontWeight: '500' },
+          bold: { fontFamily: fontFamily.semibold, fontWeight: '600' },
+          heavy: { fontFamily: fontFamily.semibold, fontWeight: '700' },
         },
       }}
     >

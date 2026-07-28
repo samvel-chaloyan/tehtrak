@@ -11,7 +11,7 @@ export function PageTitle({ children, style }: PageTitleProps) {
   const { spacing } = useTheme();
 
   return (
-    <Text variant="titleLarge" style={[{ marginBottom: spacing.xs }, style]}>
+    <Text variant="titleLarge" color="primary" style={[{ marginBottom: spacing.xs }, style]}>
       {children}
     </Text>
   );

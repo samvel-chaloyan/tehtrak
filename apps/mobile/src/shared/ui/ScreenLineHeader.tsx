@@ -1,37 +1,53 @@
 import { ReactNode, type RefObject } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { BrandMenuButton } from './BrandMenuButton';
 import { Text } from './Text';
 import { useTheme } from '@/theme';
 
+export type ScreenLineHeaderTone = 'default' | 'quiet' | 'brand';
+
 export interface ScreenLineHeaderProps {
   title: string;
-  /** Full-width row below the title — right-aligned */
+  /** Legacy non-brand layouts */
   subtitle?: string;
-  /** Accent line under the subtitle text */
   subtitleUnderline?: boolean;
-  /** Left side of the subtitle row — e.g. back control under the logo */
+  tone?: ScreenLineHeaderTone;
   contextLeading?: ReactNode;
-  /** Auth screens — back button in the title row */
   leading?: ReactNode;
-  /** Measured by the shell to place the floating menu logo */
   logoSlotRef?: RefObject<View | null>;
   onLogoSlotLayout?: () => void;
+  onMenuPress?: () => void;
+  menuLogoVariant?: 'default' | 'white';
 }
 
 export function ScreenLineHeader({
   title,
   subtitle,
   subtitleUnderline = false,
+  tone = 'brand',
   contextLeading,
   leading,
   logoSlotRef,
   onLogoSlotLayout,
+  onMenuPress,
+  menuLogoVariant = 'white',
 }: ScreenLineHeaderProps) {
   const { colors, spacing } = useTheme();
+  const isQuiet = tone === 'quiet';
+  const isBrand = tone === 'brand';
 
   const leftContent = leading ? (
     <View style={styles.leadingSlot}>{leading}</View>
+  ) : isBrand && onMenuPress ? (
+    <View
+      ref={logoSlotRef}
+      collapsable={false}
+      onLayout={onLogoSlotLayout}
+      style={styles.brandMenuAnchor}
+    >
+      <BrandMenuButton inline logoVariant={menuLogoVariant} onPress={onMenuPress} />
+    </View>
   ) : (
     <View
       ref={logoSlotRef}
@@ -41,13 +57,40 @@ export function ScreenLineHeader({
     />
   );
 
+  if (isBrand) {
+    return (
+      <View style={styles.header}>
+        <View style={[styles.brandRow, { gap: spacing.sm }]}>
+          {leftContent}
+          <Text variant="title" color="inverse" style={styles.brandTitle}>
+            {title}
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
   return (
-    <View style={[styles.header, { gap: spacing.md, marginBottom: spacing.lg }]}>
-      <View style={[styles.line, { backgroundColor: colors.primary }]} />
+    <View
+      style={[
+        styles.header,
+        { gap: spacing.md, marginBottom: isQuiet ? spacing.xl : spacing.lg },
+      ]}
+    >
+      <View
+        style={[
+          styles.line,
+          { backgroundColor: isQuiet ? colors.border : colors.primary },
+        ]}
+      />
 
       <View style={styles.topRow}>
         {leftContent}
-        <Text variant="sectionTitle" color="accent" style={styles.title}>
+        <Text
+          variant="sectionTitle"
+          color={isQuiet ? 'primary' : 'accent'}
+          style={styles.title}
+        >
           {title}
         </Text>
       </View>
@@ -63,7 +106,12 @@ export function ScreenLineHeader({
                     {subtitle}
                   </Text>
                   <View
-                    style={[styles.subtitleLine, { backgroundColor: colors.primaryBorder }]}
+                    style={[
+                      styles.subtitleLine,
+                      {
+                        backgroundColor: isQuiet ? colors.border : colors.primaryBorder,
+                      },
+                    ]}
                   />
                 </View>
               ) : (
@@ -82,6 +130,15 @@ export function ScreenLineHeader({
 const styles = StyleSheet.create({
   header: {
     width: '100%',
+  },
+  brandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  brandTitle: {
+    textAlign: 'right',
+    flexShrink: 1,
   },
   line: {
     height: 3,
@@ -133,5 +190,9 @@ const styles = StyleSheet.create({
   leadingSpacer: {
     width: 44,
     height: 44,
+  },
+  brandMenuAnchor: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

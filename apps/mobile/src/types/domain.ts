@@ -19,6 +19,11 @@ export interface Workspace {
   emoji: string;
 }
 
+export interface WorkspaceSummary {
+  collectionCount: number;
+  lastActivityAt?: string;
+}
+
 export interface Collection {
   id: string;
   workspaceId: string;

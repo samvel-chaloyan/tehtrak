@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Keyboard, Pressable, ScrollView, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useTheme } from '@/theme';
+import { useSurfaceStyles, useTheme } from '@/theme';
 
 export interface ScreenProps {
   children: ReactNode;
@@ -21,7 +21,8 @@ export function Screen({
   edges = ['top', 'bottom'],
 }: ScreenProps) {
   const insets = useSafeAreaInsets();
-  const { colors, spacing } = useTheme();
+  const { spacing } = useTheme();
+  const surfaces = useSurfaceStyles();
 
   const paddingTop = (edges.includes('top') ? insets.top : 0) + spacing.lg;
   const paddingBottom = (edges.includes('bottom') ? insets.bottom : 0) + spacing.xl;
@@ -29,8 +30,8 @@ export function Screen({
 
   const containerStyle = [
     styles.container,
+    surfaces.canvas,
     {
-      backgroundColor: colors.background,
       paddingTop,
       paddingBottom,
       paddingHorizontal: horizontalPadding,
@@ -41,7 +42,7 @@ export function Screen({
   if (scroll) {
     return (
       <ScrollView
-        style={[styles.container, { backgroundColor: colors.background, paddingTop: insets.top + spacing.lg }]}
+        style={[styles.container, surfaces.canvas, { paddingTop: insets.top + spacing.lg }]}
         contentContainerStyle={[
           {
             paddingBottom: (edges.includes('bottom') ? insets.bottom : 0) + spacing.xl,

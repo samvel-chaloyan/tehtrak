@@ -17,7 +17,10 @@ import {
 } from './storage';
 import type { DemoData, DemoSession } from './types';
 
-const WORKSPACE_EMOJIS = ['🏠', '📋', '📦', '🌿', '📝'];
+const WORKSPACE_EMOJIS = ['🅿️', '🥫', '🌿', '📦', '🚗', '📚', '📷', '🏠', '📋', '📝'];
+
+/** Bump when mock seed content changes so AsyncStorage picks up new fixtures. */
+export const DEMO_SEED_VERSION = 2;
 
 function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
@@ -39,7 +42,15 @@ async function readData(): Promise<DemoData> {
     await setDemoStorageString(demoStorageKeys.data, JSON.stringify(data));
     return data;
   }
-  return JSON.parse(raw) as DemoData;
+
+  try {
+    return JSON.parse(raw) as DemoData;
+  } catch {
+    const data = seedData();
+    await setDemoStorageString(demoStorageKeys.data, JSON.stringify(data));
+    logDemo('Reset corrupt demo data');
+    return data;
+  }
 }
 
 async function writeData(data: DemoData): Promise<void> {
@@ -47,11 +58,14 @@ async function writeData(data: DemoData): Promise<void> {
 }
 
 export async function ensureDemoInitialized(): Promise<void> {
-  const initialized = await getDemoStorageBoolean(demoStorageKeys.initialized);
-  if (!initialized) {
+  const seedVersion = await getDemoStorageString(demoStorageKeys.seedVersion);
+  const needsReseed = seedVersion !== String(DEMO_SEED_VERSION);
+
+  if (needsReseed) {
     await writeData(seedData());
     await setDemoStorageBoolean(demoStorageKeys.initialized, true);
-    logDemo('Seeded demo workspace data');
+    await setDemoStorageString(demoStorageKeys.seedVersion, String(DEMO_SEED_VERSION));
+    logDemo(`Seeded demo workspace data v${DEMO_SEED_VERSION}`);
   } else {
     logDemo('Using demo workspace data');
   }

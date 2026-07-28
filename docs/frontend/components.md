@@ -113,7 +113,7 @@ Index row inside a grouped `NotebookIndex` surface. Typography only — no icons
 
 | Size | Title | Description | Padding |
 |------|-------|-------------|---------|
-| `workspace` | `title` (20/600) | `body` (17/400) | `lg` vertical |
+| `workspace` | `subtitle` (17/600) | `bodySmall` | `xl` vertical |
 | `collection` | `subtitle` (17/500) | `bodySmall` | `md` vertical |
 | `item` | `subtitle` (17/500) | `bodySmall` | `md` vertical |
 
@@ -128,10 +128,29 @@ Meta (optional, caption tertiary)
 
 ### States
 
-* **Pressable workspace rows** — title uses `accent`; description stays `secondary`
-* **Pressed** — `primaryMuted` background
+* **Pressable rows** — workspace rows use neutral `background` on press; nested rows use `primaryMuted`
+* **Pressed** — `primaryMuted` background (collection/item)
 * No borders on individual rows
 * No emoji
+
+Workspace rows use swipe actions — no inline edit/delete buttons.
+
+---
+
+## SwipeableRow
+
+### Purpose
+
+Reveal edit/delete actions on swipe without visible row chrome.
+
+### Actions
+
+| Direction | Action | Background | Icon |
+|-----------|--------|------------|------|
+| Swipe right | Edit | `successMuted` | `successEmphasis` pencil |
+| Swipe left | Delete | `dangerMuted` | `dangerEmphasis` trash |
+
+Used on workspace list. Rows remain clean while browsing.
 
 ---
 
@@ -178,17 +197,17 @@ Example: `4 collections`
 
 ### Purpose
 
-Bordered notebook page for a single item — framed content with header and property rows.
+Property rows for a single item page. Prefer hosting them inside `NotebookListShelf` (`framed={false}`) so the page shares the same subtle grouped surface and right-footer meta as list screens.
 
 ### Components
 
 | Component | Role |
 |-----------|------|
-| `NotebookPage` | Primary border frame (reuses index surface style) |
-| `NotebookPageHeader` | Item name, updated caption, optional trailing action |
-| `NotebookPageRow` | Label + value or input, inset divider between rows |
+| `NotebookPage` | Optional unframed container (shelf usually owns the surface) |
+| `NotebookPageHeader` | Optional title block — prefer shelf footer meta for “Updated …” |
+| `NotebookPageRow` | Label + value or input, quiet inset dividers |
 
-Use on item detail (view and edit). View mode shows formatted values; edit mode uses embedded plain inputs in the same rows.
+Use on item detail (view and edit). View mode shows formatted values; edit mode uses embedded plain inputs in the same rows. Put update time in the shelf’s right meta slot (`Updated 3d ago`), not as a page header.
 
 ---
 
@@ -382,6 +401,193 @@ Full-screen spinner.
 ### Use
 
 App startup and authentication bootstrap only. Not for list or screen loading.
+
+---
+
+## ContextBanner
+
+### Purpose
+
+Band under the brand header — places capsule on Workspaces home; soft navigation capsule on nested screens; ambient copy as fallback.
+
+### Variants
+
+| Mode | When | Content |
+|------|------|---------|
+| Places home | Workspaces root | Soft white capsule — recent initials circles \| search |
+| Search | After tapping search | Soft white capsule — back \| text field (focused) \| clear / search |
+| Capsule | Nested screens | Soft white nav capsule — back \| context label \| search |
+| Ambient | Fallback root | Rotating quiet `bodySmall` secondary lines, centered |
+
+### Places home rules
+
+* Same capsule chrome as nested (`CONTEXT_CAPSULE_HEIGHT` 52, pill, `surface`, `shadows.soft`)
+* Horizontal story circles — initials only (`caption`); custom place icons later
+* Soft primary ring on last-opened place
+* Hairline separator before search
+* Search: `search-outline`, `textSecondary`
+
+### Inline search rules
+
+* Tapping search frees the capsule — recent circles / context label leave; field takes the middle
+* Auto-focus the text field so the cursor is ready
+* Back exits search and restores the previous capsule mode
+* Clear (when query non-empty) empties the field without exiting
+* Body starts blank while the query is empty; filters the grid/list live as the user types
+* No primary blue inside the search capsule
+
+### Ambient rules
+
+* Fixed height `CONTEXT_BANNER_HEIGHT` (36)
+* Short lines: centered; rotate every 5–8 seconds with a soft fade
+* Long lines: slow marquee after a ~1s pause, then loop
+* No border, card, icon, or button
+* No background
+* Generous horizontal padding (`lg`)
+* Vertically centered
+
+### Capsule rules (nested)
+
+* Height `CONTEXT_CAPSULE_HEIGHT` (52), fully rounded pill (`height / 2`)
+* White `surface` fill — quiet shadow, no border
+* Equal vertical gap (`CONTEXT_CAPSULE_GAP` = 12) above and below — centered between header and list
+* Layout: back · hairline separator · label · search
+* Icons + label: `textSecondary` (medium gray) — never primary blue, never pure black
+* Label slot flexes between separator and search; short names stay still
+* Long names: hold ~1s, then seamless looping marquee (`RunningText`)
+* Reuse on Collections, Items, Item details (and other nested shells)
+* Blue stays on header, primary actions, active states, and brand only
+
+Implementation: `ContextBanner`, composed in `AppScreenShell` via `onBack` / `subtitle` / `onSearch` / `recentPlaces` / `searchActive` (+ query handlers).
+
+---
+
+## WorkspaceGridCard
+
+### Purpose
+
+Place tile for the workspace home grid — calm, typography-led. Workspace home pairs this grid with the places capsule (initials + search) above.
+
+### Anatomy
+
+```
+┌─────────────────────────┐
+│ ╭─ blue corner accent   │  outside, one continuous rounded L
+│                         │
+│  Workspace name         │  bodySmall, medium, primary
+│                         │
+│  4 collections          │  caption, secondary
+│  Updated yesterday      │
+└─────────────────────────┘
+```
+
+Radius: `xl` (20). Surface: `surface`. Shadow: `soft`. No full border.
+
+Press: brief opacity fade only — no persistent selected tint on the grid.
+
+Accent: one continuous primary stroke hugging the **outside** of the top-left rounded corner — not a full-width bar, not separate arc/arm pieces.
+
+Long press: focus mode via `WorkspaceFocusMenu` when used in a measurable grid.
+
+Metadata only — no description, icons, badges, or visible action buttons on the idle card.
+
+Implementation: `WorkspaceGridCard` + `WorkspaceFocusMenu`.
+
+---
+
+## WorkspaceShortcutChip
+
+### Purpose
+
+Quiet shortcut chip (FieldChip density). Prefer story circles in the Workspaces capsule for home shortcuts; chip remains available if needed elsewhere.
+
+### Anatomy
+
+Bordered chip, `bodySmall`, max one line. Default: `surface` + `primaryBorder` + secondary label. Emphasized (last opened): `primaryMuted` + `primary` border + accent label.
+
+Implementation: `WorkspaceShortcutChip`.
+
+---
+
+## WorkspaceRecentAvatar
+
+### Purpose
+
+Story-style place circle in the Workspaces capsule — initials for now; custom icons later.
+
+Quiet ring (`border` / `primary` when emphasized), face on `background` / `primaryMuted`, `caption` initials.
+
+Implementation: `WorkspaceRecentAvatar` + `workspaceInitials()`.
+
+---
+
+## WorkspaceFocusMenu
+
+### Purpose
+
+Contextual long-press menu for a workspace place card — dynamic position, not a static bottom sheet.
+
+### Anatomy
+
+```
+┌ BlurView + soft scrim (full screen) ──────────────┐
+│                                                   │
+│          ┌ sharp card clone (window xy) ┐         │
+│          │  Workspace name …            │         │
+│          └──────────────────────────────┘         │
+│               ┌ pill cluster ┐                    │
+│               │ ← │ ✎ │ 🗑  │                    │
+│               └─────────────┘                     │
+└───────────────────────────────────────────────────┘
+```
+
+Cluster anchors below the card when there is room, otherwise above. Icons match app chrome: `chevron-back` (cancel), `create-outline` (edit), `trash-outline` (delete). Hairline separators between actions (same as nav capsule). Tap scrim cancels.
+
+Tokens: `expo-blur` light blur, light scrim, `surface` pill, `shadows.soft`, `radius.full`.
+
+Delete still opens the shared confirm bottom sheet after dismiss.
+
+Implementation: `WorkspaceFocusMenu`.
+
+---
+
+## AppBottomSheet
+
+### Purpose
+
+Calm notebook bottom sheet for short choices and destructive confirms — replaces system alerts.
+
+### Anatomy
+
+```
+┌ overlay (colors.overlay) ─────────────┐
+│                                       │
+│  ┌ surface, top radius xl, soft ───┐  │
+│  │  optional title (bodySmall)     │  │
+│  │  optional message (caption)     │  │
+│  │  ───────────────── hairline     │  │
+│  │  Action rows (centered body)    │  │
+│  │  Cancel (secondary)             │  │
+│  └─────────────────────────────────┘  │
+└───────────────────────────────────────┘
+```
+
+Tokens: `surface`, `overlay`, `radius.xl` (top), `shadows.soft`, inset `spacing.md`, safe-area bottom.
+
+Confirm density: `compact` — floating rounded card (`radius.xl` all sides), tighter padding, shorter action rows, lifted off the bottom edge.
+
+Action tones: default (`textPrimary`), danger (`danger`), cancel (`textSecondary`). Typography-led — no large primary buttons.
+
+Tap overlay or Cancel dismisses.
+
+### Imperative API
+
+Mount `SheetHost` at app root. Call sites use:
+
+* `presentActions({ title?, actions[] })` — shared action menus
+* `presentConfirm({ title, message, onConfirm })` — delete confirms via `confirmDelete`
+
+Implementation: `AppBottomSheet`, `SheetHost`, `sheetController`.
 
 ---
 

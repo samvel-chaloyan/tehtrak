@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   frame: {
     flex: 1,
     minHeight: 0,
-    overflow: 'hidden',
+    overflow: 'visible',
   },
   body: {
     flex: 1,
@@ -59,5 +59,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+    zIndex: 4,
   },
 });

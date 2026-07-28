@@ -48,13 +48,13 @@ export function RowActions({ onEdit, onDelete }: RowActionsProps) {
             styles.action,
             {
               borderRadius: radius.sm,
-              borderColor: colors.danger,
+              borderColor: colors.dangerEmphasis,
               backgroundColor: pressed ? colors.dangerMuted : colors.surface,
               opacity: pressed ? 0.9 : 1,
             },
           ]}
         >
-          <Ionicons name="trash-outline" size={ICON_SIZE} color={colors.danger} />
+          <Ionicons name="trash-outline" size={ICON_SIZE} color={colors.dangerEmphasis} />
         </Pressable>
       ) : null}
     </View>

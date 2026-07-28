@@ -9,7 +9,7 @@ import { FixedFooterFrame } from '@/shared/ui/FixedFooterFrame';
 import { KeyboardDismissView } from '@/shared/ui/KeyboardDismissView';
 import { useScreenContentHeight } from '@/shared/ui/useScreenContentHeight';
 import { Stack, Text } from '@/shared/ui';
-import { useTheme } from '@/theme';
+import { useSurfaceStyles, useTheme } from '@/theme';
 
 const WELCOME_LINES = [
   appConfig.tagline,
@@ -19,7 +19,8 @@ const WELCOME_LINES = [
 ] as const;
 
 export function WelcomeScreen({ navigation }: AuthScreenProps<'Welcome'>) {
-  const { colors, spacing } = useTheme();
+  const { spacing } = useTheme();
+  const surfaces = useSurfaceStyles();
   const insets = useSafeAreaInsets();
   const contentHeight = useScreenContentHeight();
 
@@ -27,13 +28,13 @@ export function WelcomeScreen({ navigation }: AuthScreenProps<'Welcome'>) {
     <KeyboardDismissView
       style={[
         styles.container,
+        surfaces.canvas,
         {
-          backgroundColor: colors.surface,
           paddingTop: insets.top + spacing.lg,
         },
       ]}
     >
-      <View style={[styles.frame, { height: contentHeight }]}>
+      <View style={[styles.frame, surfaces.scroll, { height: contentHeight }]}>
         <FixedFooterFrame
           buttonCount={2}
           footer={

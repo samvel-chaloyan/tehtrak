@@ -9,6 +9,8 @@ export interface ScreenMetaProps {
   label: string;
   color?: ScreenMetaColor;
   align?: ScreenMetaAlign;
+  /** Tighter shelf footer — no extra bottom margin */
+  compact?: boolean;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -17,6 +19,7 @@ export function ScreenMeta({
   label,
   color = 'tertiary',
   align = 'left',
+  compact = false,
   style,
 }: ScreenMetaProps) {
   const { spacing } = useTheme();
@@ -25,7 +28,11 @@ export function ScreenMeta({
     <Text
       variant="caption"
       color={color}
-      style={[{ marginBottom: spacing.md, textAlign: align }, style]}
+      style={[
+        compact ? null : { marginBottom: spacing.md },
+        { textAlign: align },
+        style,
+      ]}
     >
       {label}
     </Text>

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { collectionDetailsMeta } from '@/features/collections/constants/starterFields';
@@ -14,9 +14,32 @@ import {
   ScrollIndicatorFlatList,
   SingleBottomButton,
   SkeletonList,
+  SwipeableRow,
 } from '@/shared/ui';
+import type { Item, PropertyField } from '@/types';
 import { confirmDelete } from '@/utils/confirmDelete';
 import { getItemSubtitle, getItemTitle } from '@/utils';
+
+function matchesItemQuery(item: Item, fields: PropertyField[], query: string) {
+  const normalized = query.trim().toLowerCase();
+  if (!normalized) {
+    return false;
+  }
+
+  const title = getItemTitle(item, fields).toLowerCase();
+  const subtitle = (getItemSubtitle(item, fields) ?? '').toLowerCase();
+  if (title.includes(normalized) || subtitle.includes(normalized)) {
+    return true;
+  }
+
+  return fields.some((field) => {
+    const raw = item.data[field.key];
+    if (raw == null || raw === '') {
+      return false;
+    }
+    return String(raw).toLowerCase().includes(normalized);
+  });
+}
 
 export function CollectionDetailsScreen({
   navigation,
@@ -29,9 +52,21 @@ export function CollectionDetailsScreen({
     collectionId,
   );
   const deleteRecord = useDeleteRecord(workspaceId, collectionId);
+  const [searchActive, setSearchActive] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fieldList = fields ?? [];
   const isLoading = fieldsLoading || itemsLoading;
+
+  const enterSearch = useCallback(() => {
+    setSearchQuery('');
+    setSearchActive(true);
+  }, []);
+
+  const exitSearch = useCallback(() => {
+    setSearchActive(false);
+    setSearchQuery('');
+  }, []);
 
   const openCreateItem = useCallback(
     () => navigation.navigate('CreateItem', { collectionId, collectionName, workspaceId }),
@@ -43,12 +78,35 @@ export function CollectionDetailsScreen({
     [navigation, collectionId, collectionName, workspaceId],
   );
 
+  const itemList = items ?? [];
+
+  const filteredItems = useMemo(() => {
+    if (!searchActive) {
+      return itemList;
+    }
+    const trimmed = searchQuery.trim();
+    if (!trimmed) {
+      return [];
+    }
+    return itemList.filter((item) => matchesItemQuery(item, fieldList, trimmed));
+  }, [itemList, fieldList, searchActive, searchQuery]);
+
+  const searchShellProps = {
+    searchActive,
+    searchQuery,
+    searchPlaceholder: 'Find an item',
+    onSearchQueryChange: setSearchQuery,
+    onSearchCancel: exitSearch,
+  };
+
   const shellProps = {
     navigation,
     title: 'Items',
     subtitle: collectionName,
     subtitleUnderline: true,
     onBack: () => navigation.goBack(),
+    onSearch: enterSearch,
+    ...searchShellProps,
   };
 
   const itemFooter = (
@@ -71,13 +129,13 @@ export function CollectionDetailsScreen({
   );
 
   const shelfFooter = (
-    <OutlineButton label="Customize fields" compact onPress={openCustomizeFields} />
+    <OutlineButton label="Customize" compact onPress={openCustomizeFields} />
   );
 
   if (isLoading) {
     return (
       <AppScreenShell {...shellProps}>
-        <NotebookListShelf countLabel={collectionDetailsMeta(0, 0)} footerLeft={shelfFooter}>
+        <NotebookListShelf countLabel={collectionDetailsMeta(0, 0)} footerLeft={shelfFooter} framed={false} countColor="tertiary">
           <SkeletonList count={5} />
         </NotebookListShelf>
       </AppScreenShell>
@@ -95,15 +153,15 @@ export function CollectionDetailsScreen({
     );
   }
 
-  const itemList = items ?? [];
   const itemCount = itemList.length;
   const fieldCount = fieldList.length;
-  const countLabel = collectionDetailsMeta(itemCount, fieldCount);
+  const listCount = searchActive ? filteredItems.length : itemCount;
+  const countLabel = collectionDetailsMeta(listCount, fieldCount);
 
   if (!itemCount) {
     return (
       <AppScreenShell {...shellProps} footer={itemFooter}>
-        <NotebookListShelf countLabel={countLabel} footerLeft={shelfFooter}>
+        <NotebookListShelf countLabel={countLabel} footerLeft={shelfFooter} framed={false} countColor="tertiary">
           <EmptyListContent
             title="No items yet"
             description="Add your first item to begin recording information in this collection."
@@ -113,47 +171,75 @@ export function CollectionDetailsScreen({
     );
   }
 
+  const showSearchBlank = searchActive && !searchQuery.trim();
+  const showSearchEmpty =
+    searchActive && Boolean(searchQuery.trim()) && filteredItems.length === 0;
+
   return (
-    <AppScreenShell {...shellProps} footer={itemFooter}>
+    <AppScreenShell
+      {...shellProps}
+      footer={searchActive ? undefined : itemFooter}
+    >
       <View style={styles.content}>
-        <NotebookListShelf countLabel={countLabel} footerLeft={shelfFooter}>
-          <ScrollIndicatorFlatList
-            data={itemList}
-            keyExtractor={(item) => item.id}
-            refreshing={isRefetching}
-            onRefresh={refetch}
-            contentContainerStyle={styles.listContent}
-            renderItem={({ item, index }) => (
-              <NotebookRow
-                title={getItemTitle(item, fieldList)}
-                description={getItemSubtitle(item, fieldList)}
-                onPress={() =>
-                  navigation.navigate('ItemDetails', {
-                    itemId: item.id,
-                    collectionId,
-                    collectionName,
-                    workspaceId,
-                  })
-                }
-                onEdit={() =>
-                  navigation.navigate('ItemDetails', {
-                    itemId: item.id,
-                    collectionId,
-                    collectionName,
-                    workspaceId,
-                    edit: true,
-                  })
-                }
-                onDelete={() =>
-                  confirmDelete('Delete item?', 'This cannot be undone.', () =>
-                    deleteRecord.mutate(item.id),
-                  )
-                }
-                showDivider={index < itemList.length - 1}
-                size="item"
-              />
-            )}
-          />
+        <NotebookListShelf
+          countLabel={countLabel}
+          footerLeft={searchActive ? undefined : shelfFooter}
+          framed={false}
+          countColor="tertiary"
+        >
+          {showSearchBlank ? (
+            <EmptyListContent
+              title="Find an item"
+              description="Start typing to filter items in this collection."
+            />
+          ) : showSearchEmpty ? (
+            <EmptyListContent
+              title="No matching items"
+              description="Try another title or value."
+            />
+          ) : (
+            <ScrollIndicatorFlatList
+              data={filteredItems}
+              keyExtractor={(item) => item.id}
+              keyboardShouldPersistTaps="handled"
+              refreshing={searchActive ? false : isRefetching}
+              onRefresh={searchActive ? undefined : refetch}
+              contentContainerStyle={styles.listContent}
+              renderItem={({ item, index }) => (
+                <SwipeableRow
+                  onEdit={() =>
+                    navigation.navigate('ItemDetails', {
+                      itemId: item.id,
+                      collectionId,
+                      collectionName,
+                      workspaceId,
+                      edit: true,
+                    })
+                  }
+                  onDelete={() =>
+                    confirmDelete('Delete item?', 'This cannot be undone.', () =>
+                      deleteRecord.mutate(item.id),
+                    )
+                  }
+                >
+                  <NotebookRow
+                    title={getItemTitle(item, fieldList)}
+                    description={getItemSubtitle(item, fieldList)}
+                    onPress={() =>
+                      navigation.navigate('ItemDetails', {
+                        itemId: item.id,
+                        collectionId,
+                        collectionName,
+                        workspaceId,
+                      })
+                    }
+                    showDivider={index < filteredItems.length - 1}
+                    size="item"
+                  />
+                </SwipeableRow>
+              )}
+            />
+          )}
         </NotebookListShelf>
       </View>
     </AppScreenShell>
@@ -163,6 +249,7 @@ export function CollectionDetailsScreen({
 const styles = StyleSheet.create({
   content: {
     flex: 1,
+    minHeight: 0,
   },
   listContent: {
     flexGrow: 1,

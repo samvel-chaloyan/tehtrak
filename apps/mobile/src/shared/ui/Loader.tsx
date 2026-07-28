@@ -1,5 +1,5 @@
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import { useTheme } from '@/theme';
+import { useSurfaceStyles, useTheme } from '@/theme';
 import { Text } from './Text';
 
 export interface LoaderProps {
@@ -9,9 +9,17 @@ export interface LoaderProps {
 
 export function Loader({ message, fullScreen = false }: LoaderProps) {
   const { colors, spacing } = useTheme();
+  const surfaces = useSurfaceStyles();
 
   return (
-    <View style={[styles.container, { padding: spacing.lg }, fullScreen && styles.fullScreen]}>
+    <View
+      style={[
+        styles.container,
+        surfaces.canvas,
+        { padding: spacing.lg },
+        fullScreen && styles.fullScreen,
+      ]}
+    >
       <ActivityIndicator size="large" color={colors.primary} />
       {message ? (
         <Text variant="bodySmall" color="secondary" style={{ marginTop: spacing.md }}>

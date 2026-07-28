@@ -7,8 +7,11 @@ import {
   demoCreateWorkspace,
   demoDeleteWorkspace,
   demoFetchWorkspaces,
+  demoFetchWorkspaceSummaries,
   demoUpdateWorkspace,
 } from '@/demo/workspaces';
+import { fetchCollections } from '@/features/collections/api';
+import type { WorkspaceSummary } from '@/types';
 
 export async function fetchWorkspaces() {
   if (isDemoMode) {
@@ -47,4 +50,36 @@ export async function deleteWorkspace(id: string) {
   }
 
   await apiDelete(`/workspaces/${id}`);
+}
+
+export async function fetchWorkspaceSummaries() {
+  if (isDemoMode) {
+    logDemo('fetchWorkspaceSummaries bypassed API');
+    return demoFetchWorkspaceSummaries();
+  }
+
+  const list = await apiGet<ApiWorkspace[]>('/workspaces');
+  const summaries: Record<string, WorkspaceSummary> = {};
+
+  await Promise.all(
+    list.map(async (workspace) => {
+      const collections = await fetchCollections(workspace.id);
+      const lastActivityAt = collections.reduce<string | undefined>((latest, collection) => {
+        if (!collection.lastActivityAt) {
+          return latest;
+        }
+        if (!latest || collection.lastActivityAt > latest) {
+          return collection.lastActivityAt;
+        }
+        return latest;
+      }, undefined);
+
+      summaries[workspace.id] = {
+        collectionCount: collections.length,
+        lastActivityAt,
+      };
+    }),
+  );
+
+  return summaries;
 }

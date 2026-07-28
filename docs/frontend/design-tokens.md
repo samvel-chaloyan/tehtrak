@@ -10,19 +10,48 @@ For rules, see [ui-constitution.md](./ui-constitution.md). Implementation: `apps
 
 ## Colors
 
-### Brand
+### Core palette
+
+| Role | Token | Value |
+|------|-------|-------|
+| Background | `background` | `#F5F5F7` |
+| Surface | `surface` | `#FFFFFF` |
+| Border | `border` | `#E5E7EB` |
+| Primary text | `textPrimary` | `#48484A` |
+| Secondary text | `textSecondary` | `#6B7280` |
+| Tertiary text | `textTertiary` | `#9CA3AF` |
+| Primary blue | `primary` | `#29B5E8` |
+| Pressed blue | `primaryPressed` | `#1FA3D4` |
+
+### Background vs surface
+
+| Element | Token |
+|---------|-------|
+| Entire screen background | `background` |
+| Drawer background | `background` |
+| Grouped list (when grouped) | `surface` |
+| Modal | `surface` |
+| Bottom sheet | `surface` |
+| Dialog | `surface` |
+| Input fields | `surface` |
+| Cards (rare) | `surface` |
+
+`background` is the canvas. `surface` is content that sits on the canvas.
+
+Implementation: `useSurfaceStyles()` in `apps/mobile/src/theme/surfaces.ts` — use `canvas`, `grouped`, and `scroll` (transparent) instead of hardcoded colors. ScrollViews and FlatLists must use `scroll` so the canvas shows through.
+
+### Brand (derived)
 
 | Token | Value |
 |-------|-------|
-| `primary` | `#29B5E8` |
-| `primaryPressed` | `#4E9BC7` |
 | `primaryMuted` | `#EEF6FA` |
+| `primaryBorder` | `rgba(41, 181, 232, 0.35)` |
 
 ### Surfaces
 
 | Token | Value |
 |-------|-------|
-| `background` | `#F8F8F6` |
+| `background` | `#F5F5F7` |
 | `surface` | `#FFFFFF` |
 | `surfaceElevated` | `#FFFFFF` |
 
@@ -30,18 +59,31 @@ For rules, see [ui-constitution.md](./ui-constitution.md). Implementation: `apps
 
 | Token | Value |
 |-------|-------|
-| `border` | `#E8EAED` |
-| `borderLight` | `#E8EAED` |
-| `borderSecondary` | `#D9DDE3` |
+| `border` | `#E5E7EB` |
+| `borderLight` | `#E5E7EB` |
+| `borderSecondary` | `#D1D5DB` |
 
 ### Text
 
 | Token | Value |
 |-------|-------|
-| `textPrimary` | `#1E2430` | Main reading text — soft black, not pure black |
-| `textSecondary` | `#667085` | Dark gray — supporting text, labels, auth body copy |
-| `textTertiary` | `#98A2B3` |
+| `textPrimary` | `#48484A` |
+| `textSecondary` | `#6B7280` |
+| `textTertiary` | `#9CA3AF` |
 | `textInverse` | `#FFFFFF` |
+
+### Aesthetic color rule
+
+Prefer soft/muted variants over direct saturated colors.
+
+| Use | Token |
+|-----|-------|
+| Reading text | `textPrimary` |
+| Large fills / swipe backgrounds | `*Muted` tokens |
+| Icons on muted washes | `*Emphasis` tokens |
+| Errors, strong borders | `danger`, `success` (small areas only) |
+
+Never use pure black (`#000`) or full-saturation red/green for large surfaces.
 
 ### Feedback
 
@@ -49,15 +91,17 @@ For rules, see [ui-constitution.md](./ui-constitution.md). Implementation: `apps
 |-------|-------|
 | `success` | `#6FAF73` |
 | `successMuted` | `#F2F8F2` |
+| `successEmphasis` | `#84B588` |
 | `warning` | `#D4A15A` |
 | `danger` | `#C85A5A` |
 | `dangerMuted` | `#FBF0F0` |
+| `dangerEmphasis` | `#CF9595` |
 
 ### Overlay
 
 | Token | Value |
 |-------|-------|
-| `overlay` | `rgba(30, 36, 48, 0.4)` |
+| `overlay` | `rgba(28, 28, 30, 0.4)` |
 
 ---
 
@@ -88,6 +132,7 @@ Screen layout: horizontal padding `lg` (24), top `lg` (24), bottom `xl` (32).
 | `md` | 12 |
 | `lg` | 16 |
 | `button` | 14 |
+| `card` | 18 |
 | `xl` | 20 |
 | `full` | 9999 |
 
@@ -118,9 +163,12 @@ Easing: `ease-out` (enter), `ease-in` (exit).
 
 ## Elevation
 
-Prefer borders and spacing over shadows. Heavy shadows are prohibited.
+Quiet shadows only. Heavy multi-layer shadows are prohibited.
 
 | Token | Use |
 |-------|-----|
-| `shadowCard` | Reserved; avoid in MVP |
-| `shadowModal` | Modals only |
+| `shadows.card` | Light lift — small tiles if needed |
+| `shadows.soft` | Surfaces, list panels, buttons, grid cards, nav capsule |
+| `shadows.raised` | Brand header chrome (must read on canvas) |
+
+Implementation: `apps/mobile/src/theme/shadows.ts`. Parents must not use `overflow: 'hidden'` or shadows will be clipped.

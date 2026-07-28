@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { appConfig } from '@/config/app';
 import type { ApiUser } from '@/core/api/types';
-import { getString, setString } from '@/services/storage';
+import { getString, remove, setString } from '@/services/storage';
 
 interface AppState {
   isAuthenticated: boolean;
@@ -11,6 +11,7 @@ interface AppState {
   setAuthenticated: (value: boolean) => void;
   setUser: (user: ApiUser | null) => void;
   selectWorkspace: (workspaceId: string) => void;
+  clearWorkspaceSelection: () => void;
   /** Loads persisted workspace selection after startup (async storage). */
   hydrateFromStorage: () => Promise<void>;
 }
@@ -27,6 +28,11 @@ export const useAppStore = create<AppState>((set) => ({
   selectWorkspace: (workspaceId) => {
     void setString(appConfig.storageKeys.selectedWorkspaceId, workspaceId);
     set({ selectedWorkspaceId: workspaceId });
+  },
+
+  clearWorkspaceSelection: () => {
+    void remove(appConfig.storageKeys.selectedWorkspaceId);
+    set({ selectedWorkspaceId: null });
   },
 
   hydrateFromStorage: async () => {

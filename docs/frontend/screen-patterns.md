@@ -47,31 +47,72 @@ Tight vertical rhythm. No excessive dead space between copy and actions.
 
 ## Workspace List
 
-Notebook shelf — not dashboard.
+Place grid home — soft capsule with recent initials + search above the familiar 2-column tiles.
 
 ```
-ScreenLineHeader
-  blue line
-  top row: BrandMenuButton | page title (accent, right)
-  context row (when nested):
-    left: ShellBackLink — chevron + Back, primaryBorder underline (under logo)
-    right: parent name (secondary, primaryBorder underline when nested)
-  subtitle row — tagline (secondary, right-aligned, primaryBorder underline) on root screens
+Brand header (primary blue, edge-to-edge)
+  BrandMenuButton — tehtrak_white.png on blue; tehtrak_blue.png in drawer
+  logo left | page title right (white) — title only
 
-AppDrawer — logo, brand, Search · Favorites · Recent · Settings · Help · About · Sign out
+ContextBanner capsule (52px) — story circles (initials) | 🔍
+  recent places side-by-side (scroll if needed)
+  soft primary ring on last-opened
+  place icons deferred — initials only for now
+  search affordance on the right (drawer also has Search)
 
-NotebookListShelf — frame + "N workspaces" meta (right-aligned, shown even when empty)
+  On search tap → capsule becomes ← | text field (focused) | clear
+  body blanks until typing; grid filters live by name / description
+  back restores places capsule + full grid
 
-NotebookIndexFrame (fixed blue border, scroll inside)
-  NotebookRow size=workspace × n
-  divider between rows
+WorkspaceGrid (2 columns inside NotebookListShelf)
+  WorkspaceGridCard × n — fixed equal height tiles
+  ordered by last edited (activity)
+  long-press → WorkspaceFocusMenu (disabled while searching)
 
-SingleBottomButton — New workspace
+SingleBottomButton — New workspace (neutral border default, blue when pressed)
+  hidden while search is active
 ```
 
-Navigates to **Create Workspace** — no inline create on the list screen.
+Collections and Items keep notebook-style vertical lists.
 
-**NotebookRow** — pencil (edit) and red X (delete) on each row. Edit opens **Edit Workspace**; delete confirms before removing.
+Navigates to **Create Workspace** — no inline create on the grid screen.
+
+---
+
+## Collection List
+
+Same shell pattern as workspace list.
+
+```
+Brand header — Collections (title only)
+ContextBanner capsule (52px) — ← context label 🔍  (white, no border/shadow, no blue inside)
+
+  On search tap → capsule becomes ← | text field (focused) | clear
+  body blanks until typing; list filters live by name / description
+  back restores context capsule + full list
+
+NotebookListShelf + SwipeableRow × n
+ScreenMeta — "N collections"
+SingleBottomButton — New collection (hidden while searching)
+```
+
+---
+
+## Collection Details (Items)
+
+```
+Brand header — Items (title only)
+ContextBanner capsule — ← collection name 🔍
+
+  On search tap → capsule becomes ← | text field (focused) | clear
+  body blanks until typing; list filters live by title / values
+  back restores context capsule + full list
+
+PlainListSurface + SwipeableRow × n
+NotebookListShelf footer — Customize fields (compact) + item/field count meta
+  Customize hidden while searching
+SingleBottomButton — Add item (hidden while searching)
+```
 
 ---
 
@@ -215,13 +256,20 @@ SingleBottomButton — Add item (+ icon, fixed bottom)
 Reading a page — not viewing a record. One screen for view and edit.
 
 ```
-AppScreenShell — title Item, subtitle collection name (underlined)
+AppScreenShell — title Item, subtitle item title (underlined) + search
 
-NotebookPage (primary border frame)
-  NotebookPageHeader — Updated caption only (item name lives in shell subtitle)
+  On search tap → capsule becomes ← | text field (focused) | clear
+  exits edit if needed; body blanks until typing
+  properties filter live by label / value
+  back restores context capsule + full page
+
+NotebookListShelf (framed=false — same subtle grouped surface as lists)
   NotebookPageRow × n — label + value (view) or highlighted edit control (edit)
+  inset hairline dividers between properties
+  footer meta (right, tertiary) — "Updated 3d ago" (or property count while searching)
 
-SingleBottomButton — Edit (view) or Save (edit). Back dismisses unsaved edits.
+SingleBottomButton — Edit (view) or Save (edit). Hidden while searching.
+  Back dismisses unsaved edits.
 ```
 
 Tap Edit or the list-row pencil to enter edit mode on the same page. Delete stays on the items list row.

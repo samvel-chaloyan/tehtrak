@@ -67,9 +67,9 @@ Screen
 
 ```
 AppScreenShell — title "Item", subtitle collection name
-└── NotebookPage (primary border frame)
-    ├── NotebookPageHeader — item name + updated caption
-    └── NotebookPageRow × n — view values or embedded edit inputs
+└── NotebookListShelf (framed=false — subtle grouped surface)
+    ├── NotebookPageRow × n — view values or embedded edit inputs
+    └── footer meta (right) — Updated … / property count while searching
 ```
 
 View and edit share one screen. Footer toggles between Edit and Save.

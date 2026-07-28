@@ -1,5 +1,7 @@
 import { Text as RNText, TextProps as RNTextProps, StyleSheet } from 'react-native';
+
 import { TypographyVariant, useTheme } from '@/theme';
+import { fontFamilyForWeight } from '@/theme/typography';
 
 type TextColor = 'primary' | 'secondary' | 'tertiary' | 'accent' | 'danger' | 'inverse';
 
@@ -25,9 +27,13 @@ export function Text({
     inverse: colors.textInverse,
   };
 
+  const base = typography[variant];
+  const flat = StyleSheet.flatten([base, style]);
+  const family = fontFamilyForWeight(flat?.fontWeight);
+
   return (
     <RNText
-      style={[typography[variant], { color: colorMap[color] }, style]}
+      style={[base, { color: colorMap[color] }, style, { fontFamily: family }]}
       {...props}
     />
   );

@@ -3,7 +3,6 @@ import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
 import { useTheme } from '@/theme';
 
-import { NotebookIndexFrame } from './NotebookIndex';
 import { PageTitle } from './PageTitle';
 import { Text } from './Text';
 
@@ -12,9 +11,9 @@ export interface NotebookPageProps {
   style?: StyleProp<ViewStyle>;
 }
 
-/** Bordered notebook page — one item's content inside a framed surface. */
+/** Item page surface — quiet, unframed; matches list shelves (`framed={false}`). */
 export function NotebookPage({ children, style }: NotebookPageProps) {
-  return <NotebookIndexFrame style={[styles.page, style]}>{children}</NotebookIndexFrame>;
+  return <View style={[styles.page, style]}>{children}</View>;
 }
 
 export interface NotebookPageHeaderProps {
@@ -22,8 +21,10 @@ export interface NotebookPageHeaderProps {
   caption?: string;
 }
 
+/** Compact page meta — caption-only is a single quiet line, not a banner block. */
 export function NotebookPageHeader({ title, caption }: NotebookPageHeaderProps) {
   const { colors, spacing } = useTheme();
+  const captionOnly = Boolean(caption) && !title;
 
   return (
     <View
@@ -31,8 +32,8 @@ export function NotebookPageHeader({ title, caption }: NotebookPageHeaderProps) 
         styles.header,
         {
           paddingHorizontal: spacing.lg,
-          paddingTop: spacing.lg,
-          paddingBottom: spacing.md,
+          paddingTop: captionOnly ? spacing.xs : spacing.md,
+          paddingBottom: captionOnly ? spacing.sm : spacing.md,
           gap: spacing.xs,
         },
       ]}
@@ -43,12 +44,14 @@ export function NotebookPageHeader({ title, caption }: NotebookPageHeaderProps) 
           {caption}
         </Text>
       ) : null}
-      <View
-        style={[
-          styles.headerRule,
-          { backgroundColor: colors.primaryBorder, marginTop: spacing.list },
-        ]}
-      />
+      {title ? (
+        <View
+          style={[
+            styles.headerRule,
+            { backgroundColor: colors.border, marginTop: spacing.list },
+          ]}
+        />
+      ) : null}
     </View>
   );
 }
@@ -61,7 +64,7 @@ export interface NotebookPageRowProps {
   editing?: boolean;
 }
 
-/** One property row inside a notebook page — label, value or input, inset divider. */
+/** One property row inside a notebook page — label above value, inset divider like list rows. */
 export function NotebookPageRow({
   label,
   children,
@@ -92,7 +95,7 @@ export function NotebookPageRow({
               styles.editField,
               {
                 backgroundColor: colors.surface,
-                borderColor: colors.primaryBorder,
+                borderColor: colors.border,
                 borderRadius: radius.md,
                 paddingHorizontal: spacing.md,
                 paddingVertical: spacing.md,
@@ -110,7 +113,7 @@ export function NotebookPageRow({
           style={[
             styles.divider,
             {
-              backgroundColor: colors.primaryBorder,
+              backgroundColor: colors.border,
               marginLeft: spacing.lg,
             },
           ]}

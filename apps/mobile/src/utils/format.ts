@@ -1,3 +1,6 @@
+/** App-facing dates stay English regardless of device locale. */
+const DISPLAY_LOCALE = 'en-US';
+
 export function formatRelativeTime(iso: string): string {
   const date = new Date(iso);
   const now = new Date();
@@ -11,7 +14,7 @@ export function formatRelativeTime(iso: string): string {
   if (diffHours < 24) return `${diffHours}h ago`;
   if (diffDays < 7) return `${diffDays}d ago`;
 
-  return date.toLocaleDateString(undefined, {
+  return date.toLocaleDateString(DISPLAY_LOCALE, {
     month: 'short',
     day: 'numeric',
   });
@@ -20,7 +23,7 @@ export function formatRelativeTime(iso: string): string {
 export function formatDateDisplay(iso: string): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
-  return date.toLocaleDateString(undefined, {
+  return date.toLocaleDateString(DISPLAY_LOCALE, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -30,7 +33,7 @@ export function formatDateDisplay(iso: string): string {
 export function formatDateTimeDisplay(iso: string): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
-  return date.toLocaleString(undefined, {
+  return date.toLocaleString(DISPLAY_LOCALE, {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',

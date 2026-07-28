@@ -8,7 +8,7 @@ import { FixedFooterFrame } from '@/shared/ui/FixedFooterFrame';
 import { KeyboardDismissView } from '@/shared/ui/KeyboardDismissView';
 import { useScreenContentHeight } from '@/shared/ui/useScreenContentHeight';
 import { Stack } from '@/shared/ui';
-import { useTheme } from '@/theme';
+import { useSurfaceStyles, useTheme } from '@/theme';
 
 export interface AuthFooterAction extends Omit<OutlineButtonProps, 'label'> {
   label: string;
@@ -57,7 +57,8 @@ export function AuthScreenLayout({
   scroll = false,
   footer,
 }: AuthScreenLayoutProps) {
-  const { colors, spacing } = useTheme();
+  const { spacing } = useTheme();
+  const surfaces = useSurfaceStyles();
   const insets = useSafeAreaInsets();
   const contentHeight = useScreenContentHeight();
   const buttonCount = footer.mode === 'dual' ? 2 : 1;
@@ -73,17 +74,17 @@ export function AuthScreenLayout({
     <KeyboardDismissView
       style={[
         styles.root,
+        surfaces.canvas,
         {
-          backgroundColor: colors.surface,
           paddingTop: insets.top + spacing.lg,
         },
       ]}
     >
-      <View style={[styles.frame, { height: contentHeight }]}>
+      <View style={[styles.frame, surfaces.scroll, { height: contentHeight }]}>
         <FixedFooterFrame footer={<AuthFooter config={footer} />} buttonCount={buttonCount}>
           {scroll ? (
             <ScrollView
-              style={styles.flex}
+              style={[styles.flex, surfaces.scroll]}
               contentContainerStyle={styles.scrollContent}
               keyboardShouldPersistTaps="handled"
               keyboardDismissMode="on-drag"
@@ -93,7 +94,7 @@ export function AuthScreenLayout({
               {body}
             </ScrollView>
           ) : (
-            <View style={styles.flex}>{body}</View>
+            <View style={[styles.flex, surfaces.scroll]}>{body}</View>
           )}
         </FixedFooterFrame>
       </View>

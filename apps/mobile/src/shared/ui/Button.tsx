@@ -21,7 +21,7 @@ export function Button({
   style,
   ...props
 }: ButtonProps) {
-  const { colors, radius, spacing } = useTheme();
+  const { colors, radius, shadows, spacing } = useTheme();
 
   const variantStyles: Record<
     ButtonVariant,
@@ -42,6 +42,7 @@ export function Button({
   const height = size === 'lg' ? 52 : 48;
   const paddingHorizontal = size === 'lg' ? spacing.lg : spacing.md;
   const borderRadius = size === 'lg' ? radius.button : radius.md;
+  const elevated = variant === 'primary' || variant === 'secondary' || variant === 'danger';
 
   return (
     <Pressable
@@ -49,6 +50,7 @@ export function Button({
       disabled={disabled}
       style={({ pressed }) => [
         styles.base,
+        elevated && shadows.soft,
         {
           backgroundColor:
             pressed && v.pressedBg ? v.pressedBg : v.bg,

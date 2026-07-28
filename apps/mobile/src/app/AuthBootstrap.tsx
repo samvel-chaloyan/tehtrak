@@ -1,30 +1,60 @@
 import { ReactNode, useEffect, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+
+import { queryKeys } from '@/core/api';
 import { isDemoMode } from '@/config/demo';
 import { ensureDemoInitialized } from '@/demo/state';
-import { useSessionBootstrap } from '@/features/auth/hooks/useAuth';
+import { restoreSession } from '@/features/auth/api';
 import { useAppStore } from '@/store';
-import { Loader } from '@/shared/ui';
+import { Loader } from '@/shared/ui/Loader';
 
 export function AuthBootstrap({ children }: { children: ReactNode }) {
-  const [bootReady, setBootReady] = useState(!isDemoMode);
-  const { isPending, isError } = useSessionBootstrap({ enabled: bootReady });
-  const hydrateFromStorage = useAppStore((s) => s.hydrateFromStorage);
+  const [ready, setReady] = useState(false);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
+    let cancelled = false;
+
     async function boot() {
-      if (isDemoMode) {
-        await ensureDemoInitialized();
+      const { setAuthenticated, setUser } = useAppStore.getState();
+
+      try {
+        if (isDemoMode) {
+          await ensureDemoInitialized();
+        }
+        await useAppStore.getState().hydrateFromStorage();
+
+        try {
+          const user = await restoreSession();
+          if (user) {
+            setUser(user);
+            setAuthenticated(true);
+            queryClient.setQueryData(queryKeys.me, user);
+          } else {
+            setUser(null);
+            setAuthenticated(false);
+            queryClient.setQueryData(queryKeys.me, null);
+          }
+        } catch {
+          setUser(null);
+          setAuthenticated(false);
+          queryClient.setQueryData(queryKeys.me, null);
+        }
+      } finally {
+        if (!cancelled) {
+          setReady(true);
+        }
       }
-      await hydrateFromStorage();
-      setBootReady(true);
     }
 
     void boot();
-  }, [hydrateFromStorage]);
 
-  const showLoader = !bootReady || (isPending && !(isDemoMode && isError));
+    return () => {
+      cancelled = true;
+    };
+  }, [queryClient]);
 
-  if (showLoader) {
+  if (!ready) {
     return <Loader fullScreen message="Opening your notebook…" />;
   }
 

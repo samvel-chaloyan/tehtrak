@@ -38,6 +38,8 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
   const { colors, radius, spacing, typography } = useTheme();
   const [focused, setFocused] = useState(false);
   const isPlain = variant === 'plain';
+  const inputColor =
+    valueColor === 'secondary' ? colors.textSecondary : colors.textPrimary;
 
   const borderColor = error
     ? colors.danger
@@ -70,7 +72,7 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
             ? {
                 backgroundColor: 'transparent',
                 borderWidth: 0,
-                color: valueColor === 'secondary' ? colors.textSecondary : colors.textPrimary,
+                color: inputColor,
                 paddingHorizontal: 0,
                 paddingVertical: 0,
                 minHeight: undefined,
@@ -79,7 +81,7 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
                 backgroundColor: colors.surface,
                 borderColor,
                 borderRadius: radius.md,
-                color: valueColor === 'secondary' ? colors.textSecondary : colors.textPrimary,
+                color: inputColor,
                 paddingHorizontal: spacing.md,
                 paddingVertical: spacing.md,
               },

@@ -122,10 +122,13 @@ They should remain simple and recognizable. See [components.md](./components.md)
 
 ### Color character
 
-* **White** dominates — paper, openness, simplicity
+* **System gray background** (`#F5F5F7`) dominates — the canvas for every screen
+* **White surfaces** (`surface`) for grouped lists, inputs, modals, and rare cards
 * **Primary blue** accents — clarity, trust, organization; used sparingly, never as decoration
+* **Warm grays** for text hierarchy — `textPrimary`, `textSecondary`, `textTertiary`
+* **Muted feedback** — success and danger as soft washes with gentler emphasis icons
 
-Exact values: [design-tokens.md](./design-tokens.md). Usage rules: [ui-constitution.md](./ui-constitution.md).
+Exact values and surface rules: [design-tokens.md](./design-tokens.md). Usage rules: [ui-constitution.md](./ui-constitution.md).
 
 ---
 

@@ -60,7 +60,11 @@ export function formatFieldValue(
     }
     case 'date':
       return String(value).includes('T')
-        ? new Date(String(value)).toLocaleDateString()
+        ? new Date(String(value)).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })
         : String(value);
     case 'number':
       return String(value);

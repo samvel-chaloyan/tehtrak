@@ -5,7 +5,7 @@ import { DynamicItemForm, DynamicItemFormHandle } from '@/features/items/compone
 import { useCreateRecord } from '@/features/items/hooks/useRecords';
 import { useFields } from '@/features/properties/hooks/useFields';
 import { AppScreenProps } from '@/navigation/types';
-import { useTheme } from '@/theme';
+import { useSurfaceStyles, useTheme } from '@/theme';
 import {
   AppScreenShell,
   EmptyListContent,
@@ -19,6 +19,7 @@ import { getScreenErrorMessage } from '@/utils';
 export function CreateItemScreen({ navigation, route }: AppScreenProps<'CreateItem'>) {
   const { collectionId, collectionName, workspaceId } = route.params;
   const { spacing } = useTheme();
+  const surfaces = useSurfaceStyles();
   const formRef = useRef<DynamicItemFormHandle>(null);
   const { data: fields, isLoading } = useFields(workspaceId, collectionId);
   const createRecord = useCreateRecord(workspaceId, collectionId);
@@ -92,7 +93,7 @@ export function CreateItemScreen({ navigation, route }: AppScreenProps<'CreateIt
   return (
     <AppScreenShell {...shellProps} footer={footer}>
       <ScrollView
-        style={styles.scroll}
+        style={[styles.scroll, surfaces.scroll]}
         contentContainerStyle={{ paddingBottom: spacing.lg }}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"

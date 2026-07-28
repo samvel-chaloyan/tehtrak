@@ -6,10 +6,37 @@ import {
   mutateDemoData,
   workspaceEmojiForIndex,
 } from './state';
+import type { WorkspaceSummary } from '@/types';
 
 export async function demoFetchWorkspaces(): Promise<Workspace[]> {
   await demoDelay();
   return (await getDemoData()).workspaces;
+}
+
+export async function demoFetchWorkspaceSummaries(): Promise<Record<string, WorkspaceSummary>> {
+  await demoDelay();
+  const data = await getDemoData();
+  const summaries: Record<string, WorkspaceSummary> = {};
+
+  for (const workspace of data.workspaces) {
+    const collections = data.collections.filter((c) => c.workspaceId === workspace.id);
+    const lastActivityAt = collections.reduce<string | undefined>((latest, collection) => {
+      if (!collection.lastActivityAt) {
+        return latest;
+      }
+      if (!latest || collection.lastActivityAt > latest) {
+        return collection.lastActivityAt;
+      }
+      return latest;
+    }, undefined);
+
+    summaries[workspace.id] = {
+      collectionCount: collections.length,
+      lastActivityAt,
+    };
+  }
+
+  return summaries;
 }
 
 export async function demoCreateWorkspace(payload: {

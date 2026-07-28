@@ -1,5 +1,20 @@
 export { AppDrawer } from './AppDrawer';
 export type { AppDrawerProps } from './AppDrawer';
+export { AppBottomSheet } from './AppBottomSheet';
+export type { AppBottomSheetProps } from './AppBottomSheet';
+export { SheetHost } from './SheetHost';
+export {
+  presentActions,
+  presentConfirm,
+  dismissSheet,
+} from './sheetController';
+export type {
+  PresentActionsOptions,
+  PresentConfirmOptions,
+  SheetAction,
+  SheetActionTone,
+  SheetControllerApi,
+} from './sheetController';
 export { AppScreenShell } from './AppScreenShell';
 export type { AppScreenShellProps } from './AppScreenShell';
 export { BrandMenuButton } from './BrandMenuButton';
@@ -19,6 +34,28 @@ export { ScreenFooter, SingleBottomButton } from './ScreenFooter';
 export { KeyboardDismissView } from './KeyboardDismissView';
 export type { KeyboardDismissViewProps } from './KeyboardDismissView';
 export { ScrollIndicatorFlatList } from './ScrollIndicatorFlatList';
+export { SwipeableRow } from './SwipeableRow';
+export type { SwipeableRowProps } from './SwipeableRow';
+export { RunningText } from './RunningText';
+export type { RunningTextProps } from './RunningText';
+export {
+  NOTEBOOK_LABEL_OVERLAP,
+  NOTEBOOK_LABEL_SLOT_HEIGHT,
+  NotebookLabel,
+} from './NotebookLabel';
+export type { NotebookLabelProps } from './NotebookLabel';
+export {
+  CONTEXT_BANNER_HEIGHT,
+  CONTEXT_CAPSULE_GAP,
+  CONTEXT_CAPSULE_HEIGHT,
+  ContextBanner,
+  DEFAULT_CONTEXT_BANNER_MESSAGES,
+} from './ContextBanner';
+export type { ContextBannerProps, ContextRecentPlace } from './ContextBanner';
+export { InformationStrip, INFORMATION_STRIP_HEIGHT } from './InformationStrip';
+export type { InformationStripProps } from './InformationStrip';
+export { ScreenContextBar, CONTEXT_BAR_SLOT_HEIGHT } from './ScreenContextBar';
+export type { ScreenContextBarProps } from './ScreenContextBar';
 export { ShellBackLink } from './ShellBackLink';
 export type { ShellBackLinkProps } from './ShellBackLink';
 export { ScreenLineHeader } from './ScreenLineHeader';
@@ -52,6 +89,16 @@ export { NotebookField } from './NotebookField';
 export type { NotebookFieldProps } from './NotebookField';
 export { NotebookRow } from './NotebookRow';
 export type { NotebookRowProps, NotebookRowSize } from './NotebookRow';
+export {
+  WorkspaceGridCard,
+  WORKSPACE_GRID_CARD_HEIGHT,
+  WORKSPACE_GRID_CARD_MIN_HEIGHT,
+} from './WorkspaceGridCard';
+export type { WorkspaceGridCardProps, CardAnchorLayout } from './WorkspaceGridCard';
+export { WorkspaceFocusMenu } from './WorkspaceFocusMenu';
+export type { WorkspaceFocusMenuProps } from './WorkspaceFocusMenu';
+export { WorkspaceGridSkeleton } from './WorkspaceGridSkeleton';
+export type { WorkspaceGridSkeletonProps } from './WorkspaceGridSkeleton';
 export { PageHeader } from './PageHeader';
 export type { PageHeaderProps } from './PageHeader';
 export { PageTitle } from './PageTitle';

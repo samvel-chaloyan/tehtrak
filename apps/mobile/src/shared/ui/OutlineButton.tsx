@@ -20,7 +20,7 @@ export function OutlineButton({
   style,
   ...props
 }: OutlineButtonProps) {
-  const { colors, radius, spacing } = useTheme();
+  const { colors, radius, shadows, spacing } = useTheme();
 
   return (
     <Pressable
@@ -29,9 +29,10 @@ export function OutlineButton({
       style={({ pressed }) => [
         styles.button,
         compact ? styles.buttonCompact : styles.buttonFull,
+        !compact && shadows.soft,
         {
           backgroundColor: pressed ? colors.primary : colors.surface,
-          borderColor: colors.primary,
+          borderColor: pressed ? colors.primary : colors.border,
           borderRadius: radius.button,
           opacity: disabled ? 0.5 : 1,
           paddingHorizontal: compact ? spacing.md : spacing.lg,
@@ -41,14 +42,14 @@ export function OutlineButton({
       {...props}
     >
       {({ pressed }) => {
-        const iconColor = pressed ? colors.textInverse : colors.primary;
+        const iconColor = pressed ? colors.textInverse : colors.textPrimary;
 
         return (
           <View style={[styles.content, { gap: spacing.sm }]}>
             {icon ? <Ionicons name={icon} size={compact ? 16 : 20} color={iconColor} /> : null}
             <Text
               variant={compact ? 'caption' : 'body'}
-              color={pressed ? 'inverse' : 'accent'}
+              color={pressed ? 'inverse' : 'primary'}
               style={styles.label}
             >
               {label}

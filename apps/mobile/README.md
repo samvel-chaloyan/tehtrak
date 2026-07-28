@@ -24,6 +24,8 @@ npm start
 
 Explore the full app with seeded mock data. Creates, edits, and deletes persist locally via AsyncStorage.
 
+When mock fixtures change, demo mode reseeds automatically (`DEMO_SEED_VERSION`) — local demo edits from an older seed are replaced.
+
 ### Real API
 
 Set `EXPO_PUBLIC_DEMO_MODE=false` (or remove it), then:

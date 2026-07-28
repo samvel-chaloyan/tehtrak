@@ -8,7 +8,7 @@ import {
   type FlatListProps,
 } from 'react-native';
 
-import { useTheme } from '@/theme';
+import { useTheme, useSurfaceStyles } from '@/theme';
 
 const INDICATOR_MIN_HEIGHT = 32;
 
@@ -20,6 +20,7 @@ export function ScrollIndicatorFlatList<T>({
   ...props
 }: FlatListProps<T>) {
   const { colors, spacing } = useTheme();
+  const surfaces = useSurfaceStyles();
   const scrollY = useRef(new Animated.Value(0)).current;
   const [contentHeight, setContentHeight] = useState(0);
   const [layoutHeight, setLayoutHeight] = useState(0);
@@ -62,10 +63,10 @@ export function ScrollIndicatorFlatList<T>({
   );
 
   return (
-    <View style={[styles.container, style]}>
+    <View style={[styles.container, surfaces.scroll, style]}>
       <FlatList
         {...props}
-        style={styles.list}
+        style={[styles.list, surfaces.scroll]}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
@@ -93,7 +94,7 @@ export function ScrollIndicatorFlatList<T>({
               styles.thumb,
               {
                 height: thumbHeight,
-                backgroundColor: colors.primaryBorder,
+                backgroundColor: colors.primary,
                 borderRadius: spacing.xs / 2,
                 transform: [{ translateY: thumbTranslateY }],
               },

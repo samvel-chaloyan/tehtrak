@@ -72,7 +72,7 @@ export function SelectField<T extends FieldValues>({
                   style={[
                     styles.sheet,
                     {
-                      backgroundColor: colors.background,
+                      backgroundColor: colors.surface,
                       borderRadius: radius.lg,
                       marginHorizontal: spacing.md,
                       padding: spacing.md,

@@ -11,7 +11,9 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { appConfig } from '@/config/app';
-import { BRAND_LOGO_TOUCH, useBrandLogoAnchor } from './brandLogoLayout';
+import { BrandLogoImage } from './BrandLogoImage';
+import { BRAND_LOGO_SIZE, useBrandLogoAnchor } from './brandLogoLayout';
+import type { ScreenLineHeaderTone } from './ScreenLineHeader';
 import { Text } from './Text';
 import { useTheme } from '@/theme';
 import { typography } from '@/theme/typography';
@@ -19,6 +21,7 @@ import { typography } from '@/theme/typography';
 export interface AppDrawerProps {
   visible: boolean;
   onClose: () => void;
+  headerTone?: ScreenLineHeaderTone;
   /** Measured from the header logo slot when available */
   brandLogoLeft?: number;
   brandTextLeft?: number;
@@ -52,7 +55,7 @@ function DrawerDivider() {
       style={[
         styles.divider,
         {
-          backgroundColor: colors.primaryBorder,
+          backgroundColor: colors.border,
           marginVertical: spacing.md,
         },
       ]}
@@ -89,6 +92,7 @@ function DrawerRow({ icon, label, onPress }: DrawerRowProps) {
 export function AppDrawer({
   visible,
   onClose,
+  headerTone = 'brand',
   brandLogoLeft: brandLogoLeftProp,
   brandTextLeft: brandTextLeftProp,
   brandRowTop: brandRowTopProp,
@@ -102,12 +106,13 @@ export function AppDrawer({
 }: AppDrawerProps) {
   const { colors, spacing } = useTheme();
   const insets = useSafeAreaInsets();
-  const { rowTop, touchLeft, brandTextLeft: fallbackBrandTextLeft } = useBrandLogoAnchor();
+  const { rowTop, touchLeft, brandTextLeft: fallbackBrandTextLeft } =
+    useBrandLogoAnchor(headerTone);
   const brandLogoLeft = brandLogoLeftProp ?? touchLeft;
   const brandTextLeft = brandTextLeftProp ?? fallbackBrandTextLeft;
   const brandRowTop = brandRowTopProp ?? rowTop;
-  const brandSubtitleTop = brandRowTop + BRAND_LOGO_TOUCH + spacing.xs;
-  const menuTop = brandSubtitleTop + typography.bodySmall.lineHeight + spacing.lg;
+  const brandRowHeight = Math.max(BRAND_LOGO_SIZE.height, typography.titleLarge.lineHeight);
+  const menuTop = brandRowTop + brandRowHeight + spacing.lg;
   const [overlayVisible, setOverlayVisible] = useState(visible);
   const progress = useSharedValue(0);
 
@@ -173,39 +178,38 @@ export function AppDrawer({
           panelStyle,
           {
             width: DRAWER_WIDTH,
-            backgroundColor: colors.surface,
+            backgroundColor: colors.background,
             paddingBottom: insets.bottom + spacing.lg,
           },
         ]}
       >
         <View
           style={[
-            styles.brandTitleRow,
+            styles.brandLogo,
             {
-              top: brandRowTop,
-              left: brandTextLeft,
-              height: BRAND_LOGO_TOUCH,
-              paddingRight: spacing.lg,
+              top: brandRowTop + (brandRowHeight - BRAND_LOGO_SIZE.height) / 2,
+              left: brandLogoLeft,
+              width: BRAND_LOGO_SIZE.width,
+              height: BRAND_LOGO_SIZE.height,
             },
           ]}
         >
-          <Text variant="titleLarge" color="accent">
-            {appConfig.name}
-          </Text>
+          <BrandLogoImage />
         </View>
 
         <View
           style={[
-            styles.brandSubtitle,
+            styles.brandTitleRow,
             {
-              top: brandSubtitleTop,
-              left: brandLogoLeft,
+              top: brandRowTop,
+              left: brandTextLeft,
+              height: brandRowHeight,
               paddingRight: spacing.lg,
             },
           ]}
         >
-          <Text variant="bodySmall" color="secondary">
-            Operational Notebook
+          <Text variant="titleLarge" color="accent" numberOfLines={1}>
+            {appConfig.name}
           </Text>
         </View>
 
@@ -257,12 +261,14 @@ const styles = StyleSheet.create({
     height: '100%',
     zIndex: 2,
   },
+  brandLogo: {
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   brandTitleRow: {
     position: 'absolute',
     justifyContent: 'center',
-  },
-  brandSubtitle: {
-    position: 'absolute',
   },
   menu: {
     flex: 1,

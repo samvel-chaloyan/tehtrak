@@ -12,7 +12,11 @@ Implementation: `apps/mobile/src/theme/typography.ts`.
 
 ## Font Family
 
-System default (SF Pro on iOS, Roboto on Android).
+**IBM Plex Sans** — single family for all UI (regular / medium / semibold).
+
+Loaded via `@expo-google-fonts/ibm-plex-sans` at app start. Do not mix in system or other display faces.
+
+Implementation: `fontFamily` + `fontFamilyForWeight()` in `apps/mobile/src/theme/typography.ts`.
 
 ---
 

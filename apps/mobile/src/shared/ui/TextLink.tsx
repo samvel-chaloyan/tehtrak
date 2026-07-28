@@ -15,7 +15,11 @@ export function TextLink({ label, emphasis = true, style, ...props }: TextLinkPr
       style={[styles.base, style]}
       {...props}
     >
-      <Text variant="body" color={emphasis ? 'accent' : 'secondary'} style={emphasis ? styles.emphasis : undefined}>
+      <Text
+        variant="body"
+        color={emphasis ? 'accent' : 'secondary'}
+        style={emphasis ? styles.emphasis : undefined}
+      >
         {label}
       </Text>
     </Pressable>

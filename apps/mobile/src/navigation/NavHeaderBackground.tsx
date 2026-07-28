@@ -1,12 +1,13 @@
 import { StyleSheet, View } from 'react-native';
-import { useTheme } from '@/theme';
+import { useSurfaceStyles, useTheme } from '@/theme';
 
-/** Native navigation header — warm surface, subtle divider. */
+/** Native navigation header — canvas background, subtle divider. */
 export function NavHeaderBackground() {
   const { colors } = useTheme();
+  const surfaces = useSurfaceStyles();
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.surface }]}>
+    <View style={[styles.container, surfaces.canvas]}>
       <View style={[styles.border, { backgroundColor: colors.border }]} />
     </View>
   );

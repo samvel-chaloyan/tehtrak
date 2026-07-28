@@ -22,6 +22,7 @@ export function useCreateCollection(workspaceId: string) {
       createCollection(workspaceId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.collections(workspaceId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.workspaceSummaries });
     },
   });
 }
@@ -39,6 +40,7 @@ export function useUpdateCollection(workspaceId: string) {
     }) => updateCollection(workspaceId, collectionId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.collections(workspaceId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.workspaceSummaries });
     },
   });
 }
@@ -49,6 +51,7 @@ export function useDeleteCollection(workspaceId: string) {
     mutationFn: (collectionId: string) => deleteCollection(workspaceId, collectionId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.collections(workspaceId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.workspaceSummaries });
     },
   });
 }

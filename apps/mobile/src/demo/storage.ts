@@ -3,6 +3,7 @@ import { getString, remove, setString } from '@/services/storage';
 /** Demo persistence keys — backed by AsyncStorage (temporary; MMKV planned). */
 export const demoStorageKeys = {
   initialized: 'tehtrak.demo.initialized',
+  seedVersion: 'tehtrak.demo.seedVersion',
   session: 'tehtrak.demo.session',
   data: 'tehtrak.demo.data',
 } as const;
