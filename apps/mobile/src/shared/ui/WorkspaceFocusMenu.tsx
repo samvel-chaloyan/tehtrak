@@ -150,7 +150,7 @@ export function WorkspaceFocusMenu({
             },
           ]}
         >
-          <WorkspaceGridCard title={title} metaLines={metaLines} onPress={() => undefined} />
+          <WorkspaceGridCard title={title} metaLines={metaLines} />
         </Animated.View>
 
         <Animated.View

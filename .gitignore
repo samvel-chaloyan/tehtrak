@@ -1,0 +1,30 @@
+# Tehtrak
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.user
+*.suo
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Mobile (also see apps/mobile/.gitignore)
+apps/mobile/.expo/
+apps/mobile/dist/
+apps/mobile/web-build/
+
+# .NET build outputs — never commit
+**/bin/
+**/obj/
+*.user
+*.suo

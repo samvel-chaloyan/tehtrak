@@ -145,10 +145,16 @@ export function CollectionDetailsScreen({
   if (isError) {
     return (
       <AppScreenShell {...shellProps} footer={retryFooter}>
-        <EmptyListContent
-          title="Could not load items"
-          description="Pull to refresh or try again in a moment."
-        />
+        <NotebookListShelf
+          countLabel={collectionDetailsMeta(0, fieldList.length)}
+          framed={false}
+          countColor="tertiary"
+        >
+          <EmptyListContent
+            title="Could not load items"
+            description="Pull to refresh or try again in a moment."
+          />
+        </NotebookListShelf>
       </AppScreenShell>
     );
   }

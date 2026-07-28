@@ -88,7 +88,7 @@ export function ContextBanner({
   recentPlaces,
   searchActive = false,
   searchQuery = '',
-  searchPlaceholder = 'Find a place',
+  searchPlaceholder = 'Find a workspace',
   onSearchQueryChange,
   onSearchCancel,
 }: ContextBannerProps) {

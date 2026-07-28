@@ -26,6 +26,7 @@ export function useCreateRecord(workspaceId: string, collectionId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.records(workspaceId, collectionId) });
       queryClient.invalidateQueries({ queryKey: queryKeys.collections(workspaceId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.workspaceSummaries });
     },
   });
 }
@@ -41,6 +42,7 @@ export function useUpdateRecord(workspaceId: string, collectionId: string) {
         queryKey: queryKeys.record(workspaceId, collectionId, variables.recordId),
       });
       queryClient.invalidateQueries({ queryKey: queryKeys.collections(workspaceId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.workspaceSummaries });
     },
   });
 }
@@ -52,6 +54,7 @@ export function useDeleteRecord(workspaceId: string, collectionId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.records(workspaceId, collectionId) });
       queryClient.invalidateQueries({ queryKey: queryKeys.collections(workspaceId) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.workspaceSummaries });
     },
   });
 }

@@ -119,10 +119,12 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
   if (isError) {
     return (
       <AppScreenShell {...shellProps} footer={retryFooter}>
-        <EmptyListContent
-          title="Could not load collections"
-          description="Pull to refresh or try again in a moment."
-        />
+        <NotebookListShelf countLabel={collectionCountLabel(0)} framed={false} countColor="tertiary">
+          <EmptyListContent
+            title="Could not load collections"
+            description="Pull to refresh or try again in a moment."
+          />
+        </NotebookListShelf>
       </AppScreenShell>
     );
   }

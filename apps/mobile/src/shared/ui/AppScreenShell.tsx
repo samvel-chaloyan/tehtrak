@@ -1,5 +1,6 @@
 import { ReactNode, useCallback, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useLogout } from '@/features/auth/hooks/useAuth';
@@ -156,6 +157,7 @@ export function AppScreenShell({
 
   return (
     <KeyboardDismissView style={[styles.shell, surfaces.canvas]}>
+      {isBrandHeader ? <StatusBar style="light" /> : null}
       <View
         ref={shellRef}
         collapsable={false}

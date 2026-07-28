@@ -130,7 +130,7 @@ export function SheetHost({ children }: { children: ReactNode }) {
               compact
               action={{
                 label: state.options.confirmLabel ?? 'Delete',
-                tone: 'danger',
+                tone: state.options.confirmTone ?? 'danger',
                 onPress: state.options.onConfirm,
               }}
               onPress={() => runAction(state.options.onConfirm)}

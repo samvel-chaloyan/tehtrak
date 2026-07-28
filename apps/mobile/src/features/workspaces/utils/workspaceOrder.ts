@@ -28,7 +28,7 @@ export function sortWorkspacesByLastEdited(
   });
 }
 
-/** Top shortcuts for the Most used chip row. */
+/** Top recent places for the Workspaces capsule story circles. */
 export function mostUsedWorkspaces(
   workspaces: Workspace[],
   summaries?: Record<string, WorkspaceSummary>,

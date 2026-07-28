@@ -128,12 +128,11 @@ Meta (optional, caption tertiary)
 
 ### States
 
-* **Pressable rows** — workspace rows use neutral `background` on press; nested rows use `primaryMuted`
-* **Pressed** — `primaryMuted` background (collection/item)
+* **Pressed** — quiet canvas `background` wash on white grouped rows (all list sizes)
 * No borders on individual rows
 * No emoji
 
-Workspace rows use swipe actions — no inline edit/delete buttons.
+Workspace home uses grid cards + long-press focus menu. Collection and item lists use swipe actions — no inline edit/delete buttons.
 
 ---
 
@@ -150,7 +149,7 @@ Reveal edit/delete actions on swipe without visible row chrome.
 | Swipe right | Edit | `successMuted` | `successEmphasis` pencil |
 | Swipe left | Delete | `dangerMuted` | `dangerEmphasis` trash |
 
-Used on workspace list. Rows remain clean while browsing.
+Used on **collection** and **item** lists. Rows remain clean while browsing.
 
 ---
 
@@ -492,20 +491,6 @@ Long press: focus mode via `WorkspaceFocusMenu` when used in a measurable grid.
 Metadata only — no description, icons, badges, or visible action buttons on the idle card.
 
 Implementation: `WorkspaceGridCard` + `WorkspaceFocusMenu`.
-
----
-
-## WorkspaceShortcutChip
-
-### Purpose
-
-Quiet shortcut chip (FieldChip density). Prefer story circles in the Workspaces capsule for home shortcuts; chip remains available if needed elsewhere.
-
-### Anatomy
-
-Bordered chip, `bodySmall`, max one line. Default: `surface` + `primaryBorder` + secondary label. Emphasized (last opened): `primaryMuted` + `primary` border + accent label.
-
-Implementation: `WorkspaceShortcutChip`.
 
 ---
 

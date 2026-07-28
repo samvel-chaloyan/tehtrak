@@ -39,12 +39,6 @@ export type { SwipeableRowProps } from './SwipeableRow';
 export { RunningText } from './RunningText';
 export type { RunningTextProps } from './RunningText';
 export {
-  NOTEBOOK_LABEL_OVERLAP,
-  NOTEBOOK_LABEL_SLOT_HEIGHT,
-  NotebookLabel,
-} from './NotebookLabel';
-export type { NotebookLabelProps } from './NotebookLabel';
-export {
   CONTEXT_BANNER_HEIGHT,
   CONTEXT_CAPSULE_GAP,
   CONTEXT_CAPSULE_HEIGHT,
@@ -52,10 +46,6 @@ export {
   DEFAULT_CONTEXT_BANNER_MESSAGES,
 } from './ContextBanner';
 export type { ContextBannerProps, ContextRecentPlace } from './ContextBanner';
-export { InformationStrip, INFORMATION_STRIP_HEIGHT } from './InformationStrip';
-export type { InformationStripProps } from './InformationStrip';
-export { ScreenContextBar, CONTEXT_BAR_SLOT_HEIGHT } from './ScreenContextBar';
-export type { ScreenContextBarProps } from './ScreenContextBar';
 export { ShellBackLink } from './ShellBackLink';
 export type { ShellBackLinkProps } from './ShellBackLink';
 export { ScreenLineHeader } from './ScreenLineHeader';

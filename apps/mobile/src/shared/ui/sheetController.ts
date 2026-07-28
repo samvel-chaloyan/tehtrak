@@ -17,6 +17,8 @@ export interface PresentConfirmOptions {
   message: string;
   confirmLabel?: string;
   cancelLabel?: string;
+  /** Defaults to danger (delete). Use default for discard / neutral confirms. */
+  confirmTone?: SheetActionTone;
   onConfirm: () => void;
 }
 

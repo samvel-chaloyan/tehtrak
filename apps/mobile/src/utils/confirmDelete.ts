@@ -9,3 +9,15 @@ export function confirmDelete(title: string, message: string, onConfirm: () => v
     onConfirm,
   });
 }
+
+/** Leave edit mode without saving — used before search or navigation. */
+export function confirmDiscardEdits(onConfirm: () => void) {
+  presentConfirm({
+    title: 'Discard edits?',
+    message: 'Your changes on this page will be lost.',
+    confirmLabel: 'Discard',
+    cancelLabel: 'Keep editing',
+    confirmTone: 'default',
+    onConfirm,
+  });
+}

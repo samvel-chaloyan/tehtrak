@@ -220,7 +220,7 @@ export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceLis
   const searchShellProps = {
     searchActive,
     searchQuery,
-    searchPlaceholder: 'Find a place',
+    searchPlaceholder: 'Find a workspace',
     onSearchQueryChange: setSearchQuery,
     onSearchCancel: exitSearch,
   };
@@ -318,7 +318,7 @@ export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceLis
         <NotebookListShelf {...shelfProps}>
           <EmptyListContent
             title="No workspaces yet"
-            description="Create a place to begin organizing collections and items."
+            description="Create a workspace to begin organizing collections and items."
           />
         </NotebookListShelf>
       </AppScreenShell>
@@ -338,12 +338,12 @@ export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceLis
         <NotebookListShelf {...shelfProps}>
           {showSearchBlank ? (
             <EmptyListContent
-              title="Find a place"
+              title="Find a workspace"
               description="Start typing to filter your workspaces."
             />
           ) : showSearchEmpty ? (
             <EmptyListContent
-              title="No matching places"
+              title="No matching workspaces"
               description="Try another name or description."
             />
           ) : (

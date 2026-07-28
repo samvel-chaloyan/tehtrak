@@ -16,7 +16,7 @@ import {
   Text,
 } from '@/shared/ui';
 import { ItemData, PropertyField } from '@/types';
-import { formatFieldValue, formatRelativeTime, getItemTitle, getScreenErrorMessage } from '@/utils';
+import { formatFieldValue, formatRelativeTime, getItemTitle, getScreenErrorMessage, confirmDiscardEdits } from '@/utils';
 
 function matchesPropertyQuery(
   field: PropertyField,
@@ -75,11 +75,20 @@ export function ItemDetailsScreen({ navigation, route }: AppScreenProps<'ItemDet
   }, [startEditing]);
 
   const enterSearch = useCallback(() => {
-    setIsEditing(false);
-    setError(null);
-    setSearchQuery('');
-    setSearchActive(true);
-  }, []);
+    const beginSearch = () => {
+      setIsEditing(false);
+      setError(null);
+      setSearchQuery('');
+      setSearchActive(true);
+    };
+
+    if (isEditing) {
+      confirmDiscardEdits(beginSearch);
+      return;
+    }
+
+    beginSearch();
+  }, [isEditing]);
 
   const exitSearch = useCallback(() => {
     setSearchActive(false);
@@ -155,7 +164,7 @@ export function ItemDetailsScreen({ navigation, route }: AppScreenProps<'ItemDet
   if (isLoading) {
     return (
       <AppScreenShell {...shellProps} subtitle={undefined}>
-        <NotebookListShelf countLabel="" framed={false} countColor="tertiary">
+        <NotebookListShelf countLabel="…" framed={false} countColor="tertiary">
           <SkeletonList count={3} />
         </NotebookListShelf>
       </AppScreenShell>

@@ -58,6 +58,10 @@ export async function fetchWorkspaceSummaries() {
     return demoFetchWorkspaceSummaries();
   }
 
+  /**
+   * API mode: one collections request per workspace until a summaries endpoint exists.
+   * Demo mode uses a single local read (`demoFetchWorkspaceSummaries`).
+   */
   const list = await apiGet<ApiWorkspace[]>('/workspaces');
   const summaries: Record<string, WorkspaceSummary> = {};
 

@@ -27,7 +27,7 @@ const META_LINES = 2;
 export interface WorkspaceGridCardProps {
   title: string;
   metaLines: string[];
-  onPress: () => void;
+  onPress?: () => void;
   /** Long-press receives the card's window layout for the focus menu. */
   onLongPress?: (layout: CardAnchorLayout) => void;
 }
@@ -85,6 +85,41 @@ export function WorkspaceGridCard({
     });
   };
 
+  const cardBody = (
+    <View style={[styles.body, { padding: spacing.lg }]}>
+      <View style={{ minHeight: titleBlockHeight }}>
+        <Text
+          variant="bodySmall"
+          color="primary"
+          numberOfLines={TITLE_LINES}
+          style={styles.title}
+        >
+          {title}
+        </Text>
+      </View>
+      <View style={{ minHeight: metaBlockHeight, justifyContent: 'flex-end' }}>
+        <View style={{ gap: spacing.xs }}>
+          {metaLines.slice(0, META_LINES).map((line) =>
+            line ? (
+              <Text key={line} variant="caption" color="secondary" numberOfLines={1}>
+                {line}
+              </Text>
+            ) : null,
+          )}
+        </View>
+      </View>
+    </View>
+  );
+
+  const cardStyle = [
+    styles.card,
+    shadows.soft,
+    {
+      backgroundColor: colors.surface,
+      borderRadius: radius.xl,
+    },
+  ];
+
   return (
     <View
       ref={rootRef}
@@ -92,45 +127,21 @@ export function WorkspaceGridCard({
       style={[styles.root, { height: WORKSPACE_GRID_CARD_HEIGHT }]}
     >
       <CornerAccent color={colors.primary} cardRadius={radius.xl} />
-      <Pressable
-        accessibilityRole="button"
-        onPress={onPress}
-        onLongPress={onLongPress ? handleLongPress : undefined}
-        delayLongPress={400}
-        style={({ pressed }) => [
-          styles.card,
-          shadows.soft,
-          {
-            backgroundColor: colors.surface,
-            borderRadius: radius.xl,
-            opacity: pressed ? 0.96 : 1,
-          },
-        ]}
-      >
-        <View style={[styles.body, { padding: spacing.lg }]}>
-          <View style={{ minHeight: titleBlockHeight }}>
-            <Text
-              variant="bodySmall"
-              color="primary"
-              numberOfLines={TITLE_LINES}
-              style={styles.title}
-            >
-              {title}
-            </Text>
-          </View>
-          <View style={{ minHeight: metaBlockHeight, justifyContent: 'flex-end' }}>
-            <View style={{ gap: spacing.xs }}>
-              {metaLines.slice(0, META_LINES).map((line) =>
-                line ? (
-                  <Text key={line} variant="caption" color="secondary" numberOfLines={1}>
-                    {line}
-                  </Text>
-                ) : null,
-              )}
-            </View>
-          </View>
+      {onPress ? (
+        <Pressable
+          accessibilityRole="button"
+          onPress={onPress}
+          onLongPress={onLongPress ? handleLongPress : undefined}
+          delayLongPress={400}
+          style={({ pressed }) => [...cardStyle, { opacity: pressed ? 0.96 : 1 }]}
+        >
+          {cardBody}
+        </Pressable>
+      ) : (
+        <View style={cardStyle} pointerEvents="none">
+          {cardBody}
         </View>
-      </Pressable>
+      )}
     </View>
   );
 }

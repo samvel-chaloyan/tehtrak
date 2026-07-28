@@ -1,0 +1,38 @@
+---
+description: Distinguish dead unused code from unfinished-but-intentional product affordances
+alwaysApply: true
+---
+
+# Cleanup: dead code vs unfinished features
+
+## May remove without asking
+
+Truly **unused** code with no product role:
+
+- Deprecated aliases / re-exports nobody imports
+- Abandoned components never wired into navigation or screens
+- Leftover files after a replace (old chip after circles shipped)
+
+## Do not remove without an explicit ask
+
+**Functional but unfinished** product UI — visible or reserved for a later phase:
+
+- Drawer / menu rows that close and no-op today (Search, Favorites, Recent, Help, About)
+- Search icons, buttons, or routes stubbed for a later milestone
+- Placeholder affordances documented as “behavior next”
+
+Unfinished ≠ dead. Leave the affordance; wire behavior later.
+
+## When applying reviews
+
+- “Stub does nothing” → note it; **do not strip** the control
+- “Nothing imports this module” → safe to delete if it is not a product stub
+- If unsure whether something is a stub or dead code → **ask**
+
+```text
+❌ Drawer Search is a no-op → delete the row
+✅ Leave the row; implement search later
+
+❌ InformationStrip is only a deprecated alias of ContextBanner → delete
+✅ Remove the alias
+```
