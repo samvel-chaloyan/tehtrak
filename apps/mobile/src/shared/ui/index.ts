@@ -67,6 +67,8 @@ export type { InputProps } from './Input';
 export { Loader } from './Loader';
 export { NotebookIndex, IndexFooter, NotebookIndexFrame, useNotebookIndexStyle } from './NotebookIndex';
 export type { NotebookIndexProps, IndexFooterProps, NotebookIndexFrameProps } from './NotebookIndex';
+export { CORNER_ACCENT_STROKE, CornerAccent } from './CornerAccent';
+export type { CornerAccentProps } from './CornerAccent';
 export { NotebookListShelf } from './NotebookListShelf';
 export type { NotebookListShelfProps } from './NotebookListShelf';
 export { NotebookPage, NotebookPageHeader, NotebookPageRow } from './NotebookPage';
@@ -79,6 +81,10 @@ export { NotebookField } from './NotebookField';
 export type { NotebookFieldProps } from './NotebookField';
 export { NotebookRow } from './NotebookRow';
 export type { NotebookRowProps, NotebookRowSize } from './NotebookRow';
+export { PinButton } from './PinButton';
+export type { PinButtonProps } from './PinButton';
+export { QuickAccessChip } from './QuickAccessChip';
+export type { QuickAccessChipProps } from './QuickAccessChip';
 export {
   WorkspaceGridCard,
   WORKSPACE_GRID_CARD_HEIGHT,

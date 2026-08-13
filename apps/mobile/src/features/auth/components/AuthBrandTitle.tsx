@@ -1,41 +1,22 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { appConfig } from '@/config/app';
-import { Text } from '@/shared/ui';
-import { useTheme } from '@/theme';
+import { Stack, Text, ThreeLines } from '@/shared/ui';
 
+/** Welcome brand hero — ThreeLines + token title (no off-scale sizes). */
 export function AuthBrandTitle() {
-  const { colors, radius, spacing } = useTheme();
-
   return (
-    <View
-      style={[
-        styles.titleBadge,
-        {
-          borderColor: colors.primary,
-          backgroundColor: colors.surface,
-          borderRadius: radius.lg,
-          paddingHorizontal: spacing.xl,
-          paddingVertical: spacing.md,
-        },
-      ]}
-    >
+    <Stack gap="lg" align="center">
+      <ThreeLines size="lg" align="center" />
       <Text variant="titleLarge" color="accent" style={styles.brandName}>
         {appConfig.name}
       </Text>
-    </View>
+    </Stack>
   );
 }
 
 const styles = StyleSheet.create({
-  titleBadge: {
-    borderWidth: 2,
-  },
   brandName: {
     textAlign: 'center',
-    fontSize: 68,
-    lineHeight: 76,
-    fontWeight: '600',
-    letterSpacing: -1.6,
   },
 });

@@ -54,7 +54,7 @@ src/
 ├── demo/          # Demo mode services + AsyncStorage persistence (when EXPO_PUBLIC_DEMO_MODE=true)
 ├── config/demo.ts # Single feature flag — routes feature APIs to demo or real backend
 ├── store/         # Zustand (session UI, selected workspace)
-├── theme/         # Tokens (#29B5E8 primary)
+├── theme/         # Tokens (#00BBFF primary)
 └── features/items # Metadata → Zod → RHF → field registry (unchanged from R1)
 ```
 
@@ -62,7 +62,7 @@ src/
 
 Calm operational notebook — not ERP, not dashboard-heavy admin tooling.
 
-Primary color: `#29B5E8`
+Primary color: `#00BBFF`
 
 ## Screenshots
 

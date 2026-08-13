@@ -94,7 +94,7 @@ export function ScrollIndicatorFlatList<T>({
               styles.thumb,
               {
                 height: thumbHeight,
-                backgroundColor: colors.primary,
+                backgroundColor: colors.textTertiary,
                 borderRadius: spacing.xs / 2,
                 transform: [{ translateY: thumbTranslateY }],
               },

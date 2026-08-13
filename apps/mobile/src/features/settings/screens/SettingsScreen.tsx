@@ -1,41 +1,41 @@
-import { AppScreenProps } from '@/navigation/types';
+import { StyleSheet } from 'react-native';
+
 import { useLogout } from '@/features/auth/hooks/useAuth';
+import { AppScreenProps } from '@/navigation/types';
 import { appConfig } from '@/config/app';
-import { useTheme } from '@/theme';
+import { useAppStore } from '@/store';
 import {
+  AppScreenShell,
   NotebookIndex,
   NotebookRow,
-  PageHeader,
-  Screen,
   Stack,
   Text,
   TextLink,
 } from '@/shared/ui';
+import { useTheme } from '@/theme';
 
-export function SettingsScreen(_props: AppScreenProps<'Settings'>) {
+export function SettingsScreen({ navigation }: AppScreenProps<'Settings'>) {
   const { spacing } = useTheme();
   const logout = useLogout();
+  const user = useAppStore((s) => s.user);
+  const displayName = user?.displayName?.trim() || 'Signed in';
+  const email = user?.email?.trim() || 'Account';
 
   return (
-    <Screen scroll edges={['bottom']}>
-      <PageHeader title="Settings" subtitle="Account and preferences." />
-
-      <Stack gap="lg">
+    <AppScreenShell
+      navigation={navigation}
+      title="Settings"
+      subtitle="Account"
+      subtitleUnderline
+      onBack={() => navigation.goBack()}
+      scrollable
+    >
+      <Stack gap="lg" style={[styles.body, { paddingHorizontal: spacing.lg, paddingBottom: spacing.xl }]}>
         <NotebookIndex>
-          <NotebookRow
-            title="Account"
-            description="Signed in"
-            size="item"
-          />
-          <NotebookRow
-            title="Preferences"
-            description="Coming soon"
-            size="item"
-            showDivider
-          />
+          <NotebookRow title={displayName} description={email} size="item" />
         </NotebookIndex>
 
-        <Stack gap="sm" style={{ paddingTop: spacing.sm }}>
+        <Stack gap="sm">
           <Text variant="caption" color="tertiary">
             About
           </Text>
@@ -47,6 +47,12 @@ export function SettingsScreen(_props: AppScreenProps<'Settings'>) {
 
         <TextLink label="Sign out" onPress={() => logout.mutate()} />
       </Stack>
-    </Screen>
+    </AppScreenShell>
   );
 }
+
+const styles = StyleSheet.create({
+  body: {
+    width: '100%',
+  },
+});

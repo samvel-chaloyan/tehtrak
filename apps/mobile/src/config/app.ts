@@ -4,5 +4,6 @@ export const appConfig = {
   storageKeys: {
     selectedWorkspaceId: 'tehtrak.selectedWorkspaceId',
     sessionAuthenticated: 'tehtrak.sessionAuthenticated',
+    pins: 'tehtrak.pins',
   },
 } as const;

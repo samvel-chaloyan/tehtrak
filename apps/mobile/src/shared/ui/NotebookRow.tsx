@@ -1,9 +1,11 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { PinButton } from './PinButton';
 import { RowActions } from './RowActions';
 import { Text } from './Text';
 import { useTheme } from '@/theme';
 import type { TypographyVariant } from '@/theme';
+import type { PinTarget } from '@/types';
 
 export type NotebookRowSize = 'workspace' | 'collection' | 'item';
 
@@ -57,6 +59,8 @@ export interface NotebookRowProps {
   onDelete?: () => void;
   showDivider?: boolean;
   size?: NotebookRowSize;
+  /** When set, shows a quiet pin toggle that does not open the row. */
+  pinTarget?: PinTarget;
 }
 
 export function NotebookRow({
@@ -68,12 +72,14 @@ export function NotebookRow({
   onDelete,
   showDivider = false,
   size = 'workspace',
+  pinTarget,
 }: NotebookRowProps) {
   const { colors, spacing } = useTheme();
   const config = SIZE_CONFIG[size];
   const paddingVertical = spacing[config.paddingVertical];
   const horizontalPadding = config.inset ? spacing.lg : 0;
   const hasActions = Boolean(onEdit || onDelete);
+  const hasTrailing = hasActions || Boolean(pinTarget);
 
   const rowContent = (
     <View
@@ -82,7 +88,7 @@ export function NotebookRow({
         {
           paddingVertical,
           paddingLeft: horizontalPadding,
-          paddingRight: hasActions ? spacing.sm : horizontalPadding,
+          paddingRight: hasTrailing ? spacing.sm : horizontalPadding,
         },
       ]}
     >
@@ -114,6 +120,7 @@ export function NotebookRow({
           </Text>
         ) : null}
       </View>
+      {pinTarget ? <PinButton target={pinTarget} compact /> : null}
       {hasActions ? <RowActions onEdit={onEdit} onDelete={onDelete} /> : null}
     </View>
   );

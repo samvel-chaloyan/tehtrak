@@ -60,7 +60,7 @@ export interface NotebookPageRowProps {
   label: string;
   children: ReactNode;
   showDivider?: boolean;
-  /** Highlights the value area as an editable control. */
+  /** When true, value renders inside a quiet bordered field (no row wash). */
   editing?: boolean;
 }
 
@@ -78,7 +78,6 @@ export function NotebookPageRow({
       <View
         style={[
           styles.row,
-          editing && { backgroundColor: colors.primaryMuted },
           {
             paddingHorizontal: spacing.lg,
             paddingVertical: spacing.md,
@@ -86,7 +85,7 @@ export function NotebookPageRow({
           },
         ]}
       >
-        <Text variant="caption" color={editing ? 'accent' : 'tertiary'}>
+        <Text variant="caption" color="tertiary">
           {label}
         </Text>
         {editing ? (

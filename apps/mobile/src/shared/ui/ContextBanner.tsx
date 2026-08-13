@@ -15,16 +15,19 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { WorkspaceRecentAvatar } from '@/features/workspaces/components/WorkspaceRecentAvatar';
+import type { PinEntityType } from '@/types';
 import { useTheme } from '@/theme';
 import { fontFamily } from '@/theme/typography';
 
+import { QuickAccessChip } from './QuickAccessChip';
 import { RunningText } from './RunningText';
 import { ShellBackLink } from './ShellBackLink';
+import { Text } from './Text';
 
 /** Ambient band height — root screens without a places capsule. */
 export const CONTEXT_BANNER_HEIGHT = 36;
 
-/** Soft nav / places capsule height. */
+/** Soft nav / Quick Access capsule height — shared across home, nested, and search. */
 export const CONTEXT_CAPSULE_HEIGHT = 52;
 
 /** Equal air above and below the capsule (header ↔ list midline). Matches `spacing.list`. */
@@ -52,6 +55,8 @@ export interface ContextRecentPlace {
   label: string;
   initials: string;
   emphasized?: boolean;
+  /** When set, banner renders a Quick Access chip (type color + label). */
+  entityType?: PinEntityType;
   onPress: () => void;
 }
 
@@ -62,7 +67,7 @@ export interface ContextBannerProps {
   /** Enter search — icon only; no blue accent. */
   onSearch?: () => void;
   /**
-   * Root Workspaces capsule — story-style recent places (initials)
+   * Root Workspaces banner — Quick Access pins (circles + labels)
    * with search on the right. Replaces ambient copy when provided.
    */
   recentPlaces?: ContextRecentPlace[];
@@ -76,7 +81,7 @@ export interface ContextBannerProps {
 
 /**
  * Band under the blue header.
- * Root places: soft capsule — recent circles | search (or inline search field).
+ * Root Workspaces: soft banner — Quick Access chips | search (or inline search field).
  * Nested: soft white nav capsule — back | label | search.
  * Fallback root: ambient rotating copy.
  */
@@ -237,6 +242,8 @@ export function ContextBanner({
   }
 
   if (isPlacesHome) {
+    const useQuickAccessChips = recentPlaces.some((place) => place.entityType);
+
     return (
       <View
         style={[
@@ -264,21 +271,42 @@ export function ContextBanner({
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={[styles.placesRow, { gap: spacing.sm }]}
+            contentContainerStyle={[
+              styles.placesRow,
+              {
+                gap: useQuickAccessChips ? spacing.md : spacing.sm,
+                alignItems: 'center',
+                paddingVertical: 2,
+              },
+            ]}
             style={styles.placesScroll}
           >
             {recentPlaces.length > 0 ? (
-              recentPlaces.map((place) => (
-                <WorkspaceRecentAvatar
-                  key={place.id}
-                  initials={place.initials}
-                  label={place.label}
-                  emphasized={place.emphasized}
-                  onPress={place.onPress}
-                />
-              ))
+              recentPlaces.map((place) =>
+                place.entityType ? (
+                  <QuickAccessChip
+                    key={place.id}
+                    letter={place.initials}
+                    label={place.label}
+                    entityType={place.entityType}
+                    onPress={place.onPress}
+                  />
+                ) : (
+                  <WorkspaceRecentAvatar
+                    key={place.id}
+                    initials={place.initials}
+                    label={place.label}
+                    emphasized={place.emphasized}
+                    onPress={place.onPress}
+                  />
+                ),
+              )
             ) : (
-              <View style={styles.placesEmpty} />
+              <View style={styles.placesEmpty}>
+                <Text variant="caption" color="tertiary" numberOfLines={1}>
+                  Pin from a card
+                </Text>
+              </View>
             )}
           </ScrollView>
 
@@ -479,6 +507,7 @@ const styles = StyleSheet.create({
   placesEmpty: {
     height: 36,
     minWidth: 8,
+    justifyContent: 'center',
   },
   sidePlaceholder: {
     width: 36,

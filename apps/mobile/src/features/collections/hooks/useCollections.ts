@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/core/api';
+import { removePinsForCollection } from '@/features/pins/hooks/usePins';
 import {
   createCollection,
   deleteCollection,
@@ -23,6 +24,7 @@ export function useCreateCollection(workspaceId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.collections(workspaceId) });
       queryClient.invalidateQueries({ queryKey: queryKeys.workspaceSummaries });
+      queryClient.invalidateQueries({ queryKey: queryKeys.pinCatalog });
     },
   });
 }
@@ -41,6 +43,7 @@ export function useUpdateCollection(workspaceId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.collections(workspaceId) });
       queryClient.invalidateQueries({ queryKey: queryKeys.workspaceSummaries });
+      queryClient.invalidateQueries({ queryKey: queryKeys.pinCatalog });
     },
   });
 }
@@ -49,9 +52,11 @@ export function useDeleteCollection(workspaceId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (collectionId: string) => deleteCollection(workspaceId, collectionId),
-    onSuccess: () => {
+    onSuccess: (_result, collectionId) => {
+      removePinsForCollection(workspaceId, collectionId);
       queryClient.invalidateQueries({ queryKey: queryKeys.collections(workspaceId) });
       queryClient.invalidateQueries({ queryKey: queryKeys.workspaceSummaries });
+      queryClient.invalidateQueries({ queryKey: queryKeys.pinCatalog });
     },
   });
 }

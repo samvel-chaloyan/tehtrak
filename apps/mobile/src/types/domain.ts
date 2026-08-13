@@ -61,3 +61,28 @@ export interface DraftProperty {
   required: boolean;
   config?: PropertyConfig;
 }
+
+/** Quick Access pin target kind. */
+export type PinEntityType = 'workspace' | 'collection' | 'item';
+
+/**
+ * User-pinned object for Quick Access.
+ * Display titles resolve live from domain data — never denormalized here.
+ * `sortIndex` reserved for drag-reorder; `pinnedAt` for later sort modes.
+ * Future: `source: 'pin' | 'recent'` without changing chip UI.
+ */
+export interface Pin {
+  id: string;
+  type: PinEntityType;
+  workspaceId: string;
+  collectionId?: string;
+  itemId?: string;
+  pinnedAt: string;
+  sortIndex: number;
+}
+
+/** Identity used to toggle / look up a pin. */
+export type PinTarget =
+  | { type: 'workspace'; workspaceId: string }
+  | { type: 'collection'; workspaceId: string; collectionId: string }
+  | { type: 'item'; workspaceId: string; collectionId: string; itemId: string };

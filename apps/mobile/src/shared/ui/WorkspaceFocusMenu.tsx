@@ -180,7 +180,7 @@ export function WorkspaceFocusMenu({
           <IconAction
             label="Edit"
             icon="create-outline"
-            color={colors.textSecondary}
+            color={colors.successEmphasis}
             onPress={onEdit}
           />
           {separator}

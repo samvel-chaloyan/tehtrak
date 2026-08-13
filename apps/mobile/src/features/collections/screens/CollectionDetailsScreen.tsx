@@ -8,6 +8,7 @@ import { AppScreenProps } from '@/navigation/types';
 import {
   AppScreenShell,
   EmptyListContent,
+  EmptyNotebook,
   NotebookListShelf,
   NotebookRow,
   OutlineButton,
@@ -135,7 +136,8 @@ export function CollectionDetailsScreen({
   if (isLoading) {
     return (
       <AppScreenShell {...shellProps}>
-        <NotebookListShelf countLabel={collectionDetailsMeta(0, 0)} footerLeft={shelfFooter} framed={false} countColor="tertiary">
+        <NotebookListShelf countLabel={collectionDetailsMeta(0, 0)} footerLeft={shelfFooter} accent="item"
+          framed={false} countColor="tertiary">
           <SkeletonList count={5} />
         </NotebookListShelf>
       </AppScreenShell>
@@ -147,6 +149,7 @@ export function CollectionDetailsScreen({
       <AppScreenShell {...shellProps} footer={retryFooter}>
         <NotebookListShelf
           countLabel={collectionDetailsMeta(0, fieldList.length)}
+          accent="item"
           framed={false}
           countColor="tertiary"
         >
@@ -167,10 +170,11 @@ export function CollectionDetailsScreen({
   if (!itemCount) {
     return (
       <AppScreenShell {...shellProps} footer={itemFooter}>
-        <NotebookListShelf countLabel={countLabel} footerLeft={shelfFooter} framed={false} countColor="tertiary">
-          <EmptyListContent
-            title="No items yet"
-            description="Add your first item to begin recording information in this collection."
+        <NotebookListShelf countLabel={countLabel} footerLeft={shelfFooter} accent="item"
+          framed={false} countColor="tertiary">
+          <EmptyNotebook
+            title="Write the first page"
+            description="Add an item to begin recording what matters in this collection."
           />
         </NotebookListShelf>
       </AppScreenShell>
@@ -190,6 +194,7 @@ export function CollectionDetailsScreen({
         <NotebookListShelf
           countLabel={countLabel}
           footerLeft={searchActive ? undefined : shelfFooter}
+          accent="item"
           framed={false}
           countColor="tertiary"
         >
@@ -241,6 +246,12 @@ export function CollectionDetailsScreen({
                     }
                     showDivider={index < filteredItems.length - 1}
                     size="item"
+                    pinTarget={{
+                      type: 'item',
+                      workspaceId,
+                      collectionId,
+                      itemId: item.id,
+                    }}
                   />
                 </SwipeableRow>
               )}

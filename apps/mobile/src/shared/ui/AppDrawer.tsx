@@ -28,10 +28,10 @@ export interface AppDrawerProps {
   brandRowTop?: number;
   onSettings?: () => void;
   onSignOut?: () => void;
+  /** Opens scoped page search (or home search when none on this screen). */
   onSearch?: () => void;
-  onFavorites?: () => void;
-  onRecent?: () => void;
-  onHelp?: () => void;
+  onQuickAccess?: () => void;
+  /** About lives in Settings — same destination as Settings for honesty. */
   onAbout?: () => void;
 }
 
@@ -45,6 +45,8 @@ interface DrawerRowProps {
   icon: DrawerIconName;
   label: string;
   onPress: () => void;
+  /** Quieter icon for secondary rows — accent reserved for active chrome. */
+  quiet?: boolean;
 }
 
 function DrawerDivider() {
@@ -63,7 +65,7 @@ function DrawerDivider() {
   );
 }
 
-function DrawerRow({ icon, label, onPress }: DrawerRowProps) {
+function DrawerRow({ icon, label, onPress, quiet = false }: DrawerRowProps) {
   const { colors, radius, spacing } = useTheme();
 
   return (
@@ -81,7 +83,11 @@ function DrawerRow({ icon, label, onPress }: DrawerRowProps) {
         },
       ]}
     >
-      <Ionicons name={icon} size={20} color={colors.primary} />
+      <Ionicons
+        name={icon}
+        size={20}
+        color={quiet ? colors.textTertiary : colors.textSecondary}
+      />
       <Text variant="body" color="secondary" style={styles.rowLabel}>
         {label}
       </Text>
@@ -99,9 +105,7 @@ export function AppDrawer({
   onSettings,
   onSignOut,
   onSearch,
-  onFavorites,
-  onRecent,
-  onHelp,
+  onQuickAccess,
   onAbout,
 }: AppDrawerProps) {
   const { colors, spacing } = useTheme();
@@ -216,9 +220,18 @@ export function AppDrawer({
         <View style={[styles.menu, { paddingTop: menuTop, paddingHorizontal: spacing.lg }]}>
           <DrawerDivider />
 
-          <DrawerRow icon="search-outline" label="Search" onPress={() => runAction(onSearch)} />
-          <DrawerRow icon="star-outline" label="Favorites" onPress={() => runAction(onFavorites)} />
-          <DrawerRow icon="time-outline" label="Recent" onPress={() => runAction(onRecent)} />
+          {onSearch ? (
+            <DrawerRow
+              icon="search-outline"
+              label="Search"
+              onPress={() => runAction(onSearch)}
+            />
+          ) : null}
+          <DrawerRow
+            icon="bookmark-outline"
+            label="Quick Access"
+            onPress={() => runAction(onQuickAccess)}
+          />
 
           <DrawerDivider />
 
@@ -227,16 +240,21 @@ export function AppDrawer({
             label="Settings"
             onPress={() => runAction(onSettings)}
           />
-          <DrawerRow icon="help-circle-outline" label="Help" onPress={() => runAction(onHelp)} />
           <DrawerRow
             icon="information-circle-outline"
             label="About"
-            onPress={() => runAction(onAbout)}
+            quiet
+            onPress={() => runAction(onAbout ?? onSettings)}
           />
 
           <DrawerDivider />
 
-          <DrawerRow icon="log-out-outline" label="Sign out" onPress={() => runAction(onSignOut)} />
+          <DrawerRow
+            icon="log-out-outline"
+            label="Sign out"
+            quiet
+            onPress={() => runAction(onSignOut)}
+          />
         </View>
       </Animated.View>
 

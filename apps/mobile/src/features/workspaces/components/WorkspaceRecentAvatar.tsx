@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { Text } from '@/shared/ui';
+import { Text } from '@/shared/ui/Text';
 import { useTheme } from '@/theme';
 
 const AVATAR_SIZE = 36;

@@ -132,7 +132,7 @@ Meta (optional, caption tertiary)
 * No borders on individual rows
 * No emoji
 
-Workspace home uses grid cards + long-press focus menu. Collection and item lists use swipe actions — no inline edit/delete buttons.
+Workspace home uses grid cards + long-press focus menu. Collection and item lists use swipe actions — no inline edit/delete buttons. Structure screens (Customize Fields) may use visible `RowActions`. Full map: [ui-constitution.md](./ui-constitution.md) — Edit & delete gestures.
 
 ---
 
@@ -189,6 +189,26 @@ Use on: Workspace list, Settings, Auth forms.
 Quiet caption below native navigation. Never repeats the nav title.
 
 Example: `4 collections`
+
+---
+
+## NotebookListShelf
+
+### Purpose
+
+Grouped list body for collections, items, and similar notebook lists.
+
+### Accent
+
+Optional `accent` prop — quiet outside top-left corner mark matching entity type:
+
+| Accent | Color token | Screens |
+|--------|-------------|---------|
+| `workspace` | `entityWorkspace` (`#00BBFF`) | Quick Access workspace group |
+| `collection` | `entityCollection` (`#F5C85F`) | Collection list |
+| `item` | `entityItem` (`#34C759`) | Item list, item page |
+
+Same `CornerAccent` mark as `WorkspaceGridCard`.
 
 ---
 
@@ -350,7 +370,7 @@ Three horizontal lines. Default tone: middle line `primary`, outer lines muted. 
 
 ### Purpose
 
-Standard empty state for lists and notebooks.
+Brand empty state for first-run lists and notebooks.
 
 ### Anatomy
 
@@ -358,8 +378,10 @@ Standard empty state for lists and notebooks.
 ThreeLines (center)
 Title (sectionTitle)
 Description (body, secondary)
-TextLink action (optional)
+TextLink action (optional — prefer footer CTA when one already exists)
 ```
+
+Use `EmptyListContent` for quiet in-frame empties (search, errors).
 
 
 ## SkeletonCard
@@ -413,18 +435,19 @@ Band under the brand header — places capsule on Workspaces home; soft navigati
 
 | Mode | When | Content |
 |------|------|---------|
-| Places home | Workspaces root | Soft white capsule — recent initials circles \| search |
+| Places home | Workspaces root | Soft banner — Quick Access chips (letter + type color + label) \| search |
 | Search | After tapping search | Soft white capsule — back \| text field (focused) \| clear / search |
 | Capsule | Nested screens | Soft white nav capsule — back \| context label \| search |
 | Ambient | Fallback root | Rotating quiet `bodySmall` secondary lines, centered |
 
-### Places home rules
+### Places home / Quick Access rules
 
-* Same capsule chrome as nested (`CONTEXT_CAPSULE_HEIGHT` 52, pill, `surface`, `shadows.soft`)
-* Horizontal story circles — initials only (`caption`); custom place icons later
-* Soft primary ring on last-opened place
+* Same soft capsule height as nested/search (`CONTEXT_CAPSULE_HEIGHT` = 52) — not a separate page section
+* Horizontal Quick Access chips — first letters of the first two words; ring/face by entity type
+* No title under the circle (name is accessibility label only)
 * Hairline separator before search
 * Search: `search-outline`, `textSecondary`
+* Empty pins: quiet empty row + search still available
 
 ### Inline search rules
 
@@ -471,7 +494,7 @@ Place tile for the workspace home grid — calm, typography-led. Workspace home 
 
 ```
 ┌─────────────────────────┐
-│ ╭─ blue corner accent   │  outside, one continuous rounded L
+│ ╭─ workspace corner accent │  outside, one continuous rounded L (`entityWorkspace`)
 │                         │
 │  Workspace name         │  bodySmall, medium, primary
 │                         │
@@ -484,7 +507,7 @@ Radius: `xl` (20). Surface: `surface`. Shadow: `soft`. No full border.
 
 Press: brief opacity fade only — no persistent selected tint on the grid.
 
-Accent: one continuous primary stroke hugging the **outside** of the top-left rounded corner — not a full-width bar, not separate arc/arm pieces.
+Accent: one continuous `entityWorkspace` stroke hugging the **outside** of the top-left rounded corner — not a full-width bar, not separate arc/arm pieces.
 
 Long press: focus mode via `WorkspaceFocusMenu` when used in a measurable grid.
 
@@ -503,6 +526,32 @@ Story-style place circle in the Workspaces capsule — initials for now; custom 
 Quiet ring (`border` / `primary` when emphasized), face on `background` / `primaryMuted`, `caption` initials.
 
 Implementation: `WorkspaceRecentAvatar` + `workspaceInitials()`.
+
+---
+
+## QuickAccessChip
+
+### Purpose
+
+Circular chip for a pinned Workspace, Collection, or Item — lives in the Workspaces **banner** (and can be reused elsewhere).
+
+### Anatomy
+
+* Circle — first letters of the first two words (or first two chars of one word); never W / C / I type codes
+* Ring + face wash by entity type (see design-tokens Quick Access entity colors)
+* No title under the circle — full name is the accessibility label
+* No shadow, no thick border
+* Large touch target
+
+Implementation: `QuickAccessChip` inside `ContextBanner` places-home mode.
+
+---
+
+## PinButton
+
+### Purpose
+
+Quiet pin / unpin control on cards, rows, and the item page. Icon only (`bookmark-outline` / `bookmark`). Pinned uses the entity accent for that target (workspace / collection / item); unpinned uses `textTertiary`. No confirm, no toast.
 
 ---
 
@@ -526,7 +575,7 @@ Contextual long-press menu for a workspace place card — dynamic position, not 
 └───────────────────────────────────────────────────┘
 ```
 
-Cluster anchors below the card when there is room, otherwise above. Icons match app chrome: `chevron-back` (cancel), `create-outline` (edit), `trash-outline` (delete). Hairline separators between actions (same as nav capsule). Tap scrim cancels.
+Cluster anchors below the card when there is room, otherwise above. Icons: `chevron-back` (cancel), `create-outline` edit in `successEmphasis` (same green as swipe edit), `trash-outline` delete in `danger`. Hairline separators between actions (same as nav capsule). Tap scrim cancels.
 
 Tokens: `expo-blur` light blur, light scrim, `surface` pill, `shadows.soft`, `radius.full`.
 

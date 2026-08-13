@@ -42,7 +42,7 @@ export interface AppScreenShellProps {
   onBack?: () => void;
   /** Scoped page search — shown in the nav / places capsule when provided. */
   onSearch?: () => void;
-  /** Root Workspaces — story-style recent places in the soft capsule. */
+  /** Root Workspaces — Quick Access pins in the soft banner capsule. */
   recentPlaces?: ContextRecentPlace[];
   /** Inline capsule search field (frees recent circles / context label). */
   searchActive?: boolean;
@@ -93,6 +93,7 @@ export function AppScreenShell({
   const ambientMessages =
     bannerMessages ??
     (infoMessage ? [infoMessage] : DEFAULT_CONTEXT_BANNER_MESSAGES);
+  /** One shared slot for Workspaces Quick Access, nested nav, and search. */
   const contextSlotHeight = showContextCapsule
     ? CONTEXT_CAPSULE_HEIGHT + CONTEXT_CAPSULE_GAP * 2
     : CONTEXT_BANNER_HEIGHT;
@@ -218,6 +219,13 @@ export function AppScreenShell({
           brandRowTop={logoPosition?.top}
           onClose={() => setDrawerOpen(false)}
           onSettings={() => navigation.navigate('Settings')}
+          onAbout={() => navigation.navigate('Settings')}
+          onQuickAccess={() => navigation.navigate('QuickAccess')}
+          onSearch={
+            onSearch
+              ? () => onSearch()
+              : () => navigation.navigate('WorkspaceList', { openSearch: true })
+          }
           onSignOut={() => logout.mutate()}
         />
 

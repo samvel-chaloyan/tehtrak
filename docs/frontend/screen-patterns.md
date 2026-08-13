@@ -22,18 +22,19 @@ One title source per screen. Never duplicate.
 | Collection list | None (custom header) | Yes |
 | Collection details | None (custom header) | Yes |
 | Item details | None (custom header) | Yes — item name in shell subtitle |
-| Settings | Native title | `PageHeader` optional subtitle |
-| Auth | None | `PageHeader` |
+| Settings | None (custom header) | Yes — brand shell |
+| Auth | None | Auth page header |
 
 Secondary account actions live in **Settings** — not on workspace list.
 
+Drawer rows that ship: Search (scoped or home), Quick Access, Settings, About (→ Settings), Sign out. Do not show stub rows that look live.
 ---
 
 ## Welcome
 
 ```
 ThreeLines
-PageTitle — Tehtrak
+titleLarge (accent) — Tehtrak     ← token scale only; no off-system display sizes
 body — A calm operational notebook
 bodySmall — supporting message
 
@@ -41,37 +42,62 @@ bodySmall — supporting message
 [ Create account — ghost ]
 ```
 
-Tight vertical rhythm. No excessive dead space between copy and actions.
+Tight vertical rhythm. No excessive dead space between copy and actions. No bordered badge chrome around the brand name.
+
+---
+
+## Sign in / Create account
+
+```
+[ ← back ]                    Sign in   ← ScreenLineHeader tone=default
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  primary line
+
+Welcome back — open the notebook…       ← quiet bodySmall secondary
+
+┌ soft surface card ─────────────────┐
+│ Email                              │
+│ Password                           │
+└────────────────────────────────────┘
+
+[ Next ]  ← FixedFooterFrame bottom slot
+```
+
+Same pattern for Create account (name + email + password). Form lives on a quiet grouped card so the canvas does not feel empty. Back chevron stays fully visible — no negative left offset, no overlay banner.
 
 ---
 
 ## Workspace List
 
-Place grid home — soft capsule with recent initials + search above the familiar 2-column tiles.
+Place grid home — soft banner with Quick Access pins + search above the 2-column tiles.
 
 ```
 Brand header (primary blue, edge-to-edge)
-  BrandMenuButton — tehtrak_white.png on blue; tehtrak_blue.png in drawer
+  BrandMenuButton — tehtrak_white.png on brand header; tehtrak_blue.png in drawer (current brand blue)
   logo left | page title right (white) — title only
 
-ContextBanner capsule (52px) — story circles (initials) | 🔍
-  recent places side-by-side (scroll if needed)
-  soft primary ring on last-opened
-  place icons deferred — initials only for now
-  search affordance on the right (drawer also has Search)
+ContextBanner Quick Access (52px soft capsule) — type-colored chips | 🔍
+  pinned Workspace / Collection / Item circles (first two-word initials — no titles under)
+  color: workspace `#00BBFF` · collection `#F5C85F` · item `#34C759`
+  horizontal scroll; empty until something is pinned
+  empty dock: quiet caption — “Pin from a card” (not a blank capsule)
+  search affordance on the right
+  drawer: Quick Access opens the management screen
 
   On search tap → capsule becomes ← | text field (focused) | clear
   body blanks until typing; grid filters live by name / description
-  back restores places capsule + full grid
+  back restores Quick Access banner + full grid
 
 WorkspaceGrid (2 columns inside NotebookListShelf)
   WorkspaceGridCard × n — fixed equal height tiles
+  quiet pin toggle on each card
   ordered by last edited (activity)
   long-press → WorkspaceFocusMenu (disabled while searching)
 
 SingleBottomButton — New workspace (neutral border default, blue when pressed)
   hidden while search is active
 ```
+
+Drawer **Quick Access** opens the management screen (grouped pins). Home banner is the shortcut dock.
 
 Collections and Items keep notebook-style vertical lists.
 
@@ -264,7 +290,7 @@ AppScreenShell — title Item, subtitle item title (underlined) + search
   back restores context capsule + full page
 
 NotebookListShelf (framed=false — same subtle grouped surface as lists)
-  NotebookPageRow × n — label + value (view) or highlighted edit control (edit)
+  NotebookPageRow × n — label + value (view) or quiet bordered field (edit)
   inset hairline dividers between properties
   footer meta (right, tertiary) — "Updated 3d ago" (or property count while searching)
 
@@ -276,25 +302,52 @@ Tap Edit or the list-row pencil to enter edit mode on the same page. Delete stay
 
 ---
 
+## Quick Access
+
+Management screen for pinned objects — opened from the drawer.
+
+```
+Brand header — Quick Access (title only)
+ContextBanner capsule — ← Quick Access (no search)
+
+NotebookListShelf sections (framed=false), empty groups omitted:
+  Workspaces — NotebookRow + pin toggle
+  Collections
+  Items
+
+Empty: calm EmptyListContent — “Nothing pinned yet”
+```
+
+Tap row opens the object (same deep navigation as home chips). Pin toggles unpin without confirm.
+
+---
+
 ## Settings
 
 ```
-PageHeader — Settings
+Brand shell — Settings / Account capsule
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Grouped surface
-  Account
-  Preferences
+  Display name
+  email                          ← identity only (not tappable)
 
-About block
+About
+  Tehtrak
+  A calm operational notebook
 
 TextLink — Sign out
 ```
+
+No placeholder “Coming soon” rows. Preferences wait until they exist.
 
 ---
 
 ## Empty states
 
-`EmptyNotebook` — ThreeLines, encouraging headline, body, TextLink action.
+`EmptyNotebook` — ThreeLines, encouraging headline, body. Use for **first-run** empty lists (workspaces / collections / items). Primary create stays in the footer — do not duplicate a loud CTA in the empty body.
+
+`EmptyListContent` — quiet text only. Use for search blank, search no-match, and in-frame errors.
 
 Never: "No data found", "No records available".
 

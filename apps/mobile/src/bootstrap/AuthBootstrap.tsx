@@ -5,6 +5,7 @@ import { queryKeys } from '@/core/api';
 import { isDemoMode } from '@/config/demo';
 import { ensureDemoInitialized } from '@/demo/state';
 import { restoreSession } from '@/features/auth/api';
+import { usePinStore } from '@/features/pins/store';
 import { useAppStore } from '@/store';
 import { Loader } from '@/shared/ui/Loader';
 
@@ -14,6 +15,11 @@ export function AuthBootstrap({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
+    const safety = setTimeout(() => {
+      if (!cancelled) {
+        setReady(true);
+      }
+    }, 8000);
 
     async function boot() {
       const { setAuthenticated, setUser } = useAppStore.getState();
@@ -23,6 +29,7 @@ export function AuthBootstrap({ children }: { children: ReactNode }) {
           await ensureDemoInitialized();
         }
         await useAppStore.getState().hydrateFromStorage();
+        await usePinStore.getState().hydrate();
 
         try {
           const user = await restoreSession();
@@ -42,6 +49,7 @@ export function AuthBootstrap({ children }: { children: ReactNode }) {
         }
       } finally {
         if (!cancelled) {
+          clearTimeout(safety);
           setReady(true);
         }
       }
@@ -51,6 +59,7 @@ export function AuthBootstrap({ children }: { children: ReactNode }) {
 
     return () => {
       cancelled = true;
+      clearTimeout(safety);
     };
   }, [queryClient]);
 

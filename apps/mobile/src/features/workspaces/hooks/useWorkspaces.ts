@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/core/api';
+import { removePinsForWorkspace } from '@/features/pins/hooks/usePins';
 import { createWorkspace, deleteWorkspace, fetchWorkspaces, updateWorkspace } from '../api';
 
 export function useWorkspaces() {
@@ -16,6 +17,7 @@ export function useCreateWorkspace() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.workspaces });
       queryClient.invalidateQueries({ queryKey: queryKeys.workspaceSummaries });
+      queryClient.invalidateQueries({ queryKey: queryKeys.pinCatalog });
     },
   });
 }
@@ -33,6 +35,7 @@ export function useUpdateWorkspace() {
     }) => updateWorkspace(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.workspaces });
+      queryClient.invalidateQueries({ queryKey: queryKeys.pinCatalog });
     },
   });
 }
@@ -41,9 +44,11 @@ export function useDeleteWorkspace() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteWorkspace(id),
-    onSuccess: () => {
+    onSuccess: (_result, id) => {
+      removePinsForWorkspace(id);
       queryClient.invalidateQueries({ queryKey: queryKeys.workspaces });
       queryClient.invalidateQueries({ queryKey: queryKeys.workspaceSummaries });
+      queryClient.invalidateQueries({ queryKey: queryKeys.pinCatalog });
     },
   });
 }

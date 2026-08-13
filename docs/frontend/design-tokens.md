@@ -20,8 +20,8 @@ For rules, see [ui-constitution.md](./ui-constitution.md). Implementation: `apps
 | Primary text | `textPrimary` | `#48484A` |
 | Secondary text | `textSecondary` | `#6B7280` |
 | Tertiary text | `textTertiary` | `#9CA3AF` |
-| Primary blue | `primary` | `#29B5E8` |
-| Pressed blue | `primaryPressed` | `#1FA3D4` |
+| Primary blue | `primary` | `#00BBFF` |
+| Pressed blue | `primaryPressed` | `#00A3E0` |
 
 ### Background vs surface
 
@@ -44,8 +44,8 @@ Implementation: `useSurfaceStyles()` in `apps/mobile/src/theme/surfaces.ts` — 
 
 | Token | Value |
 |-------|-------|
-| `primaryMuted` | `#EEF6FA` |
-| `primaryBorder` | `rgba(41, 181, 232, 0.35)` |
+| `primaryMuted` | `#E5F9FF` |
+| `primaryBorder` | `rgba(0, 187, 255, 0.35)` |
 
 ### Surfaces
 
@@ -93,9 +93,27 @@ Never use pure black (`#000`) or full-saturation red/green for large surfaces.
 | `successMuted` | `#F2F8F2` |
 | `successEmphasis` | `#84B588` |
 | `warning` | `#D4A15A` |
+| `warningMuted` | `#F8F3EA` |
 | `danger` | `#C85A5A` |
 | `dangerMuted` | `#FBF0F0` |
 | `dangerEmphasis` | `#CF9595` |
+
+### Quick Access / entity accent colors
+
+Shared type language for chips, corner marks, and pinned bookmarks — not brand primary, not decorative chrome.
+
+| Token | Value | Use |
+|-------|-------|-----|
+| `entityWorkspace` | `#00BBFF` | Workspace chip, card corner, pinned bookmark |
+| `entityWorkspaceMuted` | `#E5F9FF` | Workspace chip face |
+| `entityCollection` | `#F5C85F` | Collection chip, list body corner, pinned bookmark |
+| `entityCollectionMuted` | `#FBF6E8` | Collection chip face |
+| `entityItem` | `#34C759` | Item chip, list body corner, pinned bookmark |
+| `entityItemMuted` | `#EAF9EE` | Item chip face |
+| `bookmark` | `#D9B44A` | Reserved — not used while pinned state follows entity color |
+| `bookmarkMuted` | `#F8F4E8` | Reserved |
+
+Corner accent: quiet outside top-left L on workspace cards and on collection/item list bodies (`NotebookListShelf` `accent`).
 
 ### Overlay
 

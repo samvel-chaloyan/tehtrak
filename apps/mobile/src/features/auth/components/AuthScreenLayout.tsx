@@ -7,7 +7,7 @@ import { OutlineButton, OutlineButtonProps } from '@/shared/ui/OutlineButton';
 import { FixedFooterFrame } from '@/shared/ui/FixedFooterFrame';
 import { KeyboardDismissView } from '@/shared/ui/KeyboardDismissView';
 import { useScreenContentHeight } from '@/shared/ui/useScreenContentHeight';
-import { Stack } from '@/shared/ui';
+import { Stack, Text } from '@/shared/ui';
 import { useSurfaceStyles, useTheme } from '@/theme';
 
 export interface AuthFooterAction extends Omit<OutlineButtonProps, 'label'> {
@@ -46,6 +46,8 @@ interface AuthScreenLayoutProps {
   children: ReactNode;
   headerTitle: string;
   onBack: () => void;
+  /** Quiet line under the title — gives the form a place to land. */
+  subtitle?: string;
   scroll?: boolean;
   footer: AuthFooterConfig;
 }
@@ -54,19 +56,38 @@ export function AuthScreenLayout({
   children,
   headerTitle,
   onBack,
+  subtitle,
   scroll = false,
   footer,
 }: AuthScreenLayoutProps) {
-  const { spacing } = useTheme();
+  const { radius, spacing, shadows } = useTheme();
   const surfaces = useSurfaceStyles();
   const insets = useSafeAreaInsets();
   const contentHeight = useScreenContentHeight();
   const buttonCount = footer.mode === 'dual' ? 2 : 1;
 
   const body = (
-    <View style={styles.body}>
+    <View style={[styles.body, { gap: spacing.lg }]}>
       <AuthPageHeader title={headerTitle} onBack={onBack} />
-      {children}
+      {subtitle ? (
+        <Text variant="bodySmall" color="secondary" style={styles.subtitle}>
+          {subtitle}
+        </Text>
+      ) : null}
+      <View
+        style={[
+          styles.formCard,
+          shadows.soft,
+          surfaces.grouped,
+          {
+            borderRadius: radius.xl,
+            paddingHorizontal: spacing.lg,
+            paddingVertical: spacing.lg,
+          },
+        ]}
+      >
+        {children}
+      </View>
     </View>
   );
 
@@ -85,7 +106,10 @@ export function AuthScreenLayout({
           {scroll ? (
             <ScrollView
               style={[styles.flex, surfaces.scroll]}
-              contentContainerStyle={styles.scrollContent}
+              contentContainerStyle={[
+                styles.scrollContent,
+                { paddingBottom: spacing.md },
+              ]}
               keyboardShouldPersistTaps="handled"
               keyboardDismissMode="on-drag"
               automaticallyAdjustKeyboardInsets={false}
@@ -115,7 +139,13 @@ const styles = StyleSheet.create({
     minHeight: 0,
   },
   body: {
-    flex: 1,
+    flexGrow: 1,
+    width: '100%',
+  },
+  subtitle: {
+    maxWidth: 320,
+  },
+  formCard: {
     width: '100%',
   },
   scrollContent: {

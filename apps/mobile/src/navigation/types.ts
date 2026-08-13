@@ -7,7 +7,7 @@ export type AuthStackParamList = {
 };
 
 export type AppStackParamList = {
-  WorkspaceList: undefined;
+  WorkspaceList: { openSearch?: boolean } | undefined;
   CreateWorkspace: undefined;
   EditWorkspace: {
     workspaceId: string;
@@ -65,6 +65,7 @@ export type AppStackParamList = {
     collectionName: string;
     workspaceId: string;
   };
+  QuickAccess: undefined;
   Settings: undefined;
 };
 

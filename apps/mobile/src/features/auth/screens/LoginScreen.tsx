@@ -5,11 +5,9 @@ import { AuthScreenLayout } from '@/features/auth/components/AuthScreenLayout';
 import { useLogin } from '@/features/auth/hooks/useAuth';
 import { AuthScreenProps } from '@/navigation/types';
 import { Input, Stack, Text } from '@/shared/ui';
-import { useTheme } from '@/theme';
 import { getScreenErrorMessage } from '@/utils';
 
 export function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
-  const { spacing } = useTheme();
   const login = useLogin();
 
   const [email, setEmail] = useState('');
@@ -28,6 +26,7 @@ export function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
   return (
     <AuthScreenLayout
       headerTitle="Sign in"
+      subtitle="Welcome back — open the notebook you already trust."
       onBack={() => navigation.goBack()}
       scroll
       footer={{
@@ -39,25 +38,29 @@ export function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
         },
       }}
     >
-      <Stack gap="md" style={[styles.fields, { paddingTop: spacing.sm }]}>
+      <Stack gap="md" style={styles.fields}>
         <Input
           label="Email"
           labelColor="secondary"
-          valueColor="secondary"
+          valueColor="primary"
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
           keyboardType="email-address"
           placeholder="you@example.com"
+          autoComplete="email"
+          textContentType="emailAddress"
         />
         <Input
           label="Password"
           labelColor="secondary"
-          valueColor="secondary"
+          valueColor="primary"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
           placeholder="Your password"
+          autoComplete="password"
+          textContentType="password"
         />
 
         {error ? (

@@ -11,6 +11,7 @@ import {
   EmptyListContent,
   EmptyNotebook,
   NotebookListShelf,
+  PinButton,
   SingleBottomButton,
   SkeletonList,
   Text,
@@ -74,10 +75,17 @@ export function ItemDetailsScreen({ navigation, route }: AppScreenProps<'ItemDet
     }
   }, [startEditing]);
 
+  const exitEdit = useCallback(() => {
+    setIsEditing(false);
+    setError(null);
+    if (startEditing) {
+      navigation.setParams({ edit: undefined });
+    }
+  }, [navigation, startEditing]);
+
   const enterSearch = useCallback(() => {
     const beginSearch = () => {
-      setIsEditing(false);
-      setError(null);
+      exitEdit();
       setSearchQuery('');
       setSearchActive(true);
     };
@@ -88,12 +96,33 @@ export function ItemDetailsScreen({ navigation, route }: AppScreenProps<'ItemDet
     }
 
     beginSearch();
-  }, [isEditing]);
+  }, [isEditing, exitEdit]);
 
   const exitSearch = useCallback(() => {
     setSearchActive(false);
     setSearchQuery('');
   }, []);
+
+  /** Back while editing exits edit (stay on item); otherwise leave the screen. */
+  const handleBack = useCallback(() => {
+    if (isEditing) {
+      confirmDiscardEdits(exitEdit);
+      return;
+    }
+    navigation.goBack();
+  }, [isEditing, exitEdit, navigation]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (event) => {
+      if (!isEditing) {
+        return;
+      }
+      // Phone back / gesture — exit edit instead of popping to the collection.
+      event.preventDefault();
+      confirmDiscardEdits(exitEdit);
+    });
+    return unsubscribe;
+  }, [navigation, isEditing, exitEdit]);
 
   const visibleFields = useMemo(() => {
     if (!searchActive || !item) {
@@ -121,7 +150,7 @@ export function ItemDetailsScreen({ navigation, route }: AppScreenProps<'ItemDet
     title: 'Item',
     subtitle: itemTitle,
     subtitleUnderline: true,
-    onBack: () => navigation.goBack(),
+    onBack: handleBack,
     onSearch: enterSearch,
     ...searchShellProps,
   };
@@ -164,7 +193,7 @@ export function ItemDetailsScreen({ navigation, route }: AppScreenProps<'ItemDet
   if (isLoading) {
     return (
       <AppScreenShell {...shellProps} subtitle={undefined}>
-        <NotebookListShelf countLabel="…" framed={false} countColor="tertiary">
+        <NotebookListShelf countLabel="…" accent="item" framed={false} countColor="tertiary">
           <SkeletonList count={3} />
         </NotebookListShelf>
       </AppScreenShell>
@@ -206,7 +235,24 @@ export function ItemDetailsScreen({ navigation, route }: AppScreenProps<'ItemDet
           </Text>
         ) : null}
 
-        <NotebookListShelf countLabel={shelfMeta} framed={false} countColor="tertiary">
+        <NotebookListShelf
+          countLabel={shelfMeta}
+          accent="item"
+          framed={false}
+          countColor="tertiary"
+          footerLeft={
+            searchActive ? undefined : (
+              <PinButton
+                target={{
+                  type: 'item',
+                  workspaceId,
+                  collectionId,
+                  itemId: item.id,
+                }}
+              />
+            )
+          }
+        >
           {showSearchBlank ? (
             <EmptyListContent
               title="Find a property"

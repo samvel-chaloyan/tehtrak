@@ -4,11 +4,18 @@ import { isDemoMode } from '@/config/demo';
 import { Text } from '@/shared/ui';
 import { useTheme } from '@/theme';
 
+/** Dev-only demo strip. Hidden when there is no visible copy (avoids covering auth chrome). */
 export function DemoBanner() {
   const insets = useSafeAreaInsets();
   const { colors, spacing } = useTheme();
 
   if (!isDemoMode || !__DEV__) {
+    return null;
+  }
+
+  // Copy is currently disabled — do not paint an empty overlay bar.
+  const visible = false;
+  if (!visible) {
     return null;
   }
 
@@ -26,9 +33,9 @@ export function DemoBanner() {
         },
       ]}
     >
-      {/* <Text variant="caption" color="accent" style={styles.text}>
+      <Text variant="caption" color="accent" style={styles.text}>
         Demo Mode · Backend disabled
-      </Text> */}
+      </Text>
     </View>
   );
 }

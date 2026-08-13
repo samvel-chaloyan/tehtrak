@@ -2,8 +2,6 @@ import 'react-native-reanimated';
 import { useFonts, IBMPlexSans_400Regular, IBMPlexSans_500Medium, IBMPlexSans_600SemiBold } from '@expo-google-fonts/ibm-plex-sans';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { StatusBar } from 'expo-status-bar';
-import { type ReactNode } from 'react';
-import { ActivityIndicator, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -12,7 +10,7 @@ import { DemoBanner } from './DemoBanner';
 import { isDemoMode } from '@/config/demo';
 import { RootNavigator } from '@/navigation';
 import { SheetHost } from '@/shared/ui';
-import { ThemeProvider, useSurfaceStyles, useTheme } from '@/theme';
+import { ThemeProvider, useSurfaceStyles } from '@/theme';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,6 +22,13 @@ const queryClient = new QueryClient({
 });
 
 function AppRoot() {
+  // Load fonts without blocking the UI — avoids infinite spinner if load hangs.
+  useFonts({
+    IBMPlexSans_400Regular,
+    IBMPlexSans_500Medium,
+    IBMPlexSans_600SemiBold,
+  });
+
   const surfaces = useSurfaceStyles();
 
   return (
@@ -39,40 +44,12 @@ function AppRoot() {
   );
 }
 
-function FontGate({ children }: { children: ReactNode }) {
-  const { colors } = useTheme();
-  const [loaded] = useFonts({
-    IBMPlexSans_400Regular,
-    IBMPlexSans_500Medium,
-    IBMPlexSans_600SemiBold,
-  });
-
-  if (!loaded) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: colors.background,
-        }}
-      >
-        <ActivityIndicator color={colors.primary} />
-      </View>
-    );
-  }
-
-  return <>{children}</>;
-}
-
 export default function App() {
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
-          <FontGate>
-            <AppRoot />
-          </FontGate>
+          <AppRoot />
         </ThemeProvider>
       </QueryClientProvider>
     </SafeAreaProvider>

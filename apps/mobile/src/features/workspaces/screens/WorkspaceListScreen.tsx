@@ -1,20 +1,21 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { useResolvedPins } from '@/features/pins/hooks/useResolvedPins';
+import { navigateToPin } from '@/features/pins/utils/resolvePin';
+import { pinLetter } from '@/features/pins/utils/pinIdentity';
 import { useWorkspaceSummaries } from '@/features/workspaces/hooks/useWorkspaceSummaries';
 import { useDeleteWorkspace, useWorkspaces } from '@/features/workspaces/hooks/useWorkspaces';
-import { workspaceInitials } from '@/features/workspaces/utils/workspaceInitials';
 import { workspaceCardMetaLines } from '@/features/workspaces/utils/workspaceMeta';
-import {
-  mostUsedWorkspaces,
-  sortWorkspacesByLastEdited,
-} from '@/features/workspaces/utils/workspaceOrder';
+import { sortWorkspacesByLastEdited } from '@/features/workspaces/utils/workspaceOrder';
 import { AppScreenProps } from '@/navigation/types';
 import { useAppStore } from '@/store';
 import {
   AppScreenShell,
   EmptyListContent,
+  EmptyNotebook,
   NotebookListShelf,
+  PinButton,
   ScrollIndicatorFlatList,
   SingleBottomButton,
   WorkspaceFocusMenu,
@@ -67,7 +68,7 @@ function matchesWorkspaceQuery(workspace: Workspace, query: string) {
   return name.includes(normalized) || description.includes(normalized);
 }
 
-export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceList'>) {
+export function WorkspaceListScreen({ navigation, route }: AppScreenProps<'WorkspaceList'>) {
   const { spacing } = useTheme();
   const { data: workspaces, isLoading, isError, refetch, isRefetching } = useWorkspaces();
   const { data: summaries } = useWorkspaceSummaries(!isLoading && !isError);
@@ -79,6 +80,26 @@ export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceLis
   const [focusTarget, setFocusTarget] = useState<FocusTarget | null>(null);
   const [searchActive, setSearchActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const { resolved: resolvedPins } = useResolvedPins();
+
+  const enterSearch = useCallback(() => {
+    setFocusTarget(null);
+    setSearchQuery('');
+    setSearchActive(true);
+  }, []);
+
+  const exitSearch = useCallback(() => {
+    setSearchActive(false);
+    setSearchQuery('');
+  }, []);
+
+  useEffect(() => {
+    if (!route.params?.openSearch) {
+      return;
+    }
+    enterSearch();
+    navigation.setParams({ openSearch: undefined });
+  }, [route.params?.openSearch, enterSearch, navigation]);
 
   const orderedWorkspaces = useMemo(
     () => sortWorkspacesByLastEdited(workspaces ?? [], summaries),
@@ -114,31 +135,36 @@ export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceLis
     [navigation, selectWorkspace],
   );
 
+  const openPinned = useCallback(
+    (item: (typeof resolvedPins)[number]) => {
+      if (!item.resolvable) {
+        return;
+      }
+      if (item.pin.type === 'workspace') {
+        selectWorkspace(item.pin.workspaceId);
+      }
+      navigateToPin(navigation, item.pin, item.title);
+    },
+    [navigation, selectWorkspace, resolvedPins],
+  );
+
+  /** Banner Quick Access — pinned objects (not recent activity). */
   const recentPlaces = useMemo<ContextRecentPlace[]>(
     () =>
-      mostUsedWorkspaces(workspaces ?? [], summaries).map((workspace) => ({
-        id: workspace.id,
-        label: workspace.name,
-        initials: workspaceInitials(workspace.name),
-        emphasized: workspace.id === selectedWorkspaceId,
-        onPress: () => openWorkspace(workspace),
-      })),
-    [workspaces, summaries, selectedWorkspaceId, openWorkspace],
+      resolvedPins
+        .filter((item) => item.resolvable)
+        .map((item) => ({
+          id: item.pin.id,
+          label: item.title,
+          initials: pinLetter(item.title),
+          entityType: item.pin.type,
+          onPress: () => openPinned(item),
+        })),
+    [resolvedPins, openPinned],
   );
 
   const closeFocusMenu = useCallback(() => {
     setFocusTarget(null);
-  }, []);
-
-  const enterSearch = useCallback(() => {
-    setFocusTarget(null);
-    setSearchQuery('');
-    setSearchActive(true);
-  }, []);
-
-  const exitSearch = useCallback(() => {
-    setSearchActive(false);
-    setSearchQuery('');
   }, []);
 
   const handleWorkspaceLongPress = useCallback(
@@ -264,6 +290,9 @@ export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceLis
           metaLines={workspaceCardMetaLines(summaries?.[workspace.id])}
           onPress={() => openWorkspace(workspace)}
           onLongPress={(layout) => handleWorkspaceLongPress(workspace, layout)}
+          pinSlot={
+            <PinButton target={{ type: 'workspace', workspaceId: workspace.id }} compact />
+          }
         />
       </View>
     );
@@ -316,9 +345,9 @@ export function WorkspaceListScreen({ navigation }: AppScreenProps<'WorkspaceLis
         {...searchShellProps}
       >
         <NotebookListShelf {...shelfProps}>
-          <EmptyListContent
-            title="No workspaces yet"
-            description="Create a workspace to begin organizing collections and items."
+          <EmptyNotebook
+            title="Start your notebook"
+            description="Create a workspace to keep collections and items in one calm place."
           />
         </NotebookListShelf>
       </AppScreenShell>

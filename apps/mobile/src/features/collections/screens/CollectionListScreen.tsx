@@ -9,6 +9,7 @@ import { AppScreenProps } from '@/navigation/types';
 import {
   AppScreenShell,
   EmptyListContent,
+  EmptyNotebook,
   NotebookListShelf,
   NotebookRow,
   ScrollIndicatorFlatList,
@@ -109,7 +110,7 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
   if (isLoading) {
     return (
       <AppScreenShell {...shellProps}>
-        <NotebookListShelf countLabel={collectionCountLabel(0)} framed={false} countColor="tertiary">
+        <NotebookListShelf countLabel={collectionCountLabel(0)} accent="collection" framed={false} countColor="tertiary">
           <SkeletonList count={4} />
         </NotebookListShelf>
       </AppScreenShell>
@@ -119,7 +120,7 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
   if (isError) {
     return (
       <AppScreenShell {...shellProps} footer={retryFooter}>
-        <NotebookListShelf countLabel={collectionCountLabel(0)} framed={false} countColor="tertiary">
+        <NotebookListShelf countLabel={collectionCountLabel(0)} accent="collection" framed={false} countColor="tertiary">
           <EmptyListContent
             title="Could not load collections"
             description="Pull to refresh or try again in a moment."
@@ -134,10 +135,10 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
   if (!count) {
     return (
       <AppScreenShell {...shellProps} footer={newCollectionFooter}>
-        <NotebookListShelf countLabel={collectionCountLabel(count)} framed={false} countColor="tertiary">
-          <EmptyListContent
-            title="No collections yet"
-            description="Create your first collection to begin organizing items."
+        <NotebookListShelf countLabel={collectionCountLabel(count)} accent="collection" framed={false} countColor="tertiary">
+          <EmptyNotebook
+            title="Open a new section"
+            description="Create a collection to start organizing items in this workspace."
           />
         </NotebookListShelf>
       </AppScreenShell>
@@ -156,6 +157,7 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
       <View style={styles.content}>
         <NotebookListShelf
           countLabel={collectionCountLabel(listCount)}
+          accent="collection"
           framed={false}
           countColor="tertiary"
         >
@@ -211,6 +213,11 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
                       }
                       showDivider={index < filteredCollections.length - 1}
                       size="collection"
+                      pinTarget={{
+                        type: 'collection',
+                        workspaceId,
+                        collectionId: item.id,
+                      }}
                     />
                   </SwipeableRow>
                 );

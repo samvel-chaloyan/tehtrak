@@ -98,6 +98,7 @@ Reference: [design-language.md](./design-language.md), [ui-constitution.md](./ui
 - [ ] No bounce or playful animation
 - [ ] Header has at most one accent action
 - [ ] Icons are simple and supportive, not decorative
+- [ ] Edit/delete follows the gesture map (grid long-press, list swipe, structure RowActions, item footer)
 
 ---
 

@@ -5,11 +5,9 @@ import { AuthScreenLayout } from '@/features/auth/components/AuthScreenLayout';
 import { useRegister } from '@/features/auth/hooks/useAuth';
 import { AuthScreenProps } from '@/navigation/types';
 import { Input, Stack, Text } from '@/shared/ui';
-import { useTheme } from '@/theme';
 import { getScreenErrorMessage } from '@/utils';
 
 export function RegisterScreen({ navigation }: AuthScreenProps<'Register'>) {
-  const { spacing } = useTheme();
   const register = useRegister();
 
   const [name, setName] = useState('');
@@ -33,6 +31,7 @@ export function RegisterScreen({ navigation }: AuthScreenProps<'Register'>) {
   return (
     <AuthScreenLayout
       headerTitle="Create account"
+      subtitle="Start with a calm notebook for the work you already track by hand."
       onBack={() => navigation.goBack()}
       scroll
       footer={{
@@ -44,58 +43,52 @@ export function RegisterScreen({ navigation }: AuthScreenProps<'Register'>) {
         },
       }}
     >
-      <Stack gap="lg" style={[styles.content, { paddingTop: spacing.sm }]}>
-        <Text variant="bodySmall" color="secondary" style={styles.subtitle}>
-          Start with a calm notebook for the work you already track by hand.
-        </Text>
+      <Stack gap="md" style={styles.fields}>
+        <Input
+          label="Your name"
+          labelColor="secondary"
+          valueColor="primary"
+          value={name}
+          onChangeText={setName}
+          placeholder="Sam"
+          autoComplete="name"
+          textContentType="name"
+        />
+        <Input
+          label="Email"
+          labelColor="secondary"
+          valueColor="primary"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          placeholder="you@example.com"
+          autoComplete="email"
+          textContentType="emailAddress"
+        />
+        <Input
+          label="Password"
+          labelColor="secondary"
+          valueColor="primary"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          placeholder="At least 8 characters"
+          autoComplete="new-password"
+          textContentType="newPassword"
+        />
 
-        <Stack gap="md" style={styles.fields}>
-          <Input
-            label="Your name"
-            labelColor="secondary"
-            valueColor="secondary"
-            value={name}
-            onChangeText={setName}
-            placeholder="Sam"
-          />
-          <Input
-            label="Email"
-            labelColor="secondary"
-            valueColor="secondary"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            placeholder="you@example.com"
-          />
-          <Input
-            label="Password"
-            labelColor="secondary"
-            valueColor="secondary"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            placeholder="At least 8 characters"
-          />
-
-          {error ? (
-            <Text variant="bodySmall" color="danger" style={styles.error}>
-              {error}
-            </Text>
-          ) : null}
-        </Stack>
+        {error ? (
+          <Text variant="bodySmall" color="danger" style={styles.error}>
+            {error}
+          </Text>
+        ) : null}
       </Stack>
     </AuthScreenLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  content: {
-    width: '100%',
-  },
-  subtitle: {
-    maxWidth: 320,
-  },
   fields: {
     width: '100%',
   },

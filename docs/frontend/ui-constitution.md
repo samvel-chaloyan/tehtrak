@@ -140,6 +140,28 @@ Screen-specific placement: [screen-patterns.md](./screen-patterns.md).
 
 ---
 
+## Edit & delete gestures
+
+One clear map — do not mix affordances on the same row. No on-screen coaching banners; consistency teaches the gesture.
+
+| Surface | Affordance |
+|---------|------------|
+| **Grid places** (workspace tiles) | Long-press → `WorkspaceFocusMenu` (edit / delete / cancel) |
+| **Vertical notebook lists** (collections, items) | Swipe → edit / delete (`SwipeableRow`) |
+| **Structure / template rows** (Customize Fields) | Visible `RowActions` (pencil / trash) — denser structure editing, not content browsing |
+| **Item page** | Footer Edit / Save on the same screen — not swipe |
+
+Rules:
+
+* Never show swipe actions and inline edit icons on the same row
+* Disable long-press / swipe while scoped search is active
+* Destructive actions always confirm
+* Do not invent a fifth edit pattern without updating this section
+
+Anatomy: [components.md](./components.md) (`SwipeableRow`, `WorkspaceFocusMenu`, `RowActions`).
+
+---
+
 ## States
 
 ### Empty

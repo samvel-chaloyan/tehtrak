@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/core/api';
+import { removePinsForItem } from '@/features/pins/hooks/usePins';
 import { ItemData } from '@/types';
 import { createRecord, deleteRecord, fetchRecord, fetchRecords, updateRecord } from '../api';
 
@@ -27,6 +28,7 @@ export function useCreateRecord(workspaceId: string, collectionId: string) {
       queryClient.invalidateQueries({ queryKey: queryKeys.records(workspaceId, collectionId) });
       queryClient.invalidateQueries({ queryKey: queryKeys.collections(workspaceId) });
       queryClient.invalidateQueries({ queryKey: queryKeys.workspaceSummaries });
+      queryClient.invalidateQueries({ queryKey: queryKeys.pinCatalog });
     },
   });
 }
@@ -43,6 +45,7 @@ export function useUpdateRecord(workspaceId: string, collectionId: string) {
       });
       queryClient.invalidateQueries({ queryKey: queryKeys.collections(workspaceId) });
       queryClient.invalidateQueries({ queryKey: queryKeys.workspaceSummaries });
+      queryClient.invalidateQueries({ queryKey: queryKeys.pinCatalog });
     },
   });
 }
@@ -51,10 +54,12 @@ export function useDeleteRecord(workspaceId: string, collectionId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (recordId: string) => deleteRecord(workspaceId, collectionId, recordId),
-    onSuccess: () => {
+    onSuccess: (_result, recordId) => {
+      removePinsForItem(workspaceId, collectionId, recordId);
       queryClient.invalidateQueries({ queryKey: queryKeys.records(workspaceId, collectionId) });
       queryClient.invalidateQueries({ queryKey: queryKeys.collections(workspaceId) });
       queryClient.invalidateQueries({ queryKey: queryKeys.workspaceSummaries });
+      queryClient.invalidateQueries({ queryKey: queryKeys.pinCatalog });
     },
   });
 }
