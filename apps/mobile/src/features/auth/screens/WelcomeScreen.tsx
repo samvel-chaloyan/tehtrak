@@ -5,6 +5,7 @@ import { AuthBrandTitle } from '@/features/auth/components/AuthBrandTitle';
 import { AuthFooter } from '@/features/auth/components/AuthScreenLayout';
 import { appConfig } from '@/config/app';
 import { AuthScreenProps } from '@/navigation/types';
+import { AppStatusBar } from '@/shared/ui/AppStatusBar';
 import { FixedFooterFrame } from '@/shared/ui/FixedFooterFrame';
 import { KeyboardDismissView } from '@/shared/ui/KeyboardDismissView';
 import { useScreenContentHeight } from '@/shared/ui/useScreenContentHeight';
@@ -34,6 +35,7 @@ export function WelcomeScreen({ navigation }: AuthScreenProps<'Welcome'>) {
         },
       ]}
     >
+      <AppStatusBar tone="canvas" />
       <View style={[styles.frame, surfaces.scroll, { height: contentHeight }]}>
         <FixedFooterFrame
           buttonCount={2}

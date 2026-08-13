@@ -14,6 +14,14 @@ See [components.md](./components.md) for anatomy. See [ui-constitution.md](./ui-
 
 One title source per screen. Never duplicate.
 
+**Status bar:** Always visible. `AppStatusBar` + stack `statusBarStyle` keep icons readable:
+
+* Brand blue header → light (white) status icons
+* Auth / canvas / bootstrap loader → dark status icons
+* Animated fade when chrome changes
+
+Do not hide the status bar. Content respects safe-area top inset under a transparent system bar.
+
 **Bottom actions:** Every primary bottom button (New, Create, Continue, Save, etc.) uses the same slot via `FixedFooterFrame` + `ScreenBottomBar` — 52px button, `md` top padding, `xl` bottom inset above the safe area, `lg` horizontal padding. App screens and auth screens share this layout.
 
 | Screen type | Title source | In-screen header |

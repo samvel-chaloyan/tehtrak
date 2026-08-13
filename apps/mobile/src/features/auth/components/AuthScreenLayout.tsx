@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AuthPageHeader } from '@/features/auth/components/AuthPageHeader';
 import { OutlineButton, OutlineButtonProps } from '@/shared/ui/OutlineButton';
+import { AppStatusBar } from '@/shared/ui/AppStatusBar';
 import { FixedFooterFrame } from '@/shared/ui/FixedFooterFrame';
 import { KeyboardDismissView } from '@/shared/ui/KeyboardDismissView';
 import { useScreenContentHeight } from '@/shared/ui/useScreenContentHeight';
@@ -101,6 +102,7 @@ export function AuthScreenLayout({
         },
       ]}
     >
+      <AppStatusBar tone="canvas" />
       <View style={[styles.frame, surfaces.scroll, { height: contentHeight }]}>
         <FixedFooterFrame footer={<AuthFooter config={footer} />} buttonCount={buttonCount}>
           {scroll ? (

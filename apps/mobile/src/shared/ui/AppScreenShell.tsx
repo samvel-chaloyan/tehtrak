@@ -1,6 +1,5 @@
 import { ReactNode, useCallback, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useLogout } from '@/features/auth/hooks/useAuth';
@@ -9,6 +8,7 @@ import { useSurfaceStyles, useTheme } from '@/theme';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { AppDrawer } from './AppDrawer';
+import { AppStatusBar } from './AppStatusBar';
 import { BrandMenuButton } from './BrandMenuButton';
 import {
   BRAND_HEADER_PADDING_Y,
@@ -158,7 +158,7 @@ export function AppScreenShell({
 
   return (
     <KeyboardDismissView style={[styles.shell, surfaces.canvas]}>
-      {isBrandHeader ? <StatusBar style="light" /> : null}
+      <AppStatusBar tone={isBrandHeader ? 'brand' : 'canvas'} />
       <View
         ref={shellRef}
         collapsable={false}

@@ -1,5 +1,7 @@
 export { AppDrawer } from './AppDrawer';
 export type { AppDrawerProps } from './AppDrawer';
+export { AppStatusBar } from './AppStatusBar';
+export type { AppStatusBarProps, AppStatusBarTone } from './AppStatusBar';
 export { AppBottomSheet } from './AppBottomSheet';
 export type { AppBottomSheetProps } from './AppBottomSheet';
 export { SheetHost } from './SheetHost';

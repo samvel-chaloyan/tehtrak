@@ -1,7 +1,6 @@
 import 'react-native-reanimated';
 import { useFonts, IBMPlexSans_400Regular, IBMPlexSans_500Medium, IBMPlexSans_600SemiBold } from '@expo-google-fonts/ibm-plex-sans';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -9,7 +8,8 @@ import { AuthBootstrap } from './AuthBootstrap';
 import { DemoBanner } from './DemoBanner';
 import { isDemoMode } from '@/config/demo';
 import { RootNavigator } from '@/navigation';
-import { SheetHost } from '@/shared/ui';
+import { AppStatusBar } from '@/shared/ui/AppStatusBar';
+import { SheetHost } from '@/shared/ui/SheetHost';
 import { ThemeProvider, useSurfaceStyles } from '@/theme';
 
 const queryClient = new QueryClient({
@@ -33,7 +33,7 @@ function AppRoot() {
 
   return (
     <GestureHandlerRootView style={[surfaces.canvas, { flex: 1 }]}>
-      <StatusBar style="dark" />
+      <AppStatusBar tone="canvas" />
       <DemoBanner />
       <SheetHost>
         <AuthBootstrap>

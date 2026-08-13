@@ -99,6 +99,7 @@ Reference: [design-language.md](./design-language.md), [ui-constitution.md](./ui
 - [ ] Header has at most one accent action
 - [ ] Icons are simple and supportive, not decorative
 - [ ] Edit/delete follows the gesture map (grid long-press, list swipe, structure RowActions, item footer)
+- [ ] Status bar is visible; icon tone matches chrome (light on brand, dark on canvas)
 
 ---
 

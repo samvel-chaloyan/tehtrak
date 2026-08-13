@@ -12,10 +12,11 @@ When documents conflict, follow hierarchy in [README.md](./README.md).
 
 ## Standard Screen Composition
 
-Authenticated app screens use **`AppScreenShell`** — custom header (`ScreenLineHeader`), scrollable content, optional `FixedFooterFrame` bottom action.
+Authenticated app screens use **`AppScreenShell`** — custom header (`ScreenLineHeader`), scrollable content, optional `FixedFooterFrame` bottom action. **`AppStatusBar`** sets light icons on brand chrome and dark icons on canvas.
 
 ```
 AppScreenShell
+├── AppStatusBar (brand | canvas)
 ├── ScreenLineHeader (context title + subtitle)
 ├── Content (scroll when needed)
 │   ├── PageTitle (when content needs its own hero title)
