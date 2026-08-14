@@ -79,6 +79,10 @@ public class TehtrakDbContext(DbContextOptions<TehtrakDbContext> options) : DbCo
             e.HasKey(x => x.Id);
             e.Property(x => x.Data).HasColumnType("jsonb");
             e.HasIndex(x => new { x.CollectionId, x.CreatedAt });
+            // Property is CreatedBy; navigation is Creator — tell EF they are the same FK.
+            e.HasOne(x => x.Creator)
+                .WithMany()
+                .HasForeignKey(x => x.CreatedBy);
         });
     }
 }
