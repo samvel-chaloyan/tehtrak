@@ -1,8 +1,10 @@
 import { Pressable, StyleSheet, View } from 'react-native';
+import { useRef } from 'react';
 
 import { PinButton } from './PinButton';
 import { RowActions } from './RowActions';
 import { Text } from './Text';
+import type { CardAnchorLayout } from './WorkspaceGridCard';
 import { useTheme } from '@/theme';
 import type { TypographyVariant } from '@/theme';
 import type { PinTarget } from '@/types';
@@ -55,6 +57,8 @@ export interface NotebookRowProps {
   description?: string;
   meta?: string;
   onPress?: () => void;
+  /** Long-press receives window layout for the row info focus circle. */
+  onLongPress?: (layout: CardAnchorLayout) => void;
   onEdit?: () => void;
   onDelete?: () => void;
   showDivider?: boolean;
@@ -68,6 +72,7 @@ export function NotebookRow({
   description,
   meta,
   onPress,
+  onLongPress,
   onEdit,
   onDelete,
   showDivider = false,
@@ -80,6 +85,16 @@ export function NotebookRow({
   const horizontalPadding = config.inset ? spacing.lg : 0;
   const hasActions = Boolean(onEdit || onDelete);
   const hasTrailing = hasActions || Boolean(pinTarget);
+  const rootRef = useRef<View>(null);
+
+  const handleLongPress = () => {
+    if (!onLongPress) {
+      return;
+    }
+    rootRef.current?.measureInWindow((x, y, width, height) => {
+      onLongPress({ x, y, width, height });
+    });
+  };
 
   const rowContent = (
     <View
@@ -126,13 +141,15 @@ export function NotebookRow({
   );
 
   const row = (
-    <View>
-      {onPress ? (
+    <View ref={rootRef}>
+      {onPress || onLongPress ? (
         <Pressable
           accessibilityRole="button"
           onPress={onPress}
+          onLongPress={onLongPress ? handleLongPress : undefined}
+          delayLongPress={350}
           style={({ pressed }) => [
-            pressed && { backgroundColor: colors.background },
+            pressed && onPress ? { backgroundColor: colors.background } : null,
           ]}
         >
           {rowContent}

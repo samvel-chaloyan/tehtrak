@@ -31,6 +31,7 @@ export interface RefreshResponse {
 export interface ApiWorkspace {
   id: string;
   name: string;
+  description: string | null;
   slug: string;
   ownerId: string;
   createdAt: string;

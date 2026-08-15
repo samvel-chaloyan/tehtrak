@@ -101,7 +101,9 @@ WorkspaceGrid (2 columns inside NotebookListShelf)
   WorkspaceGridCard × n — fixed equal height tiles
   quiet pin toggle on each card
   ordered by last edited (activity)
-  long-press → WorkspaceFocusMenu (disabled while searching)
+  long-press → WorkspaceFocusMenu (info / edit / delete / cancel; disabled while searching)
+  Info → centered InfoDialog (name, description, “N collections”, created, updated)
+  Edit → centered EditDialog (name, description, Save)
 
 SingleBottomButton — New workspace (neutral border default, blue when pressed)
   hidden while search is active
@@ -128,6 +130,9 @@ ContextBanner capsule (52px) — ← context label 🔍  (white, no border/shado
   back restores context capsule + full list
 
 NotebookListShelf + SwipeableRow × n
+  swipe → edit / delete (disabled while searching)
+  long-press → RowFocusInfoMenu (info circle; disabled while searching)
+  Info → centered InfoDialog (name, description, “N items”, created, updated)
 ScreenMeta — "N collections"
 SingleBottomButton — New collection (hidden while searching)
 ```
@@ -145,6 +150,9 @@ ContextBanner capsule — ← collection name 🔍
   back restores context capsule + full list
 
 PlainListSurface + SwipeableRow × n
+  swipe → edit / delete (disabled while searching)
+  long-press → RowFocusInfoMenu (info circle; disabled while searching)
+  Info → centered InfoDialog (title, subtitle, created, updated)
 NotebookListShelf footer — Customize fields (compact) + item/field count meta
   Customize hidden while searching
 SingleBottomButton — Add item (hidden while searching)

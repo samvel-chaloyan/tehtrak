@@ -20,7 +20,7 @@ import type { DemoData, DemoSession } from './types';
 const WORKSPACE_EMOJIS = ['🅿️', '🥫', '🌿', '📦', '🚗', '📚', '📷', '🏠', '📋', '📝'];
 
 /** Bump when mock seed content changes so AsyncStorage picks up new fixtures. */
-export const DEMO_SEED_VERSION = 2;
+export const DEMO_SEED_VERSION = 3;
 
 function clone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;

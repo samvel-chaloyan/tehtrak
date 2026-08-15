@@ -33,7 +33,7 @@ export function EditWorkspaceScreen({ navigation, route }: AppScreenProps<'EditW
       await updateWorkspace.mutateAsync({
         id: workspaceId,
         name: trimmedName,
-        description: description.trim() || 'Your operational notebook',
+        description: description.trim(),
       });
       navigation.goBack();
     } catch (e) {

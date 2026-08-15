@@ -22,9 +22,39 @@ export interface PresentConfirmOptions {
   onConfirm: () => void;
 }
 
+export interface InfoDetailRow {
+  label: string;
+  value: string;
+}
+
+export interface PresentInfoOptions {
+  title: string;
+  /** Description / primary body. */
+  message?: string;
+  /** Quiet one-liner (e.g. “3 collections”). */
+  meta?: string;
+  details?: InfoDetailRow[];
+  closeLabel?: string;
+}
+
+export interface PresentEditOptions {
+  /** Card heading — defaults to “Edit”. */
+  title?: string;
+  initialName: string;
+  initialDescription: string;
+  nameLabel?: string;
+  descriptionLabel?: string;
+  descriptionPlaceholder?: string;
+  saveLabel?: string;
+  closeLabel?: string;
+  onSave: (values: { name: string; description: string }) => Promise<void>;
+}
+
 export interface SheetControllerApi {
   presentActions: (options: PresentActionsOptions) => void;
   presentConfirm: (options: PresentConfirmOptions) => void;
+  presentInfo: (options: PresentInfoOptions) => void;
+  presentEdit: (options: PresentEditOptions) => void;
   dismiss: () => void;
 }
 
@@ -47,6 +77,14 @@ export function presentActions(options: PresentActionsOptions) {
 
 export function presentConfirm(options: PresentConfirmOptions) {
   requireBridge().presentConfirm(options);
+}
+
+export function presentInfo(options: PresentInfoOptions) {
+  requireBridge().presentInfo(options);
+}
+
+export function presentEdit(options: PresentEditOptions) {
+  requireBridge().presentEdit(options);
 }
 
 export function dismissSheet() {

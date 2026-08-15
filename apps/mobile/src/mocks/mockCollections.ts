@@ -10,6 +10,8 @@ export const mockCollections: Collection[] = [
     emoji: '🚙',
     itemCount: 8,
     lastActivityAt: '2026-05-24T11:05:00Z',
+    createdAt: '2026-05-24T11:05:00Z',
+    updatedAt: '2026-05-24T11:05:00Z',
   },
   {
     id: 'col-monthly-subscribers',
@@ -19,6 +21,8 @@ export const mockCollections: Collection[] = [
     emoji: '🪪',
     itemCount: 7,
     lastActivityAt: '2026-05-22T16:40:00Z',
+    createdAt: '2026-05-22T16:40:00Z',
+    updatedAt: '2026-05-22T16:40:00Z',
   },
   {
     id: 'col-incidents',
@@ -28,6 +32,8 @@ export const mockCollections: Collection[] = [
     emoji: '⚠️',
     itemCount: 7,
     lastActivityAt: '2026-05-24T09:20:00Z',
+    createdAt: '2026-05-24T09:20:00Z',
+    updatedAt: '2026-05-24T09:20:00Z',
   },
   {
     id: 'col-lost-tickets',
@@ -37,6 +43,8 @@ export const mockCollections: Collection[] = [
     emoji: '🎫',
     itemCount: 6,
     lastActivityAt: '2026-05-23T18:10:00Z',
+    createdAt: '2026-05-23T18:10:00Z',
+    updatedAt: '2026-05-23T18:10:00Z',
   },
 
   // Home Pantry
@@ -48,6 +56,8 @@ export const mockCollections: Collection[] = [
     emoji: '🥛',
     itemCount: 8,
     lastActivityAt: '2026-06-12T08:00:00Z',
+    createdAt: '2026-06-12T08:00:00Z',
+    updatedAt: '2026-06-12T08:00:00Z',
   },
   {
     id: 'col-freezer',
@@ -57,6 +67,8 @@ export const mockCollections: Collection[] = [
     emoji: '🧊',
     itemCount: 7,
     lastActivityAt: '2026-06-10T19:30:00Z',
+    createdAt: '2026-06-10T19:30:00Z',
+    updatedAt: '2026-06-10T19:30:00Z',
   },
   {
     id: 'col-dry-storage',
@@ -66,6 +78,8 @@ export const mockCollections: Collection[] = [
     emoji: '🥣',
     itemCount: 8,
     lastActivityAt: '2026-06-11T14:15:00Z',
+    createdAt: '2026-06-11T14:15:00Z',
+    updatedAt: '2026-06-11T14:15:00Z',
   },
   {
     id: 'col-shopping-list',
@@ -75,6 +89,8 @@ export const mockCollections: Collection[] = [
     emoji: '🛒',
     itemCount: 7,
     lastActivityAt: '2026-06-13T07:45:00Z',
+    createdAt: '2026-06-13T07:45:00Z',
+    updatedAt: '2026-06-13T07:45:00Z',
   },
 
   // Family Garden
@@ -86,6 +102,8 @@ export const mockCollections: Collection[] = [
     emoji: '🍅',
     itemCount: 8,
     lastActivityAt: '2026-05-24T17:00:00Z',
+    createdAt: '2026-05-24T17:00:00Z',
+    updatedAt: '2026-05-24T17:00:00Z',
   },
   {
     id: 'col-fruit-trees',
@@ -95,6 +113,8 @@ export const mockCollections: Collection[] = [
     emoji: '🌳',
     itemCount: 6,
     lastActivityAt: '2026-05-18T10:00:00Z',
+    createdAt: '2026-05-18T10:00:00Z',
+    updatedAt: '2026-05-18T10:00:00Z',
   },
   {
     id: 'col-tools',
@@ -104,6 +124,8 @@ export const mockCollections: Collection[] = [
     emoji: '🔧',
     itemCount: 7,
     lastActivityAt: '2026-05-20T15:30:00Z',
+    createdAt: '2026-05-20T15:30:00Z',
+    updatedAt: '2026-05-20T15:30:00Z',
   },
   {
     id: 'col-harvest-log',
@@ -113,6 +135,8 @@ export const mockCollections: Collection[] = [
     emoji: '🧺',
     itemCount: 7,
     lastActivityAt: '2026-05-19T18:45:00Z',
+    createdAt: '2026-05-19T18:45:00Z',
+    updatedAt: '2026-05-19T18:45:00Z',
   },
 
   // Small Warehouse
@@ -124,6 +148,8 @@ export const mockCollections: Collection[] = [
     emoji: '📥',
     itemCount: 8,
     lastActivityAt: '2026-05-24T15:00:00Z',
+    createdAt: '2026-05-24T15:00:00Z',
+    updatedAt: '2026-05-24T15:00:00Z',
   },
   {
     id: 'col-shelf-locations',
@@ -133,6 +159,8 @@ export const mockCollections: Collection[] = [
     emoji: '🗂️',
     itemCount: 8,
     lastActivityAt: '2026-05-22T12:00:00Z',
+    createdAt: '2026-05-22T12:00:00Z',
+    updatedAt: '2026-05-22T12:00:00Z',
   },
   {
     id: 'col-dispatches',
@@ -142,6 +170,8 @@ export const mockCollections: Collection[] = [
     emoji: '🚚',
     itemCount: 7,
     lastActivityAt: '2026-05-24T09:50:00Z',
+    createdAt: '2026-05-24T09:50:00Z',
+    updatedAt: '2026-05-24T09:50:00Z',
   },
   {
     id: 'col-damaged-items',
@@ -151,6 +181,8 @@ export const mockCollections: Collection[] = [
     emoji: '📉',
     itemCount: 6,
     lastActivityAt: '2026-05-21T11:20:00Z',
+    createdAt: '2026-05-21T11:20:00Z',
+    updatedAt: '2026-05-21T11:20:00Z',
   },
 
   // Car Maintenance
@@ -162,6 +194,8 @@ export const mockCollections: Collection[] = [
     emoji: '🚘',
     itemCount: 7,
     lastActivityAt: '2026-05-02T14:00:00Z',
+    createdAt: '2026-05-02T14:00:00Z',
+    updatedAt: '2026-05-02T14:00:00Z',
   },
   {
     id: 'col-hyundai-tucson',
@@ -171,6 +205,8 @@ export const mockCollections: Collection[] = [
     emoji: '🚙',
     itemCount: 6,
     lastActivityAt: '2026-04-12T11:30:00Z',
+    createdAt: '2026-04-12T11:30:00Z',
+    updatedAt: '2026-04-12T11:30:00Z',
   },
   {
     id: 'col-scheduled-maintenance',
@@ -180,6 +216,8 @@ export const mockCollections: Collection[] = [
     emoji: '🗓️',
     itemCount: 7,
     lastActivityAt: '2026-05-15T08:00:00Z',
+    createdAt: '2026-05-15T08:00:00Z',
+    updatedAt: '2026-05-15T08:00:00Z',
   },
 
   // University
@@ -191,6 +229,8 @@ export const mockCollections: Collection[] = [
     emoji: '💻',
     itemCount: 7,
     lastActivityAt: '2026-06-05T20:00:00Z',
+    createdAt: '2026-06-05T20:00:00Z',
+    updatedAt: '2026-06-05T20:00:00Z',
   },
   {
     id: 'col-databases',
@@ -200,6 +240,8 @@ export const mockCollections: Collection[] = [
     emoji: '🗄️',
     itemCount: 6,
     lastActivityAt: '2026-06-03T16:20:00Z',
+    createdAt: '2026-06-03T16:20:00Z',
+    updatedAt: '2026-06-03T16:20:00Z',
   },
   {
     id: 'col-algorithms',
@@ -209,6 +251,8 @@ export const mockCollections: Collection[] = [
     emoji: '➗',
     itemCount: 7,
     lastActivityAt: '2026-06-07T21:10:00Z',
+    createdAt: '2026-06-07T21:10:00Z',
+    updatedAt: '2026-06-07T21:10:00Z',
   },
   {
     id: 'col-exams',
@@ -218,6 +262,8 @@ export const mockCollections: Collection[] = [
     emoji: '📝',
     itemCount: 6,
     lastActivityAt: '2026-06-01T09:00:00Z',
+    createdAt: '2026-06-01T09:00:00Z',
+    updatedAt: '2026-06-01T09:00:00Z',
   },
 
   // Photography Studio
@@ -229,6 +275,8 @@ export const mockCollections: Collection[] = [
     emoji: '📅',
     itemCount: 7,
     lastActivityAt: '2026-06-08T12:00:00Z',
+    createdAt: '2026-06-08T12:00:00Z',
+    updatedAt: '2026-06-08T12:00:00Z',
   },
   {
     id: 'col-delivered-projects',
@@ -238,6 +286,8 @@ export const mockCollections: Collection[] = [
     emoji: '✅',
     itemCount: 6,
     lastActivityAt: '2026-05-28T17:40:00Z',
+    createdAt: '2026-05-28T17:40:00Z',
+    updatedAt: '2026-05-28T17:40:00Z',
   },
   {
     id: 'col-equipment',
@@ -247,5 +297,7 @@ export const mockCollections: Collection[] = [
     emoji: '🎥',
     itemCount: 8,
     lastActivityAt: '2026-06-02T10:15:00Z',
+    createdAt: '2026-06-02T10:15:00Z',
+    updatedAt: '2026-06-02T10:15:00Z',
   },
 ];

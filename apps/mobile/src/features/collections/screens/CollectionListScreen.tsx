@@ -13,17 +13,24 @@ import {
   EmptyNotebook,
   NotebookListShelf,
   NotebookRow,
+  RowFocusInfoMenu,
   ScrollIndicatorFlatList,
   SingleBottomButton,
   SkeletonList,
   SwipeableRow,
+  presentInfo,
+  type CardAnchorLayout,
 } from '@/shared/ui';
 import type { Collection } from '@/types';
 import { confirmDelete } from '@/utils/confirmDelete';
-import { formatRelativeTime, getScreenErrorMessage } from '@/utils';
+import { formatDateDisplay, formatRelativeTime, getScreenErrorMessage } from '@/utils';
 
 function collectionCountLabel(count: number) {
   return count === 1 ? '1 collection' : `${count} collections`;
+}
+
+function itemCountLabel(count: number) {
+  return count === 1 ? '1 item' : `${count} items`;
 }
 
 function matchesCollectionQuery(collection: Collection, query: string) {
@@ -37,6 +44,11 @@ function matchesCollectionQuery(collection: Collection, query: string) {
   return name.includes(normalized) || description.includes(normalized);
 }
 
+type FocusTarget = {
+  collection: Collection;
+  layout: CardAnchorLayout;
+};
+
 export function CollectionListScreen({ navigation, route }: AppScreenProps<'CollectionList'>) {
   const { workspaceId, workspaceName } = route.params;
   const { data: collections, isLoading, isError, error, refetch, isRefetching } =
@@ -44,8 +56,10 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
   const deleteCollection = useDeleteCollection(workspaceId);
   const [searchActive, setSearchActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [focusTarget, setFocusTarget] = useState<FocusTarget | null>(null);
 
   const enterSearch = useCallback(() => {
+    setFocusTarget(null);
     setSearchQuery('');
     setSearchActive(true);
   }, []);
@@ -54,6 +68,46 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
     setSearchActive(false);
     setSearchQuery('');
   }, []);
+
+  const closeFocusMenu = useCallback(() => {
+    setFocusTarget(null);
+  }, []);
+
+  const handleRowLongPress = useCallback(
+    (collection: Collection, layout: CardAnchorLayout) => {
+      if (searchActive) {
+        return;
+      }
+      setFocusTarget({ collection, layout });
+    },
+    [searchActive],
+  );
+
+  const handleFocusInfo = useCallback(() => {
+    if (!focusTarget) {
+      return;
+    }
+    const { collection } = focusTarget;
+    setFocusTarget(null);
+    requestAnimationFrame(() => {
+      const description = collection.description.trim();
+      presentInfo({
+        title: collection.name,
+        message: description.length > 0 ? description : 'No description yet.',
+        meta: itemCountLabel(collection.itemCount),
+        details: [
+          {
+            label: 'Created',
+            value: formatDateDisplay(collection.createdAt),
+          },
+          {
+            label: 'Updated',
+            value: formatRelativeTime(collection.updatedAt),
+          },
+        ],
+      });
+    });
+  }, [focusTarget]);
 
   const collectionList = collections ?? [];
 
@@ -187,6 +241,37 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
               contentContainerStyle={styles.listContent}
               renderItem={({ item, index }) => {
                 const meta = `${item.itemCount} ${item.itemCount === 1 ? 'item' : 'items'} · ${formatRelativeTime(item.lastActivityAt)}`;
+                const row = (
+                  <NotebookRow
+                    title={item.name}
+                    description={item.description || undefined}
+                    meta={meta}
+                    onPress={() =>
+                      navigation.navigate('CollectionDetails', {
+                        collectionId: item.id,
+                        collectionName: item.name,
+                        workspaceId,
+                      })
+                    }
+                    onLongPress={
+                      searchActive
+                        ? undefined
+                        : (layout) => handleRowLongPress(item, layout)
+                    }
+                    showDivider={index < filteredCollections.length - 1}
+                    size="collection"
+                    pinTarget={{
+                      type: 'collection',
+                      workspaceId,
+                      collectionId: item.id,
+                    }}
+                  />
+                );
+
+                if (searchActive) {
+                  return row;
+                }
+
                 return (
                   <SwipeableRow
                     onEdit={() =>
@@ -206,25 +291,7 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
                       )
                     }
                   >
-                    <NotebookRow
-                      title={item.name}
-                      description={item.description || undefined}
-                      meta={meta}
-                      onPress={() =>
-                        navigation.navigate('CollectionDetails', {
-                          collectionId: item.id,
-                          collectionName: item.name,
-                          workspaceId,
-                        })
-                      }
-                      showDivider={index < filteredCollections.length - 1}
-                      size="collection"
-                      pinTarget={{
-                        type: 'collection',
-                        workspaceId,
-                        collectionId: item.id,
-                      }}
-                    />
+                    {row}
                   </SwipeableRow>
                 );
               }}
@@ -232,6 +299,13 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
           )}
         </NotebookListShelf>
       </View>
+
+      <RowFocusInfoMenu
+        visible={Boolean(focusTarget)}
+        layout={focusTarget?.layout ?? null}
+        onInfo={handleFocusInfo}
+        onCancel={closeFocusMenu}
+      />
     </AppScreenShell>
   );
 }

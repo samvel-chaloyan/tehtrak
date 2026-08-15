@@ -7,8 +7,10 @@ export function mapWorkspace(dto: ApiWorkspace, index = 0): Workspace {
   return {
     id: dto.id,
     name: dto.name,
-    description: `/${dto.slug}`,
+    description: dto.description?.trim() || '',
     emoji: WORKSPACE_EMOJIS[index % WORKSPACE_EMOJIS.length],
+    createdAt: dto.createdAt,
+    updatedAt: dto.updatedAt,
   };
 }
 
@@ -21,6 +23,8 @@ export function mapCollection(dto: ApiCollection): Collection {
     emoji: dto.icon ?? '📓',
     itemCount: dto.itemCount,
     lastActivityAt: dto.lastActivityAt ?? dto.updatedAt,
+    createdAt: dto.createdAt,
+    updatedAt: dto.updatedAt,
   };
 }
 

@@ -292,6 +292,10 @@ namespace Tehtrak.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("deleted_at");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)

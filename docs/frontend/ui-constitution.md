@@ -146,8 +146,8 @@ One clear map — do not mix affordances on the same row. No on-screen coaching 
 
 | Surface | Affordance |
 |---------|------------|
-| **Grid places** (workspace tiles) | Long-press → `WorkspaceFocusMenu` (edit / delete / cancel) |
-| **Vertical notebook lists** (collections, items) | Swipe → edit / delete (`SwipeableRow`) |
+| **Grid places** (workspace tiles) | Long-press → `WorkspaceFocusMenu` (info / edit / delete / cancel) |
+| **Vertical notebook lists** (collections, items) | Swipe → edit / delete (`SwipeableRow`); long-press → `RowFocusInfoMenu` (info circle → `InfoDialog`) |
 | **Structure / template rows** (Customize Fields) | Visible `RowActions` (pencil / trash) — denser structure editing, not content browsing |
 | **Item page** | Footer Edit / Save on the same screen — not swipe |
 
@@ -158,7 +158,7 @@ Rules:
 * Destructive actions always confirm
 * Do not invent a fifth edit pattern without updating this section
 
-Anatomy: [components.md](./components.md) (`SwipeableRow`, `WorkspaceFocusMenu`, `RowActions`).
+Anatomy: [components.md](./components.md) (`SwipeableRow`, `WorkspaceFocusMenu`, `RowFocusInfoMenu`, `RowActions`).
 
 ---
 

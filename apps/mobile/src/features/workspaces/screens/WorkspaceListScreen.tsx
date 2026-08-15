@@ -6,8 +6,8 @@ import { useResolvedPins } from '@/features/pins/hooks/useResolvedPins';
 import { navigateToPin } from '@/features/pins/utils/resolvePin';
 import { pinLetter } from '@/features/pins/utils/pinIdentity';
 import { useWorkspaceSummaries } from '@/features/workspaces/hooks/useWorkspaceSummaries';
-import { useDeleteWorkspace, useWorkspaces } from '@/features/workspaces/hooks/useWorkspaces';
-import { workspaceCardMetaLines } from '@/features/workspaces/utils/workspaceMeta';
+import { useDeleteWorkspace, useUpdateWorkspace, useWorkspaces } from '@/features/workspaces/hooks/useWorkspaces';
+import { workspaceCardMetaLines, collectionCountLabel } from '@/features/workspaces/utils/workspaceMeta';
 import { sortWorkspacesByLastEdited } from '@/features/workspaces/utils/workspaceOrder';
 import { AppScreenProps } from '@/navigation/types';
 import { useAppStore } from '@/store';
@@ -22,12 +22,15 @@ import {
   WorkspaceFocusMenu,
   WorkspaceGridCard,
   WorkspaceGridSkeleton,
+  presentInfo,
+  presentEdit,
   type CardAnchorLayout,
   type ContextRecentPlace,
 } from '@/shared/ui';
 import { useTheme } from '@/theme';
 import type { Workspace } from '@/types';
 import { confirmDelete } from '@/utils/confirmDelete';
+import { formatDateDisplay, formatRelativeTime } from '@/utils';
 
 const GRID_SPACER_ID = '__workspace-grid-spacer__';
 
@@ -74,6 +77,7 @@ export function WorkspaceListScreen({ navigation, route }: AppScreenProps<'Works
   const { data: workspaces, isLoading, isError, refetch, isRefetching } = useWorkspaces();
   const { data: summaries } = useWorkspaceSummaries(!isLoading && !isError);
   const deleteWorkspace = useDeleteWorkspace();
+  const updateWorkspace = useUpdateWorkspace();
   const selectWorkspace = useAppStore((s) => s.selectWorkspace);
   const clearWorkspaceSelection = useAppStore((s) => s.clearWorkspaceSelection);
   const selectedWorkspaceId = useAppStore((s) => s.selectedWorkspaceId);
@@ -190,6 +194,42 @@ export function WorkspaceListScreen({ navigation, route }: AppScreenProps<'Works
     [searchActive, summaries],
   );
 
+  const handleFocusInfo = useCallback(() => {
+    if (!focusTarget) {
+      return;
+    }
+    const { workspace } = focusTarget;
+    const summary = summaries?.[workspace.id];
+    setFocusTarget(null);
+    requestAnimationFrame(() => {
+      const description = workspace.description.trim();
+      const updatedMs = Date.parse(workspace.updatedAt);
+      const activityMs = summary?.lastActivityAt
+        ? Date.parse(summary.lastActivityAt)
+        : Number.NaN;
+      const latestIso =
+        !Number.isNaN(activityMs) && activityMs > (Number.isNaN(updatedMs) ? 0 : updatedMs)
+          ? summary!.lastActivityAt!
+          : workspace.updatedAt;
+
+      presentInfo({
+        title: workspace.name,
+        message: description.length > 0 ? description : 'No description yet.',
+        meta: summary ? collectionCountLabel(summary.collectionCount) : undefined,
+        details: [
+          {
+            label: 'Created',
+            value: formatDateDisplay(workspace.createdAt),
+          },
+          {
+            label: 'Updated',
+            value: formatRelativeTime(latestIso),
+          },
+        ],
+      });
+    });
+  }, [focusTarget, summaries]);
+
   const handleFocusEdit = useCallback(() => {
     if (!focusTarget) {
       return;
@@ -197,13 +237,20 @@ export function WorkspaceListScreen({ navigation, route }: AppScreenProps<'Works
     const { workspace } = focusTarget;
     setFocusTarget(null);
     requestAnimationFrame(() => {
-      navigation.navigate('EditWorkspace', {
-        workspaceId: workspace.id,
-        workspaceName: workspace.name,
-        workspaceDescription: workspace.description,
+      presentEdit({
+        title: 'Edit workspace',
+        initialName: workspace.name,
+        initialDescription: workspace.description,
+        onSave: async ({ name, description }) => {
+          await updateWorkspace.mutateAsync({
+            id: workspace.id,
+            name,
+            description,
+          });
+        },
       });
     });
-  }, [focusTarget, navigation]);
+  }, [focusTarget, updateWorkspace]);
 
   const handleFocusDelete = useCallback(() => {
     if (!focusTarget) {
@@ -405,6 +452,7 @@ export function WorkspaceListScreen({ navigation, route }: AppScreenProps<'Works
         layout={focusTarget?.layout ?? null}
         title={focusTarget?.workspace.name ?? ''}
         metaLines={focusTarget?.metaLines ?? []}
+        onInfo={handleFocusInfo}
         onEdit={handleFocusEdit}
         onDelete={handleFocusDelete}
         onCancel={closeFocusMenu}

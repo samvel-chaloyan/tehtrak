@@ -28,6 +28,7 @@ PostgreSQL. All timestamps `timestamptz`. All PKs `uuid` with `gen_random_uuid()
 |--------|------|-------|
 | id | uuid PK | |
 | name | varchar(100) NOT NULL | |
+| description | text NULL | short note about the notebook |
 | slug | varchar(100) UNIQUE NOT NULL | |
 | owner_id | uuid FK → users NOT NULL | |
 | created_at | timestamptz NOT NULL | |

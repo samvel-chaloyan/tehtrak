@@ -591,19 +591,45 @@ Contextual long-press menu for a workspace place card — dynamic position, not 
 │          ┌ sharp card clone (window xy) ┐         │
 │          │  Workspace name …            │         │
 │          └──────────────────────────────┘         │
-│               ┌ pill cluster ┐                    │
-│               │ ← │ ✎ │ 🗑  │                    │
-│               └─────────────┘                     │
+│            ┌ pill cluster ┐                       │
+│            │ ← │ ℹ │ ✎ │ 🗑 │                     │
+│            └──────────────┘                       │
 └───────────────────────────────────────────────────┘
 ```
 
-Cluster anchors below the card when there is room, otherwise above. Icons: `chevron-back` (cancel), `create-outline` edit in `successEmphasis` (same green as swipe edit), `trash-outline` delete in `danger`. Hairline separators between actions (same as nav capsule). Tap scrim cancels.
+Cluster anchors below the card when there is room, otherwise above. Icons: `chevron-back` (cancel), `information-circle-outline` info (`textSecondary`), `create-outline` edit in `successEmphasis` (same green as swipe edit), `trash-outline` delete in `danger`. Hairline separators between actions (same as nav capsule). Tap scrim cancels.
 
 Tokens: `expo-blur` light blur, light scrim, `surface` pill, `shadows.soft`, `radius.full`.
 
-Delete still opens the shared confirm bottom sheet after dismiss.
+Info opens `presentInfo` — a **centered** card (`InfoDialog`) over a soft dim overlay: name, description, quiet “N collections” meta, Created + Updated. Edit opens `presentEdit` — the same centered chrome with Name / Description fields and a quiet Save. Delete still opens the shared confirm bottom sheet after dismiss.
 
 Implementation: `WorkspaceFocusMenu`.
+
+---
+
+## RowFocusInfoMenu
+
+### Purpose
+
+Quiet long-press affordance on vertical notebook rows (collections, items) — info only. Edit / delete stay on swipe.
+
+### Anatomy
+
+```
+┌ soft dim overlay (colors.overlay) ───────────────┐
+│                                                   │
+│                    ┌ ● ℹ ┐                        │
+│                    └─────┘  ← surface circle      │
+└───────────────────────────────────────────────────┘
+```
+
+Circle anchors below the row when there is room, otherwise above. Icon: `information-circle-outline`. Tap opens `presentInfo`. Tap overlay cancels (same dismiss pattern as `InfoDialog`).
+
+Tokens: `colors.overlay` dim (same as `InfoDialog`), `surface` / `radius.full` / `shadows.soft` for the circle.
+
+Disabled while scoped search is active.
+
+Implementation: `RowFocusInfoMenu`.
 
 ---
 
@@ -642,8 +668,66 @@ Mount `SheetHost` at app root. Call sites use:
 
 * `presentActions({ title?, actions[] })` — shared action menus
 * `presentConfirm({ title, message, onConfirm })` — delete confirms via `confirmDelete`
+* `presentInfo({ title, message?, meta?, details?, closeLabel? })` — centered info card
+* `presentEdit({ title?, initialName, initialDescription, onSave })` — centered edit card
 
-Implementation: `AppBottomSheet`, `SheetHost`, `sheetController`.
+Implementation: `AppBottomSheet`, `InfoDialog`, `EditDialog`, `SheetHost`, `sheetController`.
+
+---
+
+## InfoDialog
+
+### Purpose
+
+Centered notebook card for reading place details — not a bottom sheet.
+
+### Anatomy
+
+```
+┌ soft dim overlay (colors.overlay) ───────────────┐
+│         ┌ surface card xl ─────┐                 │
+│         │                 ✕    │  ← top-right    │
+│         │  Name (sectionTitle) │                 │
+│         │  Description (body)  │                 │
+│         │  N collections       │  ← caption meta │
+│         │  Created / Updated   │                 │
+│         └──────────────────────┘                 │
+└──────────────────────────────────────────────────┘
+```
+
+Tokens: `overlay` (same family as `AppBottomSheet`), `surface`, `radius.xl`, `shadows.soft`. Tap overlay or the top-right ✕ dismisses.
+
+`presentInfo({ title, message?, meta?, details?, closeLabel? })` — meta is a quiet one-liner (e.g. “3 collections”); details are labeled rows (Created, Updated).
+
+Implementation: `InfoDialog`, `presentInfo` via `SheetHost`.
+
+---
+
+## EditDialog
+
+### Purpose
+
+Centered notebook card for editing place name / description — same chrome as `InfoDialog`.
+
+### Anatomy
+
+```
+┌ soft dim overlay (colors.overlay) ───────────────┐
+│         ┌ surface card xl ─────┐                 │
+│         │                 ✕    │  ← top-right    │
+│         │  Edit workspace      │                 │
+│         │  Name field          │                 │
+│         │  Description field   │                 │
+│         │  Save                │  ← TextLink     │
+│         └──────────────────────┘                 │
+└──────────────────────────────────────────────────┘
+```
+
+Tokens: `overlay`, `surface`, `radius.xl`, `shadows.soft`, existing `Input` + `TextLink`. Tap overlay or ✕ dismisses; Save commits then dismisses.
+
+`presentEdit({ title?, initialName, initialDescription, onSave })`.
+
+Implementation: `EditDialog`, `presentEdit` via `SheetHost`.
 
 ---
 

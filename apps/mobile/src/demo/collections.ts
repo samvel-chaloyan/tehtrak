@@ -29,6 +29,8 @@ export async function demoCreateCollection(
       emoji: payload.icon ?? '📓',
       itemCount: 0,
       lastActivityAt: now,
+      createdAt: now,
+      updatedAt: now,
     };
     data.collections.push(created);
   });
@@ -53,6 +55,7 @@ export async function demoUpdateCollection(
     if (payload.name != null) collection.name = payload.name.trim();
     if (payload.description != null) collection.description = payload.description.trim();
     if (payload.icon != null) collection.emoji = payload.icon;
+    collection.updatedAt = new Date().toISOString();
 
     updated = { ...collection };
   });

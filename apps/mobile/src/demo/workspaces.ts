@@ -46,11 +46,14 @@ export async function demoCreateWorkspace(payload: {
   await demoDelay();
   let created!: Workspace;
   await mutateDemoData((data) => {
+    const now = new Date().toISOString();
     created = {
       id: createId('ws'),
       name: payload.name.trim(),
       description: payload.description?.trim() || 'Your operational notebook',
       emoji: workspaceEmojiForIndex(data.workspaces.length),
+      createdAt: now,
+      updatedAt: now,
     };
     data.workspaces.push(created);
   });
@@ -70,6 +73,7 @@ export async function demoUpdateWorkspace(
     if (payload.description !== undefined) {
       workspace.description = payload.description.trim();
     }
+    workspace.updatedAt = new Date().toISOString();
     updated = { ...workspace };
   });
   return updated;

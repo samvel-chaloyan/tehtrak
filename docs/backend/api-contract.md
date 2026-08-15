@@ -72,9 +72,9 @@ HTTP status codes follow semantics (404 for not found, 403 for forbidden, etc.) 
 | Method | Path | Notes |
 |--------|------|-------|
 | GET | `/workspaces` | List for current user |
-| POST | `/workspaces` | `{ name }` → creates slug |
+| POST | `/workspaces` | `{ name, description? }` → creates slug |
 | GET | `/workspaces/:workspaceId` | |
-| PATCH | `/workspaces/:workspaceId` | `{ name }` |
+| PATCH | `/workspaces/:workspaceId` | `{ name?, description? }` |
 | DELETE | `/workspaces/:workspaceId` | Owner only, soft delete |
 
 ### Members

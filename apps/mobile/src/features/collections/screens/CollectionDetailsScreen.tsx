@@ -12,14 +12,22 @@ import {
   NotebookListShelf,
   NotebookRow,
   OutlineButton,
+  RowFocusInfoMenu,
   ScrollIndicatorFlatList,
   SingleBottomButton,
   SkeletonList,
   SwipeableRow,
+  presentInfo,
+  type CardAnchorLayout,
 } from '@/shared/ui';
 import type { Item, PropertyField } from '@/types';
 import { confirmDelete } from '@/utils/confirmDelete';
-import { getItemSubtitle, getItemTitle } from '@/utils';
+import {
+  formatDateDisplay,
+  formatRelativeTime,
+  getItemSubtitle,
+  getItemTitle,
+} from '@/utils';
 
 function matchesItemQuery(item: Item, fields: PropertyField[], query: string) {
   const normalized = query.trim().toLowerCase();
@@ -42,6 +50,11 @@ function matchesItemQuery(item: Item, fields: PropertyField[], query: string) {
   });
 }
 
+type FocusTarget = {
+  item: Item;
+  layout: CardAnchorLayout;
+};
+
 export function CollectionDetailsScreen({
   navigation,
   route,
@@ -55,11 +68,13 @@ export function CollectionDetailsScreen({
   const deleteRecord = useDeleteRecord(workspaceId, collectionId);
   const [searchActive, setSearchActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [focusTarget, setFocusTarget] = useState<FocusTarget | null>(null);
 
   const fieldList = fields ?? [];
   const isLoading = fieldsLoading || itemsLoading;
 
   const enterSearch = useCallback(() => {
+    setFocusTarget(null);
     setSearchQuery('');
     setSearchActive(true);
   }, []);
@@ -68,6 +83,46 @@ export function CollectionDetailsScreen({
     setSearchActive(false);
     setSearchQuery('');
   }, []);
+
+  const closeFocusMenu = useCallback(() => {
+    setFocusTarget(null);
+  }, []);
+
+  const handleRowLongPress = useCallback(
+    (item: Item, layout: CardAnchorLayout) => {
+      if (searchActive) {
+        return;
+      }
+      setFocusTarget({ item, layout });
+    },
+    [searchActive],
+  );
+
+  const handleFocusInfo = useCallback(() => {
+    if (!focusTarget) {
+      return;
+    }
+    const { item } = focusTarget;
+    const title = getItemTitle(item, fieldList);
+    const subtitle = getItemSubtitle(item, fieldList);
+    setFocusTarget(null);
+    requestAnimationFrame(() => {
+      presentInfo({
+        title,
+        message: subtitle || undefined,
+        details: [
+          {
+            label: 'Created',
+            value: formatDateDisplay(item.createdAt),
+          },
+          {
+            label: 'Updated',
+            value: formatRelativeTime(item.updatedAt),
+          },
+        ],
+      });
+    });
+  }, [focusTarget, fieldList]);
 
   const openCreateItem = useCallback(
     () => navigation.navigate('CreateItem', { collectionId, collectionName, workspaceId }),
@@ -216,23 +271,8 @@ export function CollectionDetailsScreen({
               refreshing={searchActive ? false : isRefetching}
               onRefresh={searchActive ? undefined : refetch}
               contentContainerStyle={styles.listContent}
-              renderItem={({ item, index }) => (
-                <SwipeableRow
-                  onEdit={() =>
-                    navigation.navigate('ItemDetails', {
-                      itemId: item.id,
-                      collectionId,
-                      collectionName,
-                      workspaceId,
-                      edit: true,
-                    })
-                  }
-                  onDelete={() =>
-                    confirmDelete('Delete item?', 'This cannot be undone.', () =>
-                      deleteRecord.mutate(item.id),
-                    )
-                  }
-                >
+              renderItem={({ item, index }) => {
+                const row = (
                   <NotebookRow
                     title={getItemTitle(item, fieldList)}
                     description={getItemSubtitle(item, fieldList)}
@@ -244,6 +284,11 @@ export function CollectionDetailsScreen({
                         workspaceId,
                       })
                     }
+                    onLongPress={
+                      searchActive
+                        ? undefined
+                        : (layout) => handleRowLongPress(item, layout)
+                    }
                     showDivider={index < filteredItems.length - 1}
                     size="item"
                     pinTarget={{
@@ -253,12 +298,44 @@ export function CollectionDetailsScreen({
                       itemId: item.id,
                     }}
                   />
-                </SwipeableRow>
-              )}
+                );
+
+                if (searchActive) {
+                  return row;
+                }
+
+                return (
+                  <SwipeableRow
+                    onEdit={() =>
+                      navigation.navigate('ItemDetails', {
+                        itemId: item.id,
+                        collectionId,
+                        collectionName,
+                        workspaceId,
+                        edit: true,
+                      })
+                    }
+                    onDelete={() =>
+                      confirmDelete('Delete item?', 'This cannot be undone.', () =>
+                        deleteRecord.mutate(item.id),
+                      )
+                    }
+                  >
+                    {row}
+                  </SwipeableRow>
+                );
+              }}
             />
           )}
         </NotebookListShelf>
       </View>
+
+      <RowFocusInfoMenu
+        visible={Boolean(focusTarget)}
+        layout={focusTarget?.layout ?? null}
+        onInfo={handleFocusInfo}
+        onCancel={closeFocusMenu}
+      />
     </AppScreenShell>
   );
 }

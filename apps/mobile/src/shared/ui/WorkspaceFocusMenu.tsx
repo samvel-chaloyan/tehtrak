@@ -27,6 +27,7 @@ export interface WorkspaceFocusMenuProps {
   layout: CardAnchorLayout | null;
   title: string;
   metaLines: string[];
+  onInfo: () => void;
   onEdit: () => void;
   onDelete: () => void;
   onCancel: () => void;
@@ -39,13 +40,14 @@ const SEPARATOR_HEIGHT = 22;
 
 /**
  * Long-press focus mode: blur the world, keep the chosen place card sharp,
- * and anchor edit / delete / cancel icons to that card.
+ * and anchor info / edit / delete / cancel icons to that card.
  */
 export function WorkspaceFocusMenu({
   visible,
   layout,
   title,
   metaLines,
+  onInfo,
   onEdit,
   onDelete,
   onCancel,
@@ -80,11 +82,11 @@ export function WorkspaceFocusMenu({
     }
 
     const screen = Dimensions.get('window');
-    // 3 actions + 2 hairlines + gaps matching the nav capsule rhythm
+    // 4 actions + 3 hairlines + gaps matching the nav capsule rhythm
     const clusterWidth =
-      ACTION_SIZE * 3 +
-      StyleSheet.hairlineWidth * 2 +
-      spacing.sm * 4 +
+      ACTION_SIZE * 4 +
+      StyleSheet.hairlineWidth * 3 +
+      spacing.sm * 6 +
       CLUSTER_PAD * 2;
     const clusterHeight = ACTION_SIZE + CLUSTER_PAD * 2;
     const spaceBelow = screen.height - (layout.y + layout.height) - insets.bottom;
@@ -175,6 +177,13 @@ export function WorkspaceFocusMenu({
             icon="chevron-back"
             color={colors.textSecondary}
             onPress={onCancel}
+          />
+          {separator}
+          <IconAction
+            label="Info"
+            icon="information-circle-outline"
+            color={colors.textSecondary}
+            onPress={onInfo}
           />
           {separator}
           <IconAction

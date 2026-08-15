@@ -37,6 +37,7 @@ public class TehtrakDbContext(DbContextOptions<TehtrakDbContext> options) : DbCo
             e.ToTable("workspaces");
             e.HasKey(x => x.Id);
             e.Property(x => x.Name).HasMaxLength(100).IsRequired();
+            e.Property(x => x.Description);
             e.Property(x => x.Slug).HasMaxLength(100).IsRequired();
             e.HasIndex(x => x.Slug).IsUnique();
             e.HasOne(x => x.Owner).WithMany().HasForeignKey(x => x.OwnerId);

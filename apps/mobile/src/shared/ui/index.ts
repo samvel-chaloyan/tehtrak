@@ -5,14 +5,23 @@ export type { AppStatusBarProps, AppStatusBarTone } from './AppStatusBar';
 export { AppBottomSheet } from './AppBottomSheet';
 export type { AppBottomSheetProps } from './AppBottomSheet';
 export { SheetHost } from './SheetHost';
+export { InfoDialog } from './InfoDialog';
+export type { InfoDialogProps, InfoDetailRow as InfoDialogDetailRow } from './InfoDialog';
+export { EditDialog } from './EditDialog';
+export type { EditDialogProps, EditDialogValues } from './EditDialog';
 export {
   presentActions,
   presentConfirm,
+  presentInfo,
+  presentEdit,
   dismissSheet,
 } from './sheetController';
 export type {
   PresentActionsOptions,
   PresentConfirmOptions,
+  PresentInfoOptions,
+  PresentEditOptions,
+  InfoDetailRow,
   SheetAction,
   SheetActionTone,
   SheetControllerApi,
@@ -97,6 +106,8 @@ export {
 export type { WorkspaceGridCardProps, CardAnchorLayout } from './WorkspaceGridCard';
 export { WorkspaceFocusMenu } from './WorkspaceFocusMenu';
 export type { WorkspaceFocusMenuProps } from './WorkspaceFocusMenu';
+export { RowFocusInfoMenu } from './RowFocusInfoMenu';
+export type { RowFocusInfoMenuProps } from './RowFocusInfoMenu';
 export { WorkspaceGridSkeleton } from './WorkspaceGridSkeleton';
 export type { WorkspaceGridSkeletonProps } from './WorkspaceGridSkeleton';
 export { PageHeader } from './PageHeader';

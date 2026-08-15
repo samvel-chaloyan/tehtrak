@@ -48,6 +48,7 @@ public sealed class WorkspaceService(
         {
             Id = Guid.NewGuid(),
             Name = name,
+            Description = NormalizeDescription(request.Description),
             Slug = slug,
             OwnerId = userId,
             CreatedAt = now,
@@ -79,7 +80,23 @@ public sealed class WorkspaceService(
     {
         await auth.RequireRoleAsync(workspaceId, userId, WorkspaceRole.Admin, ct);
         var workspace = await FindWorkspaceAsync(workspaceId, ct);
-        workspace.Name = request.Name.Trim();
+
+        if (request.Name is not null)
+        {
+            var name = request.Name.Trim();
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ServiceException("VALIDATION_ERROR", "Workspace name is required.", 400);
+            }
+
+            workspace.Name = name;
+        }
+
+        if (request.Description is not null)
+        {
+            workspace.Description = NormalizeDescription(request.Description);
+        }
+
         workspace.UpdatedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
         return workspace.ToDto();
@@ -93,6 +110,9 @@ public sealed class WorkspaceService(
         workspace.UpdatedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
     }
+
+    private static string? NormalizeDescription(string? description) =>
+        string.IsNullOrWhiteSpace(description) ? null : description.Trim();
 
     private async Task<Workspace> FindWorkspaceAsync(Guid workspaceId, CancellationToken ct)
     {

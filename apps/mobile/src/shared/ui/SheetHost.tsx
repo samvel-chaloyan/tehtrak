@@ -4,11 +4,15 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { useTheme } from '@/theme';
 
 import { AppBottomSheet } from './AppBottomSheet';
+import { EditDialog } from './EditDialog';
+import { InfoDialog } from './InfoDialog';
 import { Text } from './Text';
 import {
   registerSheetController,
   type PresentActionsOptions,
   type PresentConfirmOptions,
+  type PresentEditOptions,
+  type PresentInfoOptions,
   type SheetAction,
   type SheetActionTone,
 } from './sheetController';
@@ -16,7 +20,9 @@ import {
 type SheetState =
   | { kind: 'closed' }
   | { kind: 'actions'; options: PresentActionsOptions }
-  | { kind: 'confirm'; options: PresentConfirmOptions };
+  | { kind: 'confirm'; options: PresentConfirmOptions }
+  | { kind: 'info'; options: PresentInfoOptions }
+  | { kind: 'edit'; options: PresentEditOptions };
 
 function toneColor(
   tone: SheetActionTone | undefined,
@@ -63,8 +69,7 @@ function ActionRow({
 }
 
 /**
- * Root host for Tehtrak bottom sheets.
- * Registers imperative presentActions / presentConfirm for thin call-site helpers.
+ * Root host for Tehtrak sheets and centered info dialogs.
  */
 export function SheetHost({ children }: { children: ReactNode }) {
   const { colors, spacing } = useTheme();
@@ -82,17 +87,30 @@ export function SheetHost({ children }: { children: ReactNode }) {
     setState({ kind: 'confirm', options });
   }, []);
 
-  useEffect(() => {
-    registerSheetController({ presentActions, presentConfirm, dismiss });
-    return () => registerSheetController(null);
-  }, [presentActions, presentConfirm, dismiss]);
+  const presentInfo = useCallback((options: PresentInfoOptions) => {
+    setState({ kind: 'info', options });
+  }, []);
 
-  const visible = state.kind !== 'closed';
-  const title = state.kind === 'closed' ? undefined : state.options.title;
+  const presentEdit = useCallback((options: PresentEditOptions) => {
+    setState({ kind: 'edit', options });
+  }, []);
+
+  useEffect(() => {
+    registerSheetController({
+      presentActions,
+      presentConfirm,
+      presentInfo,
+      presentEdit,
+      dismiss,
+    });
+    return () => registerSheetController(null);
+  }, [presentActions, presentConfirm, presentInfo, presentEdit, dismiss]);
+
+  const sheetVisible = state.kind === 'actions' || state.kind === 'confirm';
+  const title =
+    state.kind === 'actions' || state.kind === 'confirm' ? state.options.title : undefined;
   const message =
-    state.kind === 'actions' || state.kind === 'confirm'
-      ? state.options.message
-      : undefined;
+    state.kind === 'actions' || state.kind === 'confirm' ? state.options.message : undefined;
   const isConfirm = state.kind === 'confirm';
 
   const runAction = (onPress: () => void) => {
@@ -106,7 +124,7 @@ export function SheetHost({ children }: { children: ReactNode }) {
     <>
       {children}
       <AppBottomSheet
-        visible={visible}
+        visible={sheetVisible}
         onClose={dismiss}
         title={title}
         message={message}
@@ -148,6 +166,36 @@ export function SheetHost({ children }: { children: ReactNode }) {
           </View>
         ) : null}
       </AppBottomSheet>
+
+      <InfoDialog
+        visible={state.kind === 'info'}
+        onClose={dismiss}
+        title={state.kind === 'info' ? state.options.title : ''}
+        message={state.kind === 'info' ? state.options.message : undefined}
+        meta={state.kind === 'info' ? state.options.meta : undefined}
+        details={state.kind === 'info' ? state.options.details : undefined}
+        closeLabel={state.kind === 'info' ? state.options.closeLabel : undefined}
+      />
+
+      <EditDialog
+        visible={state.kind === 'edit'}
+        onClose={dismiss}
+        title={state.kind === 'edit' ? state.options.title : undefined}
+        initialName={state.kind === 'edit' ? state.options.initialName : ''}
+        initialDescription={state.kind === 'edit' ? state.options.initialDescription : ''}
+        nameLabel={state.kind === 'edit' ? state.options.nameLabel : undefined}
+        descriptionLabel={state.kind === 'edit' ? state.options.descriptionLabel : undefined}
+        descriptionPlaceholder={
+          state.kind === 'edit' ? state.options.descriptionPlaceholder : undefined
+        }
+        saveLabel={state.kind === 'edit' ? state.options.saveLabel : undefined}
+        closeLabel={state.kind === 'edit' ? state.options.closeLabel : undefined}
+        onSave={
+          state.kind === 'edit'
+            ? state.options.onSave
+            : async () => undefined
+        }
+      />
     </>
   );
 }

@@ -17,6 +17,8 @@ export interface Workspace {
   name: string;
   description: string;
   emoji: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface WorkspaceSummary {
@@ -32,6 +34,8 @@ export interface Collection {
   emoji: string;
   itemCount: number;
   lastActivityAt: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface PropertyField {
