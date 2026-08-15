@@ -6,6 +6,7 @@ ASP.NET Core modular monolith — Phase R2.
 
 - .NET 10 SDK
 - Docker
+- EF Core tools (once): `dotnet tool install --global dotnet-ef`
 
 ## Run PostgreSQL
 
@@ -14,16 +15,45 @@ cd services/api
 docker compose up -d
 ```
 
+## Database migrations
+
+Schema is managed with **EF Core migrations** (not `EnsureCreated`).
+
+On API startup, pending migrations are applied automatically (`MigrateAsync`).
+
+Create a new migration after model changes:
+
+```bash
+cd services/api/src/Api
+dotnet ef migrations add <Name> --project ../Infrastructure --output-dir Persistence/Migrations
+```
+
+Apply without starting the API (optional):
+
+```bash
+cd services/api/src/Api
+dotnet ef database update --project ../Infrastructure
+```
+
+Fresh local database (dev only — deletes data):
+
+```bash
+cd services/api
+docker compose down -v
+docker compose up -d
+# then start the API — migrations recreate tables
+```
+
 ## Run API
 
 ```bash
 cd services/api/src/Api
-dotnet run
+dotnet run --launch-profile http
 ```
 
-- API: http://localhost:5000 (see `launchSettings.json`)
-- Swagger: http://localhost:5000/swagger (Development)
-- Health: http://localhost:5000/health
+- API: http://localhost:5163
+- Swagger: http://localhost:5163/swagger (Development)
+- Health: http://localhost:5163/health
 
 ## Configuration
 
@@ -36,7 +66,7 @@ src/
 ├── Api/              # Controllers, Program.cs
 ├── Application/      # DTOs, interfaces, validation
 ├── Domain/           # Entities, enums
-└── Infrastructure/   # EF Core, services, JWT
+└── Infrastructure/   # EF Core, services, JWT, Migrations
 ```
 
 Records use **JSONB** `data` — no per-collection tables.

@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Tehtrak.Api.Filters;
@@ -67,7 +68,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<TehtrakDbContext>();
-    await db.Database.EnsureCreatedAsync();
+    // Apply pending EF migrations (replaces EnsureCreated — schema can evolve safely).
+    await db.Database.MigrateAsync();
 }
 
 if (app.Environment.IsDevelopment())
