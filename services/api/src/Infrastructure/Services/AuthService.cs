@@ -15,10 +15,20 @@ public sealed class AuthService(
     public async Task<AuthResponseDto> RegisterAsync(RegisterRequest request, CancellationToken ct = default)
     {
         var email = request.Email.Trim().ToLowerInvariant();
-        if (string.IsNullOrWhiteSpace(request.DisplayName) || request.Password.Length < 8)
+        var fieldErrors = new Dictionary<string, string[]>();
+        if (string.IsNullOrWhiteSpace(request.DisplayName))
         {
-            throw new ServiceException("VALIDATION_ERROR", "Validation failed", 400,
-                new { displayName = new[] { "Display name is required" }, password = new[] { "Password must be at least 8 characters" } });
+            fieldErrors["displayName"] = ["Display name is required"];
+        }
+
+        if (string.IsNullOrEmpty(request.Password) || request.Password.Length < 8)
+        {
+            fieldErrors["password"] = ["Password must be at least 8 characters"];
+        }
+
+        if (fieldErrors.Count > 0)
+        {
+            throw new ServiceException("VALIDATION_ERROR", "Validation failed", 400, fieldErrors);
         }
 
         if (await db.Users.AnyAsync(u => u.Email == email && u.DeletedAt == null, ct))

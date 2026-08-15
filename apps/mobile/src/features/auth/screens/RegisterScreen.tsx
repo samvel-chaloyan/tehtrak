@@ -17,11 +17,27 @@ export function RegisterScreen({ navigation }: AuthScreenProps<'Register'>) {
 
   const handleRegister = async () => {
     setError(null);
+
+    const displayName = name.trim();
+    const trimmedEmail = email.trim();
+    if (!displayName) {
+      setError('Enter your name to continue.');
+      return;
+    }
+    if (!trimmedEmail) {
+      setError('Enter your email to continue.');
+      return;
+    }
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters.');
+      return;
+    }
+
     try {
       await register.mutateAsync({
-        email: email.trim(),
+        email: trimmedEmail,
         password,
-        displayName: name.trim(),
+        displayName,
       });
     } catch (e) {
       setError(getScreenErrorMessage(e, 'Could not create account. Try again.'));

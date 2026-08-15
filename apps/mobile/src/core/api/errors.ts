@@ -27,8 +27,10 @@ export class ApiClientError extends Error {
     switch (this.code) {
       case 'UNAUTHORIZED':
         return 'Your session expired. Please sign in again.';
-      case 'VALIDATION_ERROR':
-        return 'Please check the highlighted fields and try again.';
+      case 'VALIDATION_ERROR': {
+        const firstDetail = firstValidationDetail(this.details);
+        return firstDetail ?? 'Please check the highlighted fields and try again.';
+      }
       case 'WORKSPACE_ACCESS_DENIED':
       case 'INSUFFICIENT_ROLE':
         return 'You do not have permission for this action.';
@@ -38,4 +40,17 @@ export class ApiClientError extends Error {
         return this.message;
     }
   }
+}
+
+function firstValidationDetail(details?: Record<string, unknown>): string | null {
+  if (!details) return null;
+  for (const value of Object.values(details)) {
+    if (Array.isArray(value) && typeof value[0] === 'string' && value[0].length > 0) {
+      return value[0];
+    }
+    if (typeof value === 'string' && value.length > 0) {
+      return value;
+    }
+  }
+  return null;
 }

@@ -1,28 +1,56 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { queryKeys } from '@/core/api';
+import { apiConfig } from '@/config/api';
 import { isDemoMode } from '@/config/demo';
+import { clearTokens, queryKeys } from '@/core/api';
 import { ensureDemoInitialized } from '@/demo/state';
 import { restoreSession } from '@/features/auth/api';
 import { usePinStore } from '@/features/pins/store';
 import { useAppStore } from '@/store';
 import { Loader } from '@/shared/ui/Loader';
 
+const BOOT_TIMEOUT_MS = 4000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => resolve(null), ms);
+    promise
+      .then((value) => {
+        clearTimeout(timer);
+        resolve(value);
+      })
+      .catch(() => {
+        clearTimeout(timer);
+        resolve(null);
+      });
+  });
+}
+
 export function AuthBootstrap({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const queryClient = useQueryClient();
+  const readyRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
-    const safety = setTimeout(() => {
-      if (!cancelled) {
-        setReady(true);
-      }
-    }, 8000);
+
+    const markReady = () => {
+      if (cancelled || readyRef.current) return;
+      readyRef.current = true;
+      setReady(true);
+    };
+
+    const safety = setTimeout(markReady, BOOT_TIMEOUT_MS);
 
     async function boot() {
       const { setAuthenticated, setUser } = useAppStore.getState();
+
+      if (__DEV__) {
+        console.log(
+          `[boot] demo=${isDemoMode} api=${apiConfig.baseUrl}`,
+        );
+      }
 
       try {
         if (isDemoMode) {
@@ -31,27 +59,32 @@ export function AuthBootstrap({ children }: { children: ReactNode }) {
         await useAppStore.getState().hydrateFromStorage();
         await usePinStore.getState().hydrate();
 
-        try {
-          const user = await restoreSession();
-          if (user) {
-            setUser(user);
-            setAuthenticated(true);
-            queryClient.setQueryData(queryKeys.me, user);
-          } else {
-            setUser(null);
-            setAuthenticated(false);
-            queryClient.setQueryData(queryKeys.me, null);
+        const user = await withTimeout(restoreSession(), BOOT_TIMEOUT_MS - 500);
+        if (cancelled) return;
+
+        if (user) {
+          setUser(user);
+          setAuthenticated(true);
+          queryClient.setQueryData(queryKeys.me, user);
+        } else {
+          // Timed out or no session — clear any half-broken tokens so we don't loop.
+          if (!isDemoMode) {
+            await clearTokens();
           }
-        } catch {
           setUser(null);
           setAuthenticated(false);
           queryClient.setQueryData(queryKeys.me, null);
         }
-      } finally {
-        if (!cancelled) {
-          clearTimeout(safety);
-          setReady(true);
+      } catch (error) {
+        if (__DEV__) {
+          console.warn('[boot] failed', error);
         }
+        setUser(null);
+        setAuthenticated(false);
+        queryClient.setQueryData(queryKeys.me, null);
+      } finally {
+        clearTimeout(safety);
+        markReady();
       }
     }
 
