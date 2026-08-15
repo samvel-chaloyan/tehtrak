@@ -60,6 +60,8 @@ export { EmptyListContent } from './EmptyListContent';
 export type { EmptyListContentProps } from './EmptyListContent';
 export { EmptyNotebook } from './EmptyNotebook';
 export type { EmptyNotebookProps } from './EmptyNotebook';
+export { BrandWatermarkBackground } from './BrandWatermark';
+export type { BrandWatermarkBackgroundProps } from './BrandWatermark';
 export { RowActions } from './RowActions';
 export type { RowActionsProps } from './RowActions';
 export { EmptyState } from './EmptyState';

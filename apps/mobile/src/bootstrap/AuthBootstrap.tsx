@@ -1,20 +1,22 @@
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { apiConfig } from '@/config/api';
 import { isDemoMode } from '@/config/demo';
-import { clearTokens, queryKeys } from '@/core/api';
+import { queryKeys } from '@/core/api';
 import { ensureDemoInitialized } from '@/demo/state';
 import { restoreSession } from '@/features/auth/api';
 import { usePinStore } from '@/features/pins/store';
 import { useAppStore } from '@/store';
 import { Loader } from '@/shared/ui/Loader';
 
-const BOOT_TIMEOUT_MS = 4000;
+/** Hard cap — never leave the splash hanging (Fast Refresh / slow LAN). */
+const BOOT_SAFETY_MS = 3000;
+const SESSION_WAIT_MS = 2500;
 
-function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | 'timeout' | null> {
   return new Promise((resolve) => {
-    const timer = setTimeout(() => resolve(null), ms);
+    const timer = setTimeout(() => resolve('timeout'), ms);
     promise
       .then((value) => {
         clearTimeout(timer);
@@ -30,26 +32,24 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
 export function AuthBootstrap({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const queryClient = useQueryClient();
-  const readyRef = useRef(false);
 
   useEffect(() => {
-    let cancelled = false;
+    let active = true;
 
-    const markReady = () => {
-      if (cancelled || readyRef.current) return;
-      readyRef.current = true;
-      setReady(true);
+    const finish = () => {
+      if (active) {
+        setReady(true);
+      }
     };
 
-    const safety = setTimeout(markReady, BOOT_TIMEOUT_MS);
+    // Absolute failsafe — ignores session work still in flight.
+    const safety = setTimeout(finish, BOOT_SAFETY_MS);
 
     async function boot() {
       const { setAuthenticated, setUser } = useAppStore.getState();
 
       if (__DEV__) {
-        console.log(
-          `[boot] demo=${isDemoMode} api=${apiConfig.baseUrl}`,
-        );
+        console.log(`[boot] demo=${isDemoMode} api=${apiConfig.baseUrl}`);
       }
 
       try {
@@ -59,17 +59,16 @@ export function AuthBootstrap({ children }: { children: ReactNode }) {
         await useAppStore.getState().hydrateFromStorage();
         await usePinStore.getState().hydrate();
 
-        const user = await withTimeout(restoreSession(), BOOT_TIMEOUT_MS - 500);
-        if (cancelled) return;
+        const result = await withTimeout(restoreSession(), SESSION_WAIT_MS);
+        if (!active) return;
 
-        if (user) {
-          setUser(user);
+        if (result && result !== 'timeout') {
+          setUser(result);
           setAuthenticated(true);
-          queryClient.setQueryData(queryKeys.me, user);
+          queryClient.setQueryData(queryKeys.me, result);
         } else {
-          // Timed out or no session — clear any half-broken tokens so we don't loop.
-          if (!isDemoMode) {
-            await clearTokens();
+          if (__DEV__ && result === 'timeout') {
+            console.warn('[boot] session restore timed out — showing welcome');
           }
           setUser(null);
           setAuthenticated(false);
@@ -79,19 +78,20 @@ export function AuthBootstrap({ children }: { children: ReactNode }) {
         if (__DEV__) {
           console.warn('[boot] failed', error);
         }
+        if (!active) return;
         setUser(null);
         setAuthenticated(false);
         queryClient.setQueryData(queryKeys.me, null);
       } finally {
         clearTimeout(safety);
-        markReady();
+        finish();
       }
     }
 
     void boot();
 
     return () => {
-      cancelled = true;
+      active = false;
       clearTimeout(safety);
     };
   }, [queryClient]);

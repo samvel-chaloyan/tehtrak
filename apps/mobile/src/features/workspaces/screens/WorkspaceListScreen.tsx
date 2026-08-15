@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { BackHandler, StyleSheet, View } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 
 import { useResolvedPins } from '@/features/pins/hooks/useResolvedPins';
 import { navigateToPin } from '@/features/pins/utils/resolvePin';
@@ -81,6 +82,14 @@ export function WorkspaceListScreen({ navigation, route }: AppScreenProps<'Works
   const [searchActive, setSearchActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { resolved: resolvedPins } = useResolvedPins();
+
+  // Root of the app stack — consume Android back so RN doesn't warn about GO_BACK.
+  useFocusEffect(
+    useCallback(() => {
+      const sub = BackHandler.addEventListener('hardwareBackPress', () => true);
+      return () => sub.remove();
+    }, []),
+  );
 
   const enterSearch = useCallback(() => {
     setFocusTarget(null);

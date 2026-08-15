@@ -6,6 +6,7 @@ import {
   useCollections,
 } from '@/features/collections/hooks/useCollections';
 import { AppScreenProps } from '@/navigation/types';
+import { safeGoBack } from '@/navigation/safeGoBack';
 import {
   AppScreenShell,
   EmptyListContent,
@@ -19,7 +20,7 @@ import {
 } from '@/shared/ui';
 import type { Collection } from '@/types';
 import { confirmDelete } from '@/utils/confirmDelete';
-import { formatRelativeTime } from '@/utils';
+import { formatRelativeTime, getScreenErrorMessage } from '@/utils';
 
 function collectionCountLabel(count: number) {
   return count === 1 ? '1 collection' : `${count} collections`;
@@ -38,7 +39,8 @@ function matchesCollectionQuery(collection: Collection, query: string) {
 
 export function CollectionListScreen({ navigation, route }: AppScreenProps<'CollectionList'>) {
   const { workspaceId, workspaceName } = route.params;
-  const { data: collections, isLoading, isError, refetch, isRefetching } = useCollections(workspaceId);
+  const { data: collections, isLoading, isError, error, refetch, isRefetching } =
+    useCollections(workspaceId);
   const deleteCollection = useDeleteCollection(workspaceId);
   const [searchActive, setSearchActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -100,7 +102,8 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
     title: 'Collections',
     subtitle: workspaceName,
     subtitleUnderline: true,
-    onBack: () => navigation.goBack(),
+    onBack: () =>
+      safeGoBack(navigation, () => navigation.navigate('WorkspaceList')),
     onSearch: enterSearch,
     ...searchShellProps,
   };
@@ -123,7 +126,10 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
         <NotebookListShelf countLabel={collectionCountLabel(0)} accent="collection" framed={false} countColor="tertiary">
           <EmptyListContent
             title="Could not load collections"
-            description="Pull to refresh or try again in a moment."
+            description={getScreenErrorMessage(
+              error,
+              'Pull to refresh or try again in a moment.',
+            )}
           />
         </NotebookListShelf>
       </AppScreenShell>

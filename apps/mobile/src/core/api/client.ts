@@ -2,6 +2,7 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { apiConfig } from '@/config/api';
 import { isDemoMode } from '@/config/demo';
 import { logDemo } from '@/config/demoDebug';
+import { useAppStore } from '@/store';
 import { clearTokens, getAccessToken, getRefreshToken, setTokens } from './authStorage';
 import { ApiClientError } from './errors';
 import { ApiResponse, RefreshResponse } from './types';
@@ -17,6 +18,11 @@ let refreshPromise: Promise<string | null> | null = null;
 function blockDemoNetwork(method: string, path: string): never {
   logDemo(`Blocked ${method} ${path}`);
   throw new ApiClientError('Demo mode active.', 'DEMO_MODE', 0);
+}
+
+function signOutLocally() {
+  useAppStore.getState().setUser(null);
+  useAppStore.getState().setAuthenticated(false);
 }
 
 apiClient.interceptors.request.use(async (config) => {
@@ -50,6 +56,7 @@ apiClient.interceptors.response.use(
         return apiClient(original);
       }
       await clearTokens();
+      signOutLocally();
     }
 
     return Promise.reject(toApiError(error));

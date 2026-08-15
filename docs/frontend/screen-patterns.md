@@ -41,8 +41,9 @@ Drawer rows that ship: Search (scoped or home), Quick Access, Settings, About (�
 ## Welcome
 
 ```
-ThreeLines
-titleLarge (accent) — Tehtrak     ← token scale only; no off-system display sizes
+┌ primary border frame ──────────────┐
+│ titleLarge (accent) — Tehtrak      │  ← token scale only; no off-system sizes
+└────────────────────────────────────┘
 body — A calm operational notebook
 bodySmall — supporting message
 
@@ -50,7 +51,7 @@ bodySmall — supporting message
 [ Create account — ghost ]
 ```
 
-Tight vertical rhythm. No excessive dead space between copy and actions. No bordered badge chrome around the brand name.
+Tight vertical rhythm. No excessive dead space between copy and actions. Welcome brand mark is the wordmark in a quiet primary-border frame — not ThreeLines (ThreeLines stays for empty states).
 
 ---
 
@@ -64,10 +65,11 @@ Welcome back — open the notebook…       ← quiet bodySmall secondary
 
 ┌ soft surface card ─────────────────┐
 │ Email                              │
-│ Password                           │
+│ Password              [ eye ]      │  ← revealable; hint under field when needed
+│ At least 8 characters (register)   │  ← caption tertiary, not placeholder
 └────────────────────────────────────┘
 
-[ Next ]  ← FixedFooterFrame bottom slot
+[ Sign in ] / [ Create account ]  ← FixedFooterFrame; label matches the task
 ```
 
 Same pattern for Create account (name + email + password). Form lives on a quiet grouped card so the canvas does not feel empty. Back chevron stays fully visible — no negative left offset, no overlay banner.
@@ -353,7 +355,7 @@ No placeholder “Coming soon” rows. Preferences wait until they exist.
 
 ## Empty states
 
-`EmptyNotebook` — ThreeLines, encouraging headline, body. Use for **first-run** empty lists (workspaces / collections / items). Primary create stays in the footer — do not duplicate a loud CTA in the empty body.
+`EmptyNotebook` — large soft blue logo as identity background, with encouraging headline + body on top. Use for **first-run** empty lists (workspaces / collections / items). Primary create stays in the footer — do not duplicate a loud CTA in the empty body.
 
 `EmptyListContent` — quiet text only. Use for search blank, search no-match, and in-frame errors.
 

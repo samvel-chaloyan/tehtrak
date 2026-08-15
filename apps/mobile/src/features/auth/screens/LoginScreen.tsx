@@ -4,6 +4,7 @@ import { StyleSheet } from 'react-native';
 import { AuthScreenLayout } from '@/features/auth/components/AuthScreenLayout';
 import { useLogin } from '@/features/auth/hooks/useAuth';
 import { AuthScreenProps } from '@/navigation/types';
+import { safeGoBack } from '@/navigation/safeGoBack';
 import { Input, Stack, Text } from '@/shared/ui';
 import { getScreenErrorMessage } from '@/utils';
 
@@ -27,12 +28,12 @@ export function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
     <AuthScreenLayout
       headerTitle="Sign in"
       subtitle="Welcome back — open the notebook you already trust."
-      onBack={() => navigation.goBack()}
+      onBack={() => safeGoBack(navigation, () => navigation.navigate('Welcome'))}
       scroll
       footer={{
         mode: 'single',
         action: {
-          label: login.isPending ? 'Signing in…' : 'Next',
+          label: login.isPending ? 'Signing in…' : 'Sign in',
           onPress: handleLogin,
           disabled: login.isPending,
         },
@@ -58,7 +59,7 @@ export function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
-          placeholder="Your password"
+          revealable
           autoComplete="password"
           textContentType="password"
         />

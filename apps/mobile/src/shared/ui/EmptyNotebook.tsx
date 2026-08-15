@@ -1,9 +1,10 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+
 import { useTheme } from '@/theme';
+import { BrandWatermarkBackground } from './BrandWatermark';
 import { Stack } from './Stack';
 import { Text } from './Text';
 import { TextLink } from './TextLink';
-import { ThreeLines } from './ThreeLines';
 
 export interface EmptyNotebookProps {
   title: string;
@@ -21,9 +22,10 @@ export function EmptyNotebook({
   const { spacing } = useTheme();
 
   return (
-    <View style={[styles.container, { paddingVertical: spacing['2xl'] }]}>
+    <BrandWatermarkBackground
+      style={[styles.container, { paddingVertical: spacing['2xl'] }]}
+    >
       <Stack gap="lg" align="center">
-        <ThreeLines size="md" align="center" />
         <Stack gap="sm" align="center">
           <Text variant="sectionTitle" color="secondary" style={styles.centered}>
             {title}
@@ -36,12 +38,13 @@ export function EmptyNotebook({
           <TextLink label={actionLabel} onPress={onAction} />
         ) : null}
       </Stack>
-    </View>
+    </BrandWatermarkBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    minHeight: 280,
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -16,8 +16,15 @@ export async function fetchCollections(workspaceId: string) {
     return demoFetchCollections(workspaceId);
   }
 
-  const list = await apiGet<ApiCollection[]>(`/workspaces/${workspaceId}/collections`);
-  return list.map(mapCollection);
+  try {
+    const list = await apiGet<ApiCollection[]>(`/workspaces/${workspaceId}/collections`);
+    return list.map(mapCollection);
+  } catch (error) {
+    if (__DEV__) {
+      console.warn('[collections] fetch failed', workspaceId, error);
+    }
+    throw error;
+  }
 }
 
 export async function createCollection(

@@ -87,7 +87,7 @@ Reference: [design-language.md](./design-language.md), [ui-constitution.md](./ui
 ## Empty States
 
 - [ ] Empty state exists where lists can be empty
-- [ ] Uses ThreeLines + encouraging copy
+- [ ] Uses soft brand watermark + encouraging copy
 - [ ] Explains next step clearly
 - [ ] Contains an action that does not overpower the message
 

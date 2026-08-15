@@ -272,12 +272,12 @@ Single-line text entry in forms.
 ```
 Label          ← label variant, above field
 ┌────────────────────────────┐
-│  value                     │  min height 48
+│  value              [eye]  │  min height 52; eye only when revealable
 └────────────────────────────┘
-Error text     ← caption, danger (below)
+Hint / Error   ← caption tertiary (hint) or danger (error), below — not placeholder
 ```
 
-Radius: `md`. Border: 1px `border`. Background: `background`.
+Radius: `md`. Border: hairline `border`. Background: `surface`.
 
 ### Variants
 
@@ -286,11 +286,18 @@ Radius: `md`. Border: 1px `border`. Background: `background`.
 | `default` | Standalone form fields (create flows) |
 | `plain` | Embedded in `NotebookPageRow` — no box, label provided by row |
 
+### Props
+
+| Prop | Use |
+|------|-----|
+| `hint` | Quiet guidance under the field (e.g. password length). Prefer over placeholder for requirements. |
+| `revealable` | With `secureTextEntry`, shows an eye control to reveal/hide the value. |
+
 ### States
 
 * **Default**
 * **Focused** — border `primary`
-* **Error** — border `danger`, error message below
+* **Error** — border `danger`, error message below (replaces hint)
 * **Disabled** — reduced opacity
 
 ---
@@ -375,13 +382,28 @@ Brand empty state for first-run lists and notebooks.
 ### Anatomy
 
 ```
-ThreeLines (center)
-Title (sectionTitle)
-Description (body, secondary)
-TextLink action (optional — prefer footer CTA when one already exists)
+BrandWatermarkBackground (ImageBackground — logo is the container bg)
+  Title + description as children on top
+  TextLink action (optional)
 ```
 
-Use `EmptyListContent` for quiet in-frame empties (search, errors).
+No sibling Image watermark. The empty body *is* the logo background.
+
+
+## BrandWatermarkBackground
+
+### Purpose
+
+Identity background for empty notebook list bodies via React Native `ImageBackground`.
+
+### Rules
+
+* Asset: `tehtrak_blue.png`
+* `resizeMode="contain"` — logo centered in the empty body
+* `imageStyle.opacity` ~0.08 — softer wash
+* Scaled ~1.45× so the mark reads large in the empty body
+* Children (title/description) render on top of the background image
+* Not used on search/error empties (`EmptyListContent`)
 
 
 ## SkeletonCard

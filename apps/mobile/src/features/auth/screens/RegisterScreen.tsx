@@ -4,6 +4,7 @@ import { StyleSheet } from 'react-native';
 import { AuthScreenLayout } from '@/features/auth/components/AuthScreenLayout';
 import { useRegister } from '@/features/auth/hooks/useAuth';
 import { AuthScreenProps } from '@/navigation/types';
+import { safeGoBack } from '@/navigation/safeGoBack';
 import { Input, Stack, Text } from '@/shared/ui';
 import { getScreenErrorMessage } from '@/utils';
 
@@ -48,12 +49,12 @@ export function RegisterScreen({ navigation }: AuthScreenProps<'Register'>) {
     <AuthScreenLayout
       headerTitle="Create account"
       subtitle="Start with a calm notebook for the work you already track by hand."
-      onBack={() => navigation.goBack()}
+      onBack={() => safeGoBack(navigation, () => navigation.navigate('Welcome'))}
       scroll
       footer={{
         mode: 'single',
         action: {
-          label: register.isPending ? 'Creating…' : 'Next',
+          label: register.isPending ? 'Creating account…' : 'Create account',
           onPress: handleRegister,
           disabled: register.isPending,
         },
@@ -89,7 +90,8 @@ export function RegisterScreen({ navigation }: AuthScreenProps<'Register'>) {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
-          placeholder="At least 8 characters"
+          revealable
+          hint="At least 8 characters"
           autoComplete="new-password"
           textContentType="newPassword"
         />

@@ -114,11 +114,11 @@ They represent written information — the visual foundation of the brand.
 They may appear in:
 
 * logo and splash
-* welcome and onboarding
-* empty states
 * loading placeholders
 
-They should remain simple and recognizable. See [components.md](./components.md) for the `ThreeLines` component.
+Empty list bodies use a large, very soft blue wordmark watermark instead of ThreeLines — calm atmosphere without a competing foreground mark.
+
+They should remain simple and recognizable. See [components.md](./components.md) for the `ThreeLines` component and `BrandWatermark`.
 
 ### Color character
 
