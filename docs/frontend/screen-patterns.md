@@ -35,14 +35,16 @@ Do not hide the status bar. Content respects safe-area top inset under a transpa
 
 Secondary account actions live in **Settings** — not on workspace list.
 
-Drawer rows that ship: Search (scoped or home), Quick Access, Settings, About (→ Settings), Sign out. Do not show stub rows that look live.
+Drawer rows that ship: Search (global — already-fetched workspaces / collections / items), Quick Access, Settings, About (→ Settings), Sign out. Do not show stub rows that look live.
 ---
 
 ## Welcome
 
+White surface canvas (`surface`) — brand page, not the gray app canvas.
+
 ```
 ┌ primary border frame ──────────────┐
-│ titleLarge (accent) — Tehtrak      │  ← token scale only; no off-system sizes
+│ display (accent) — Tehtrak         │  ← brand hero token; no off-system sizes
 └────────────────────────────────────┘
 body — A calm operational notebook
 bodySmall — supporting message
@@ -51,7 +53,7 @@ bodySmall — supporting message
 [ Create account — ghost ]
 ```
 
-Tight vertical rhythm. No excessive dead space between copy and actions. Welcome brand mark is the wordmark in a quiet primary-border frame — not ThreeLines (ThreeLines stays for empty states).
+Tight vertical rhythm. No excessive dead space between copy and actions. Welcome brand mark is the wordmark in a quiet primary-border frame — not ThreeLines (ThreeLines stays for empty states). Auth flow (Welcome, Sign in, Create account) uses white `surface` canvas.
 
 ---
 
@@ -72,7 +74,7 @@ Welcome back — open the notebook…       ← quiet bodySmall secondary
 [ Sign in ] / [ Create account ]  ← FixedFooterFrame; label matches the task
 ```
 
-Same pattern for Create account (name + email + password). Form lives on a quiet grouped card so the canvas does not feel empty. Back chevron stays fully visible — no negative left offset, no overlay banner.
+Same pattern for Create account (name + email + password). Form lives on a quiet grouped card. Auth screens use white `surface` canvas (same as Welcome). Back chevron stays fully visible — no negative left offset, no overlay banner.
 
 ---
 
@@ -114,6 +116,32 @@ Drawer **Quick Access** opens the management screen (grouped pins). Home banner 
 Collections and Items keep notebook-style vertical lists.
 
 Navigates to **Create Workspace** — no inline create on the grid screen.
+
+---
+
+## Global Search (drawer)
+
+Mixed search over **already-fetched** notebook data — no network round-trip.
+
+```
+Brand header — Search
+ContextBanner capsule — inline search field (active on entry)
+
+Empty (no query) — EmptyListContent
+  “Search your notebook”
+  “Looks through workspaces, collections, and items you’ve already opened…”
+
+No match — EmptyListContent
+  “Nothing matched”
+
+Results — grouped like Quick Access
+  Workspaces (entity accent)
+  Collections
+  Items
+  NotebookRow → navigate to place / section / page
+```
+
+Opens from drawer **Search**. Per-screen list search stays local to that list.
 
 ---
 

@@ -11,5 +11,6 @@ export type {
   PropertyType,
   SelectOption,
   Workspace,
+  WorkspaceRole,
   WorkspaceSummary,
 } from './domain';

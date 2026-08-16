@@ -20,7 +20,7 @@ const WELCOME_LINES = [
 ] as const;
 
 export function WelcomeScreen({ navigation }: AuthScreenProps<'Welcome'>) {
-  const { spacing } = useTheme();
+  const { colors, spacing } = useTheme();
   const surfaces = useSurfaceStyles();
   const insets = useSafeAreaInsets();
   const contentHeight = useScreenContentHeight();
@@ -29,8 +29,8 @@ export function WelcomeScreen({ navigation }: AuthScreenProps<'Welcome'>) {
     <KeyboardDismissView
       style={[
         styles.container,
-        surfaces.canvas,
         {
+          backgroundColor: colors.surface,
           paddingTop: insets.top + spacing.lg,
         },
       ]}

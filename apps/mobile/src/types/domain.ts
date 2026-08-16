@@ -17,9 +17,13 @@ export interface Workspace {
   name: string;
   description: string;
   emoji: string;
+  /** Current user's role in this workspace. */
+  role: WorkspaceRole;
   createdAt: string;
   updatedAt: string;
 }
+
+export type WorkspaceRole = 'owner' | 'admin' | 'manager' | 'worker' | 'viewer';
 
 export interface WorkspaceSummary {
   collectionCount: number;

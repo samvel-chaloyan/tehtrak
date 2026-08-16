@@ -15,20 +15,11 @@ RootNavigator
 │   ├── LoginScreen
 │   └── RegisterScreen
 └── AppStack (authenticated)
-    ├── MainTabs
-    │   ├── WorkspacesStack
-    │   │   ├── WorkspaceListScreen
-    │   │   └── WorkspaceHomeScreen
-    │   ├── CollectionsStack (within active workspace)
-    │   │   ├── CollectionListScreen
-    │   │   ├── CollectionDetailScreen
-    │   │   ├── RecordListScreen
-    │   │   ├── RecordDetailScreen
-    │   │   └── RecordFormScreen (create/edit)
-    │   ├── SearchScreen
-    │   └── SettingsStack
-    │       ├── SettingsScreen
-    │       └── ProfileScreen
+    ├── WorkspaceList
+    ├── GlobalSearch          ← drawer Search (cached mixed results)
+    ├── QuickAccess
+    ├── CollectionList / Details / Items…
+    └── Settings
     └── Modals
         ├── CollectionFormModal (create/edit collection)
         ├── FieldEditorModal

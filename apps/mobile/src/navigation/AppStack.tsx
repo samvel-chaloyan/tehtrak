@@ -10,6 +10,7 @@ import { CreatePropertyScreen } from '@/features/properties/screens/CreateProper
 import { EditPropertyScreen } from '@/features/properties/screens/EditPropertyScreen';
 import { CustomizeFieldsScreen } from '@/features/properties/screens/CustomizeFieldsScreen';
 import { QuickAccessScreen } from '@/features/pins/screens/QuickAccessScreen';
+import { GlobalSearchScreen } from '@/features/search/screens/GlobalSearchScreen';
 import { SettingsScreen } from '@/features/settings/screens/SettingsScreen';
 import { CreateWorkspaceScreen } from '@/features/workspaces/screens/CreateWorkspaceScreen';
 import { EditWorkspaceScreen } from '@/features/workspaces/screens/EditWorkspaceScreen';
@@ -114,6 +115,11 @@ export function AppStack() {
       <Stack.Screen
         name="QuickAccess"
         component={QuickAccessScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="GlobalSearch"
+        component={GlobalSearchScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen

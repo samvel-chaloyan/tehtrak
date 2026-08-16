@@ -9,15 +9,26 @@ public static class EntityMappers
 {
     public static UserDto ToDto(this User user) => new(user.Id, user.Email, user.DisplayName);
 
-    public static WorkspaceDto ToDto(this Workspace workspace) =>
+    public static WorkspaceDto ToDto(this Workspace workspace, WorkspaceRole role) =>
         new(
             workspace.Id,
             workspace.Name,
             workspace.Description,
             workspace.Slug,
             workspace.OwnerId,
+            role.ToApiString(),
             workspace.CreatedAt,
             workspace.UpdatedAt);
+
+    public static string ToApiString(this WorkspaceRole role) => role switch
+    {
+        WorkspaceRole.Owner => "owner",
+        WorkspaceRole.Admin => "admin",
+        WorkspaceRole.Manager => "manager",
+        WorkspaceRole.Worker => "worker",
+        WorkspaceRole.Viewer => "viewer",
+        _ => "viewer",
+    };
 
     public static CollectionDto ToDto(this Collection collection, int itemCount, DateTimeOffset? lastActivityAt) =>
         new(

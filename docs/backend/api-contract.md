@@ -77,6 +77,24 @@ HTTP status codes follow semantics (404 for not found, 403 for forbidden, etc.) 
 | PATCH | `/workspaces/:workspaceId` | `{ name?, description? }` |
 | DELETE | `/workspaces/:workspaceId` | Owner only, soft delete |
 
+### Workspace DTO
+
+```json
+{
+  "id": "uuid",
+  "name": "Yard Ops",
+  "description": "optional",
+  "slug": "yard-ops",
+  "ownerId": "uuid",
+  "role": "owner",
+  "createdAt": "ISO-8601",
+  "updatedAt": "ISO-8601"
+}
+```
+
+`role` is the **current user's** workspace role: `owner` | `admin` | `manager` | `worker` | `viewer`.
+Clients use it to hide create / edit / delete actions. Server authorization remains the source of truth.
+
 ### Members
 
 | Method | Path | Notes |

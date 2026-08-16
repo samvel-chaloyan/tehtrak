@@ -221,11 +221,7 @@ export function AppScreenShell({
           onSettings={() => navigation.navigate('Settings')}
           onAbout={() => navigation.navigate('Settings')}
           onQuickAccess={() => navigation.navigate('QuickAccess')}
-          onSearch={
-            onSearch
-              ? () => onSearch()
-              : () => navigation.navigate('WorkspaceList', { openSearch: true })
-          }
+          onSearch={() => navigation.navigate('GlobalSearch')}
           onSignOut={() => logout.mutate()}
         />
 

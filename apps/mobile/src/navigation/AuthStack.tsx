@@ -2,17 +2,21 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LoginScreen } from '@/features/auth/screens/LoginScreen';
 import { RegisterScreen } from '@/features/auth/screens/RegisterScreen';
 import { WelcomeScreen } from '@/features/auth/screens/WelcomeScreen';
+import { useTheme } from '@/theme';
 import { AuthStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
 export function AuthStack() {
+  const { colors } = useTheme();
+
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
         animation: 'fade',
         keyboardHandlingEnabled: false,
+        contentStyle: { backgroundColor: colors.surface },
       }}
     >
       <Stack.Screen name="Welcome" component={WelcomeScreen} />

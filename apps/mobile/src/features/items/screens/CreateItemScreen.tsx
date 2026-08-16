@@ -21,7 +21,7 @@ export function CreateItemScreen({ navigation, route }: AppScreenProps<'CreateIt
   const { spacing } = useTheme();
   const surfaces = useSurfaceStyles();
   const formRef = useRef<DynamicItemFormHandle>(null);
-  const { data: fields, isLoading } = useFields(workspaceId, collectionId);
+  const { data: fields, isLoading, isError, refetch } = useFields(workspaceId, collectionId);
   const createRecord = useCreateRecord(workspaceId, collectionId);
   const [error, setError] = useState<string | null>(null);
 
@@ -55,10 +55,30 @@ export function CreateItemScreen({ navigation, route }: AppScreenProps<'CreateIt
     />
   );
 
+  const retryFooter = (
+    <SingleBottomButton
+      action={{
+        label: 'Retry',
+        onPress: () => refetch(),
+      }}
+    />
+  );
+
   if (isLoading) {
     return (
       <AppScreenShell {...shellProps}>
         <SkeletonList count={4} />
+      </AppScreenShell>
+    );
+  }
+
+  if (isError) {
+    return (
+      <AppScreenShell {...shellProps} footer={retryFooter}>
+        <EmptyListContent
+          title="Could not load fields"
+          description="Try again in a moment."
+        />
       </AppScreenShell>
     );
   }

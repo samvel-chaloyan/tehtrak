@@ -52,6 +52,7 @@ export async function demoCreateWorkspace(payload: {
       name: payload.name.trim(),
       description: payload.description?.trim() || 'Your operational notebook',
       emoji: workspaceEmojiForIndex(data.workspaces.length),
+      role: 'owner',
       createdAt: now,
       updatedAt: now,
     };

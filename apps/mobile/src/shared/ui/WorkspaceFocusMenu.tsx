@@ -28,8 +28,8 @@ export interface WorkspaceFocusMenuProps {
   title: string;
   metaLines: string[];
   onInfo: () => void;
-  onEdit: () => void;
-  onDelete: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
   onCancel: () => void;
 }
 
@@ -81,12 +81,13 @@ export function WorkspaceFocusMenu({
       return null;
     }
 
+    const actionCount = 2 + (onEdit ? 1 : 0) + (onDelete ? 1 : 0);
+    const separatorCount = Math.max(0, actionCount - 1);
     const screen = Dimensions.get('window');
-    // 4 actions + 3 hairlines + gaps matching the nav capsule rhythm
     const clusterWidth =
-      ACTION_SIZE * 4 +
-      StyleSheet.hairlineWidth * 3 +
-      spacing.sm * 6 +
+      ACTION_SIZE * actionCount +
+      StyleSheet.hairlineWidth * separatorCount +
+      spacing.sm * separatorCount * 2 +
       CLUSTER_PAD * 2;
     const clusterHeight = ACTION_SIZE + CLUSTER_PAD * 2;
     const spaceBelow = screen.height - (layout.y + layout.height) - insets.bottom;
@@ -110,7 +111,7 @@ export function WorkspaceFocusMenu({
       card: layout,
       cluster: { top: clusterTop, left: clusterLeft, width: clusterWidth, height: clusterHeight },
     };
-  }, [layout, insets.bottom, insets.top, spacing.md, spacing.sm]);
+  }, [layout, insets.bottom, insets.top, onDelete, onEdit, spacing.md, spacing.sm]);
 
   if (!visible || !placement) {
     return null;
@@ -185,20 +186,28 @@ export function WorkspaceFocusMenu({
             color={colors.textSecondary}
             onPress={onInfo}
           />
-          {separator}
-          <IconAction
-            label="Edit"
-            icon="create-outline"
-            color={colors.successEmphasis}
-            onPress={onEdit}
-          />
-          {separator}
-          <IconAction
-            label="Delete"
-            icon="trash-outline"
-            color={colors.danger}
-            onPress={onDelete}
-          />
+          {onEdit ? (
+            <>
+              {separator}
+              <IconAction
+                label="Edit"
+                icon="create-outline"
+                color={colors.successEmphasis}
+                onPress={onEdit}
+              />
+            </>
+          ) : null}
+          {onDelete ? (
+            <>
+              {separator}
+              <IconAction
+                label="Delete"
+                icon="trash-outline"
+                color={colors.danger}
+                onPress={onDelete}
+              />
+            </>
+          ) : null}
         </Animated.View>
       </View>
     </Modal>

@@ -5,6 +5,8 @@ import {
   useDeleteCollection,
   useCollections,
 } from '@/features/collections/hooks/useCollections';
+import { useWorkspaceRole } from '@/features/workspaces/hooks/useWorkspaceRole';
+import { canManageCollections } from '@/features/workspaces/utils/permissions';
 import { AppScreenProps } from '@/navigation/types';
 import { safeGoBack } from '@/navigation/safeGoBack';
 import {
@@ -54,6 +56,8 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
   const { data: collections, isLoading, isError, error, refetch, isRefetching } =
     useCollections(workspaceId);
   const deleteCollection = useDeleteCollection(workspaceId);
+  const role = useWorkspaceRole(workspaceId);
+  const canManage = canManageCollections(role);
   const [searchActive, setSearchActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [focusTarget, setFocusTarget] = useState<FocusTarget | null>(null);
@@ -124,7 +128,7 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
     );
   }, [collectionList, searchActive, searchQuery]);
 
-  const newCollectionFooter = (
+  const newCollectionFooter = canManage ? (
     <SingleBottomButton
       action={{
         label: 'New collection',
@@ -132,7 +136,7 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
         onPress: () => navigation.navigate('CreateCollection', { workspaceId, workspaceName }),
       }}
     />
-  );
+  ) : undefined;
 
   const retryFooter = (
     <SingleBottomButton
@@ -268,7 +272,7 @@ export function CollectionListScreen({ navigation, route }: AppScreenProps<'Coll
                   />
                 );
 
-                if (searchActive) {
+                if (searchActive || !canManage) {
                   return row;
                 }
 

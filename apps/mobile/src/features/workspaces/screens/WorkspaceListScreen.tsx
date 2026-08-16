@@ -7,6 +7,10 @@ import { navigateToPin } from '@/features/pins/utils/resolvePin';
 import { pinLetter } from '@/features/pins/utils/pinIdentity';
 import { useWorkspaceSummaries } from '@/features/workspaces/hooks/useWorkspaceSummaries';
 import { useDeleteWorkspace, useUpdateWorkspace, useWorkspaces } from '@/features/workspaces/hooks/useWorkspaces';
+import {
+  canDeleteWorkspace,
+  canEditWorkspace,
+} from '@/features/workspaces/utils/permissions';
 import { workspaceCardMetaLines, collectionCountLabel } from '@/features/workspaces/utils/workspaceMeta';
 import { sortWorkspacesByLastEdited } from '@/features/workspaces/utils/workspaceOrder';
 import { AppScreenProps } from '@/navigation/types';
@@ -453,8 +457,16 @@ export function WorkspaceListScreen({ navigation, route }: AppScreenProps<'Works
         title={focusTarget?.workspace.name ?? ''}
         metaLines={focusTarget?.metaLines ?? []}
         onInfo={handleFocusInfo}
-        onEdit={handleFocusEdit}
-        onDelete={handleFocusDelete}
+        onEdit={
+          focusTarget && canEditWorkspace(focusTarget.workspace.role)
+            ? handleFocusEdit
+            : undefined
+        }
+        onDelete={
+          focusTarget && canDeleteWorkspace(focusTarget.workspace.role)
+            ? handleFocusDelete
+            : undefined
+        }
         onCancel={closeFocusMenu}
       />
     </AppScreenShell>

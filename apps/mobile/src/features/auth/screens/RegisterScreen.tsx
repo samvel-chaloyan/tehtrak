@@ -91,6 +91,7 @@ export function RegisterScreen({ navigation }: AuthScreenProps<'Register'>) {
           onChangeText={setPassword}
           secureTextEntry
           revealable
+          placeholder="********"
           hint="At least 8 characters"
           autoComplete="new-password"
           textContentType="newPassword"

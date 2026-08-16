@@ -34,6 +34,13 @@ export function fontFamilyForWeight(weight?: string | number | null): string {
 }
 
 export const typography = {
+  display: {
+    fontFamily: fontFamily.semibold,
+    fontSize: 48,
+    fontWeight: '600',
+    lineHeight: 54,
+    letterSpacing: -0.8,
+  },
   titleLarge: {
     fontFamily: fontFamily.semibold,
     fontSize: 28,

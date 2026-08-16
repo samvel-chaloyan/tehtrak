@@ -66,6 +66,7 @@ export type AppStackParamList = {
     workspaceId: string;
   };
   QuickAccess: undefined;
+  GlobalSearch: undefined;
   Settings: undefined;
 };
 

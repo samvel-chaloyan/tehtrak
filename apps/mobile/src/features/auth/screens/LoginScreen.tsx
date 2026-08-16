@@ -60,6 +60,7 @@ export function LoginScreen({ navigation }: AuthScreenProps<'Login'>) {
           onChangeText={setPassword}
           secureTextEntry
           revealable
+          placeholder="********"
           autoComplete="password"
           textContentType="password"
         />

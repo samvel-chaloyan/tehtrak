@@ -17,13 +17,18 @@ export function AuthBrandTitle() {
           backgroundColor: colors.surface,
           borderRadius: radius.lg,
           paddingHorizontal: spacing.xl,
-          paddingVertical: spacing.md,
+          paddingVertical: spacing.lg,
         },
       ]}
       accessibilityRole="header"
       accessibilityLabel={appConfig.name}
     >
-      <Text variant="titleLarge" color="accent" style={styles.brandName}>
+      <Text
+        variant="display"
+        color="accent"
+        numberOfLines={1}
+        style={styles.brandName}
+      >
         {appConfig.name}
       </Text>
     </View>
@@ -37,5 +42,6 @@ const styles = StyleSheet.create({
   },
   brandName: {
     textAlign: 'center',
+    flexShrink: 0,
   },
 });

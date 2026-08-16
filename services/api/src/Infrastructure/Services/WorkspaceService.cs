@@ -16,17 +16,15 @@ public sealed class WorkspaceService(
 {
     public async Task<IReadOnlyList<WorkspaceDto>> ListAsync(Guid userId, CancellationToken ct = default)
     {
-        return await db.WorkspaceMembers
-            .AsNoTracking()
-            .Where(m => m.UserId == userId)
-            .Join(
-                db.Workspaces.Where(w => w.DeletedAt == null),
-                m => m.WorkspaceId,
-                w => w.Id,
-                (_, w) => w)
-            .OrderBy(w => w.Name)
-            .Select(w => w.ToDto())
-            .ToListAsync(ct);
+        var rows = await (
+            from m in db.WorkspaceMembers.AsNoTracking()
+            where m.UserId == userId
+            join w in db.Workspaces.Where(w => w.DeletedAt == null) on m.WorkspaceId equals w.Id
+            orderby w.Name
+            select new { Workspace = w, m.Role }
+        ).ToListAsync(ct);
+
+        return rows.Select(row => row.Workspace.ToDto(row.Role)).ToList();
     }
 
     public async Task<WorkspaceDto> CreateAsync(Guid userId, CreateWorkspaceRequest request, CancellationToken ct = default)
@@ -66,14 +64,16 @@ public sealed class WorkspaceService(
         });
 
         await db.SaveChangesAsync(ct);
-        return workspace.ToDto();
+        return workspace.ToDto(WorkspaceRole.Owner);
     }
 
     public async Task<WorkspaceDto> GetAsync(Guid userId, Guid workspaceId, CancellationToken ct = default)
     {
         await auth.RequireMembershipAsync(workspaceId, userId, ct);
+        var role = await auth.GetRoleAsync(workspaceId, userId, ct)
+            ?? throw new ServiceException("WORKSPACE_ACCESS_DENIED", "You are not a member of this workspace.", 403);
         var workspace = await FindWorkspaceAsync(workspaceId, ct);
-        return workspace.ToDto();
+        return workspace.ToDto(role);
     }
 
     public async Task<WorkspaceDto> UpdateAsync(Guid userId, Guid workspaceId, UpdateWorkspaceRequest request, CancellationToken ct = default)
@@ -99,7 +99,8 @@ public sealed class WorkspaceService(
 
         workspace.UpdatedAt = DateTimeOffset.UtcNow;
         await db.SaveChangesAsync(ct);
-        return workspace.ToDto();
+        var role = await auth.GetRoleAsync(workspaceId, userId, ct) ?? WorkspaceRole.Admin;
+        return workspace.ToDto(role);
     }
 
     public async Task DeleteAsync(Guid userId, Guid workspaceId, CancellationToken ct = default)

@@ -6,6 +6,8 @@ public sealed record WorkspaceDto(
     string? Description,
     string Slug,
     Guid OwnerId,
+    /// <summary>Current user's role in this workspace: owner | admin | manager | worker | viewer.</summary>
+    string Role,
     DateTimeOffset CreatedAt,
     DateTimeOffset UpdatedAt);
 

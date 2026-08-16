@@ -4,6 +4,8 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { DynamicItemForm, DynamicItemFormHandle } from '@/features/items/components/DynamicItemForm';
 import { useRecord, useUpdateRecord } from '@/features/items/hooks/useRecords';
 import { useFields } from '@/features/properties/hooks/useFields';
+import { useWorkspaceRole } from '@/features/workspaces/hooks/useWorkspaceRole';
+import { canMutateItems } from '@/features/workspaces/utils/permissions';
 import { AppScreenProps } from '@/navigation/types';
 import { useTheme } from '@/theme';
 import {
@@ -52,28 +54,37 @@ export function ItemDetailsScreen({ navigation, route }: AppScreenProps<'ItemDet
   const { itemId, collectionId, workspaceId, edit: startEditing } = route.params;
   const { spacing } = useTheme();
   const formRef = useRef<DynamicItemFormHandle>(null);
-  const [isEditing, setIsEditing] = useState(Boolean(startEditing));
+  const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchActive, setSearchActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { data: fields, isLoading: fieldsLoading } = useFields(workspaceId, collectionId);
-  const { data: item, isLoading: itemLoading, isError } = useRecord(
-    workspaceId,
-    collectionId,
-    itemId,
-  );
+  const {
+    data: fields,
+    isLoading: fieldsLoading,
+    isError: fieldsError,
+    refetch: refetchFields,
+  } = useFields(workspaceId, collectionId);
+  const {
+    data: item,
+    isLoading: itemLoading,
+    isError: itemError,
+    refetch: refetchItem,
+  } = useRecord(workspaceId, collectionId, itemId);
   const updateRecord = useUpdateRecord(workspaceId, collectionId);
+  const role = useWorkspaceRole(workspaceId);
+  const canWriteItems = canMutateItems(role);
 
   const fieldList = fields ?? [];
   const isLoading = fieldsLoading || itemLoading;
+  const isError = fieldsError || itemError;
   const itemTitle = item ? getItemTitle(item, fieldList) : 'Item';
 
   useEffect(() => {
-    if (startEditing) {
+    if (startEditing && canWriteItems) {
       setIsEditing(true);
     }
-  }, [startEditing]);
+  }, [startEditing, canWriteItems]);
 
   const exitEdit = useCallback(() => {
     setIsEditing(false);
@@ -179,13 +190,25 @@ export function ItemDetailsScreen({ navigation, route }: AppScreenProps<'ItemDet
         disabled: updateRecord.isPending || fieldList.length === 0,
       }}
     />
-  ) : (
+  ) : canWriteItems ? (
     <SingleBottomButton
       action={{
         label: 'Edit',
         icon: 'create-outline',
         onPress: enterEdit,
         disabled: fieldList.length === 0,
+      }}
+    />
+  ) : undefined;
+
+  const retryFooter = (
+    <SingleBottomButton
+      action={{
+        label: 'Retry',
+        onPress: () => {
+          void refetchFields();
+          void refetchItem();
+        },
       }}
     />
   );
@@ -200,7 +223,18 @@ export function ItemDetailsScreen({ navigation, route }: AppScreenProps<'ItemDet
     );
   }
 
-  if (isError || !item) {
+  if (isError) {
+    return (
+      <AppScreenShell {...shellProps} footer={retryFooter}>
+        <EmptyListContent
+          title="Could not load item"
+          description="Try again in a moment."
+        />
+      </AppScreenShell>
+    );
+  }
+
+  if (!item) {
     return (
       <AppScreenShell {...shellProps}>
         <EmptyNotebook

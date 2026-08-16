@@ -1,7 +1,32 @@
 import { ApiCollection, ApiField, ApiRecord, ApiWorkspace } from './types';
-import { Collection, Item, ItemData, PropertyField, PropertyType, Workspace } from '@/types';
+import {
+  Collection,
+  Item,
+  ItemData,
+  PropertyField,
+  PropertyType,
+  Workspace,
+  WorkspaceRole,
+} from '@/types';
 
 const WORKSPACE_EMOJIS = ['🏠', '📋', '📦', '🌿', '📝'];
+
+function mapWorkspaceRole(role: string | undefined | null): WorkspaceRole {
+  switch ((role ?? '').toLowerCase()) {
+    case 'owner':
+      return 'owner';
+    case 'admin':
+      return 'admin';
+    case 'manager':
+      return 'manager';
+    case 'worker':
+      return 'worker';
+    case 'viewer':
+      return 'viewer';
+    default:
+      return 'viewer';
+  }
+}
 
 export function mapWorkspace(dto: ApiWorkspace, index = 0): Workspace {
   return {
@@ -9,6 +34,7 @@ export function mapWorkspace(dto: ApiWorkspace, index = 0): Workspace {
     name: dto.name,
     description: dto.description?.trim() || '',
     emoji: WORKSPACE_EMOJIS[index % WORKSPACE_EMOJIS.length],
+    role: mapWorkspaceRole(dto.role),
     createdAt: dto.createdAt,
     updatedAt: dto.updatedAt,
   };

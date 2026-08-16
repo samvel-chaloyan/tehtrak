@@ -34,6 +34,7 @@ export interface ApiWorkspace {
   description: string | null;
   slug: string;
   ownerId: string;
+  role: string;
   createdAt: string;
   updatedAt: string;
 }

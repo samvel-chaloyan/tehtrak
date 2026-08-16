@@ -4,6 +4,11 @@ import { StyleSheet, View } from 'react-native';
 import { collectionDetailsMeta } from '@/features/collections/constants/starterFields';
 import { useFields } from '@/features/properties/hooks/useFields';
 import { useDeleteRecord, useRecords } from '@/features/items/hooks/useRecords';
+import { useWorkspaceRole } from '@/features/workspaces/hooks/useWorkspaceRole';
+import {
+  canManageCollections,
+  canMutateItems,
+} from '@/features/workspaces/utils/permissions';
 import { AppScreenProps } from '@/navigation/types';
 import {
   AppScreenShell,
@@ -66,6 +71,9 @@ export function CollectionDetailsScreen({
     collectionId,
   );
   const deleteRecord = useDeleteRecord(workspaceId, collectionId);
+  const role = useWorkspaceRole(workspaceId);
+  const canManage = canManageCollections(role);
+  const canWriteItems = canMutateItems(role);
   const [searchActive, setSearchActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [focusTarget, setFocusTarget] = useState<FocusTarget | null>(null);
@@ -165,7 +173,7 @@ export function CollectionDetailsScreen({
     ...searchShellProps,
   };
 
-  const itemFooter = (
+  const itemFooter = canWriteItems ? (
     <SingleBottomButton
       action={{
         label: 'Add item',
@@ -173,7 +181,7 @@ export function CollectionDetailsScreen({
         onPress: openCreateItem,
       }}
     />
-  );
+  ) : undefined;
 
   const retryFooter = (
     <SingleBottomButton
@@ -184,9 +192,9 @@ export function CollectionDetailsScreen({
     />
   );
 
-  const shelfFooter = (
+  const shelfFooter = canManage ? (
     <OutlineButton label="Customize" compact onPress={openCustomizeFields} />
-  );
+  ) : undefined;
 
   if (isLoading) {
     return (
@@ -300,7 +308,7 @@ export function CollectionDetailsScreen({
                   />
                 );
 
-                if (searchActive) {
+                if (searchActive || !canWriteItems) {
                   return row;
                 }
 

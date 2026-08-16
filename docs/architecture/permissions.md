@@ -22,6 +22,20 @@ Role-based access control at **workspace** level via `WorkspaceMember.role`.
 2. Checks live in Application layer (`IWorkspaceAuthorizationService`), not controllers
 3. Client hides UI actions user cannot perform — **not** a security boundary
 
+### Mobile UI gating (MVP)
+
+Workspace list responses include `role` for the signed-in member. The app uses that to hide:
+
+| Action | Minimum role |
+|--------|--------------|
+| Delete workspace | Owner |
+| Edit workspace name / description | Admin |
+| Create / edit / delete collections & fields | Manager |
+| Create / edit / delete items | Worker |
+| Read / search / pin | Viewer |
+
+Helpers live in `apps/mobile/src/features/workspaces/utils/permissions.ts`.
+
 ## Authorization flow
 
 ```

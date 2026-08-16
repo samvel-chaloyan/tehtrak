@@ -24,6 +24,7 @@ Implementation: `fontFamily` + `fontFamilyForWeight()` in `apps/mobile/src/theme
 
 | Variant | Size | Weight | Line height | Use |
 |---------|------|--------|-------------|-----|
+| `display` | 48 | 600 | 54 | Brand hero (Welcome wordmark only) |
 | `titleLarge` | 28 | 600 | 34 | Page title — once per screen |
 | `sectionTitle` | 22 | 600 | 28 | Section headers |
 | `title` | 20 | 600 | 26 | Card / list row titles |

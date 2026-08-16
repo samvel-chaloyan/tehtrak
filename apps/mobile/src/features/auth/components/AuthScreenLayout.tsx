@@ -61,7 +61,7 @@ export function AuthScreenLayout({
   scroll = false,
   footer,
 }: AuthScreenLayoutProps) {
-  const { radius, spacing, shadows } = useTheme();
+  const { colors, radius, spacing, shadows } = useTheme();
   const surfaces = useSurfaceStyles();
   const insets = useSafeAreaInsets();
   const contentHeight = useScreenContentHeight();
@@ -96,8 +96,8 @@ export function AuthScreenLayout({
     <KeyboardDismissView
       style={[
         styles.root,
-        surfaces.canvas,
         {
+          backgroundColor: colors.surface,
           paddingTop: insets.top + spacing.lg,
         },
       ]}
