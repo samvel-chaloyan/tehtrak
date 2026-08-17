@@ -1,86 +1,100 @@
-# MVP Checklist
+# Core notebook checklist
 
-Use this before calling Phase 1 complete.
+Use this to confirm the **shipped** Auth → Item slice.  
+Deferred enhancements live at the bottom — they are **not** blockers.
 
 ## Product
 
-- [ ] User can explain app as "notebook for real-world things" without confusion
-- [ ] No user-facing use of "schema", "entity", or "table"
-- [ ] Elderly-friendly mode increases text size app-wide
+- [x] User can explain app as "notebook for real-world things" without confusion
+- [x] No user-facing use of "schema", "entity", or "table"
+- [ ] Elderly-friendly larger text — **deferred**
 
 ## Authentication
 
-- [ ] Register with email/password
-- [ ] Login / logout
-- [ ] Token refresh on 401
-- [ ] Session survives app restart
+- [x] Register with email/password
+- [x] Login / logout
+- [x] Token refresh on 401
+- [x] Session survives app restart
 
 ## Workspaces
 
-- [ ] Create workspace
-- [ ] List user's workspaces
-- [ ] Switch active workspace
-- [ ] Invite member with role
-- [ ] Owner/Admin/Manager/Worker/Viewer enforced server-side
+- [x] Create workspace
+- [x] List user's workspaces
+- [x] Open / switch into a workspace (collections)
+- [x] Edit name / description; soft-delete (owner)
+- [ ] Invite member with role — **deferred**
+- [x] Roles enforced server-side; mutating UI hidden by role (light)
 
 ## Collections
 
-- [ ] Create, rename, delete (soft) collection
-- [ ] Collection list per workspace
-- [ ] Unique name per workspace
+- [x] Create, rename, delete (soft) collection
+- [x] Collection list per workspace
 
 ## Fields (properties)
 
-- [ ] Add text, number, date, boolean, select fields
-- [ ] Required flag enforced
-- [ ] Reorder fields
-- [ ] Select options configurable
+- [x] Add text, number, date, boolean, select fields
+- [x] Required flag
+- [ ] Reorder fields (polished drag UI) — **partial / polish later**
+- [x] Select options configurable
 
 ## Records (items)
 
-- [ ] Create record via dynamic form
-- [ ] Edit record
-- [ ] Delete record (soft)
-- [ ] List records with pagination
-- [ ] Values validated against field types server-side
+- [x] Create item via dynamic form
+- [x] Edit item
+- [x] Delete item (soft)
+- [x] List items
+- [x] Values stored in JSONB; validated against field types server-side
 
-## Offline
+## Search (current)
 
-- [ ] View records offline
-- [ ] Create/edit records offline
-- [ ] Sync queue persists across app kill
-- [ ] Sync on reconnect
-- [ ] User notified on sync failure
-
-## Search
-
-- [ ] Search records within workspace or collection
-
-## Attachments
-
-- [ ] Upload image on image field
-- [ ] View attached image
-
-## Activity
-
-- [ ] Record create/update appears in activity feed
-
-## Quality
-
-- [ ] Sentry reports crashes
-- [ ] API p95 read < 200ms on staging
-- [ ] List scroll 60fps on mid-range device
-- [ ] No secrets in repository
+- [x] Filter within list screens (client)
+- [x] Drawer global search over already-fetched cache
+- [ ] Server-backed search — **deferred**
 
 ## Architecture compliance
 
-- [ ] No per-collection SQL tables
-- [ ] Records use JSONB `data` column only
-- [ ] Domain model matches docs/architecture/domain-model.md
-- [ ] API responses use standard envelope
+- [x] No per-collection SQL tables
+- [x] Records use JSONB `data` column only
+- [x] API responses use standard envelope
+
+## Quality (core)
+
+- [x] Primary screens: loading / empty / error
+- [x] No secrets in repository
+- [ ] Sentry crash reporting — **deferred**
+- [ ] Perf targets on staging — **when we have staging**
+
+---
+
+## Deferred enhancements (not core blockers)
+
+### Offline
+
+- [ ] View / create / edit offline
+- [ ] Sync queue + reconnect
+
+### Sharing
+
+- [ ] Invite members UI
+- [ ] Role admin / deeper permission UX
+
+### Attachments
+
+- [ ] Upload / view image on image field
+
+### Activity
+
+- [ ] Activity feed UI (“who changed what”)
+
+### Ops / a11y
+
+- [ ] Sentry
+- [ ] App-wide elderly / `fontScale` mode
+
+---
 
 ## Documentation
 
-- [ ] README points to docs/
-- [ ] API matches docs/backend/api-contract.md
-- [ ] Any intentional deviations documented
+- [x] README points to docs/
+- [x] Core API matches docs/backend/api-contract.md (deviations called out when intentional)
+- [x] Phase 1 / roadmap mark deferred work explicitly

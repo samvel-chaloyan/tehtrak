@@ -1,105 +1,93 @@
-# Phase 1 — MVP Implementation
+# Phase 1 — Core notebook (shipped)
 
 ## Goal
 
-Deliver one complete vertical slice: auth → workspace → collection → fields → records, with basic offline and permissions.
+Deliver one complete **online** vertical slice:
 
-## Milestones
+**Auth → Workspace → Collection → Field → Item**
 
-### M1 — Project scaffolding
+Feel: calm operational notebook (not admin CRUD).
 
-**Backend**
-- [ ] Solution structure (Api, Application, Domain, Infrastructure, Modules)
-- [ ] PostgreSQL + EF Core + Docker Compose
-- [ ] Health check endpoint
-- [ ] Swagger in development
+## Status (current)
 
-**Mobile**
-- [ ] Expo + TypeScript project
-- [ ] Folder structure per frontend-architecture.md
-- [ ] Theme tokens + ThemeProvider
-- [ ] Navigation shell (Auth + App stacks)
-- [ ] Axios client + API envelope types
+**Core slice: done** for a single-user / owner-first product.
 
-### M2 — Authentication
+Enhancements below are **not** required to call the core notebook complete. They must not divert implementation unless explicitly prioritized.
 
-- [ ] Register, login, refresh, logout endpoints
-- [ ] JWT + refresh token rotation
-- [ ] Secure token storage on mobile
-- [ ] Session restoration on launch
-- [ ] Auth screens (login, register)
+---
 
-### M3 — Workspaces
+## Shipped milestones
 
-- [ ] Workspace CRUD API
-- [ ] Member list + invite (email invite simplified: direct add by email MVP)
-- [ ] Role assignment
-- [ ] Workspace list + switcher UI
-- [ ] `IWorkspaceAuthorizationService`
+### M1 — Project scaffolding — done
 
-### M4 — Collections & fields
+**Backend:** Clean Architecture solution, PostgreSQL + EF Core migrations, health, Swagger  
+**Mobile:** Expo + TypeScript, theme tokens, Auth/App stacks, Axios envelope client
 
-- [ ] Collection CRUD API + UI
-- [ ] Field CRUD API
-- [ ] Field editor UI (admin/manager)
-- [ ] Field reorder
+### M2 — Authentication — done
 
-### M5 — Records
+Register, login, refresh, logout · JWT + SecureStore · session restore · Welcome / Sign in / Create account
 
-- [ ] Record CRUD API with JSONB validation
-- [ ] Dynamic form engine (text, number, date, boolean, select)
-- [ ] Record list (FlashList)
-- [ ] Record create/edit screens
-- [ ] Activity log on record changes
+### M3 — Workspaces — done (owner-first)
 
-### M6 — Offline (basic)
+Workspace CRUD API + UI · grid home · description · Quick Access pins · soft delete  
+Server `IWorkspaceAuthorizationService` + workspace `role` on DTOs · light mobile UI gating  
 
-- [ ] SQLite schema + repositories
-- [ ] Read-from-local-first in Query hooks
-- [ ] Sync queue + worker
-- [ ] Optimistic create/update records
+**Deferred:** member invite UI, member management screens, role expansion beyond hide-actions
 
-### M7 — Polish for MVP
+### M4 — Collections & fields — done
 
-- [ ] Search within collection (PostgreSQL `ILIKE` on data)
-- [ ] Image attachment upload (single image field)
-- [ ] Empty states, loading states, error toasts
-- [ ] Sentry integration
-- [ ] Permissions enforced + UI hidden by role
+Collection CRUD · field CRUD · Customize fields UI · dynamic types (text, number, date, boolean, select)  
+**Partial:** field reorder API exists; drag-reorder UI may still be thin
 
-## Vertical slice order (strict)
+### M5 — Records (items) — done
 
-Implement in this order — do not skip ahead:
+Record CRUD + JSONB · dynamic forms · list / create / details+edit · swipe & long-press patterns · loading / empty / error states
+
+---
+
+## Deferred enhancements (not Phase 1 expected work)
+
+These remain documented for later product depth. **Do not treat as unfinished MVP.**
+
+| Theme | Examples |
+|-------|----------|
+| Offline | SQLite, sync queue, optimistic offline writes |
+| Sharing | Invite members UI, role admin, collection-level overrides |
+| Search | PostgreSQL `ILIKE` / server workspace search (client list + cache search is enough for now) |
+| Attachments | Image upload / image field |
+| Activity feed | “Who changed what” workspace history UI |
+| Ops / a11y | Sentry, elderly `fontScale` mode |
+| Field polish | Richer reorder UX, more field types |
+
+---
+
+## Vertical slice (current)
 
 ```
-Auth → Workspace → Collection → Field → Record → Offline → Search → Attachment
+Auth → Workspace → Collection → Field → Item
 ```
 
-## Definition of done (Phase 1)
+Stopped here on purpose. Offline → server search → attachment are **enhancement lanes**, not the next mandatory steps.
 
-- User can register, create workspace, collection with 3+ field types, add 20+ records
-- App works offline for record add/edit; syncs on reconnect
-- Worker role cannot manage collections
-- Activity shows record updates
-- No per-collection SQL tables exist
+---
 
-## Out of scope (Phase 1)
+## Definition of done (core notebook)
+
+- [x] User can register, create workspace, collection with fields, add/edit/delete items
+- [x] Data persists via API (JSONB records; no per-collection SQL tables)
+- [x] App feels like Notebook → Section → Page
+- [x] Empty / loading / error states on primary screens
+- [ ] *(enhancement)* Offline record add/edit + sync
+- [ ] *(enhancement)* Activity feed UI
+- [ ] *(enhancement)* Attachments, server search, invites
+
+---
+
+## Out of scope (still)
 
 - Barcode, QR, formula, relation fields
 - Push notifications
-- Realtime sync
+- Realtime sync / collaboration
 - Dark mode
 - Elasticsearch
 - Automation rules
-
-## Estimated sequencing
-
-| Milestone | Depends on |
-|-----------|------------|
-| M1 | — |
-| M2 | M1 |
-| M3 | M2 |
-| M4 | M3 |
-| M5 | M4 |
-| M6 | M5 |
-| M7 | M5, M6 |

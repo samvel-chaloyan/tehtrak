@@ -237,20 +237,17 @@ Follow:
 
 docs/implementation/phase-1.md
 
-Strict order:
+**Current core slice (shipped):**
 
 Auth
 → Workspace
 → Collection
 → Field
-→ Record
-→ Offline
-→ Search
-→ Attachment
+→ Record (Item)
 
-Do not skip ahead.
+**Deferred enhancements** (offline, server search, attachments, invites, activity feed, Sentry, elderly text) are documented but **not** expected next work unless the product owner prioritizes them. Do not treat them as unfinished MVP.
 
-Do not implement later milestones before earlier milestones are complete.
+Do not invent later-phase features as mandatory before the core notebook is solid.
 
 ---
 

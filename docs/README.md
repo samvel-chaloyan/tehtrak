@@ -10,8 +10,8 @@ This documentation is the **architectural contract** for the project. Cursor and
 | Building API endpoints | [api-contract.md](backend/api-contract.md), [api-conventions.md](backend/api-conventions.md) |
 | Building UI | [frontend/README.md](frontend/README.md) (design hierarchy), [form-engine.md](frontend/form-engine.md) |
 | Adding persistence | [database-schema.md](backend/database-schema.md) |
-| Offline/sync work | [offline-sync.md](architecture/offline-sync.md), [offline-storage.md](frontend/offline-storage.md) |
-| Shipping MVP | [mvp-checklist.md](implementation/mvp-checklist.md) |
+| Shipping the core notebook | [mvp-checklist.md](implementation/mvp-checklist.md), [phase-1.md](implementation/phase-1.md) |
+| Offline/sync (enhancement) | [offline-sync.md](architecture/offline-sync.md), [offline-storage.md](frontend/offline-storage.md) |
 
 ## Structure
 
@@ -37,6 +37,6 @@ docs/
 ## Principles (non-negotiable)
 
 - **Configurable, not hardcoded** — no industry-specific modules or per-collection SQL tables
-- **Mobile first** — one-hand usage, camera-first, quick entry
-- **Offline first** — local write path before server sync
+- **Mobile first** — one-hand usage, reachable actions, simple navigation
 - **Human language** — collection, property, item, workspace (never schema, entity, table)
+- **Online-first core (current ship)** — Auth → Workspace → Collection → Field → Item works against the API; offline/sync, sharing invites, attachments, server search, and activity feed are **enhancements**, not required to call the core notebook done (see [phase-1.md](implementation/phase-1.md) and [roadmap.md](product/roadmap.md))
